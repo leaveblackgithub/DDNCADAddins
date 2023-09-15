@@ -27,9 +27,9 @@ namespace PreviousDevelopmentToRefactor.Archive
         internal void EndCommands(bool EndOrCancel)
         {
             if (!EndOrCancel)
-                CurEditorHelper.WriteMessage($"\nCommand [{this.GetType().Name}] Cancelled.");
+                CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Cancelled.");
             else
-                CurEditorHelper.WriteMessage($"\nCommand [{this.GetType().Name}] Succeeded.");
+                CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Succeeded.");
             Dispose();
         }
     }

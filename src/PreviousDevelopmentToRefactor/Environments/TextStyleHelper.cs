@@ -126,7 +126,7 @@ namespace PreviousDevelopmentToRefactor.Environments
                                 GenUtils.SetObjectPropertyValue(obj, NameOfTextStyleId, newTextStyle);
                                 count++;
                             }
-                            catch (Exception e)
+                            catch
                             {
                                 MessageBox.Show($"\n{blk.Name}:{obj.GetType().Name}");
                             }

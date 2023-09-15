@@ -7,9 +7,9 @@ namespace PreviousDevelopmentToRefactor.LibsOfCleanup
 {
     public class LTypeHelper : DisposableClassBase
     {
+        private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly dynamic _lTypeTableId;
-        private readonly O_DocHelper _curDocHelper;
 
         public LTypeHelper(dynamic lTypeTableId, O_DocHelper docHelper)
         {

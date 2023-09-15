@@ -31,7 +31,6 @@ namespace PreviousDevelopmentToRefactor
         {
             BlockReference bref;
             string newname;
-            BlockTable bt;
             var btId = CurDocHelper.BlockTableId;
             var brefId = CurEditorHelper.GetEntity("\nSelect main block instance to copy: ",
                 "\nMust be a type of the BlockReference!", typeof(BlockReference));

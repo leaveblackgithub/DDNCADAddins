@@ -2,7 +2,6 @@
 using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.Runtime;
 using General;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -150,7 +149,7 @@ namespace PreviousDevelopmentToRefactor.Archive
                         trans.Commit();
                     }
                 }
-                catch (Exception Ex)
+                catch
                 {
                 }
 

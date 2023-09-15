@@ -5,7 +5,7 @@ using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 
-namespace PreviousDevelopmentToRefactor.Reference
+namespace ACADReferenceCodes
 {
     //添加图层的返回状态
     public enum AddLayerStatuts
@@ -351,7 +351,7 @@ namespace PreviousDevelopmentToRefactor.Reference
                     var ltr = (LayerTableRecord)lt[layerName].GetObject(OpenMode.ForWrite);
                     if (delete)
                     {
-                        if (ltr.IsUsed) ltr.deleteAllEntityInLayer();
+                        if (ltr.IsUsed) deleteAllEntityInLayer(ltr);
                         if (db.Clayer == ltr.ObjectId) db.Clayer = lt["0"];
                         ltr.Erase();
                         isDeleteOK = true;

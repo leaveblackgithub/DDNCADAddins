@@ -10,15 +10,15 @@ namespace PreviousDevelopmentToRefactor.LibsOfCleanup
     public class LayerHelper
     {
         private const string _layerSep = "___";
+        private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly LTypeHelper _curLtypeHelper;
         private readonly Dictionary<string, dynamic> _dictFrozenNpltSpecial;
         private readonly Dictionary<string, dynamic> _dictOffSpecial;
+        private readonly Dictionary<string, List<string>> _dirtytypes;
         private readonly dynamic _layerTableId;
 
         private Dictionary<string, dynamic> _cleantypes;
-        private readonly O_DocHelper _curDocHelper;
-        private readonly Dictionary<string, List<string>> _dirtytypes;
 
         public LayerHelper(dynamic layerTableId, O_DocHelper docHelper, LTypeHelper ltypeHelper)
         {
@@ -420,7 +420,7 @@ namespace PreviousDevelopmentToRefactor.LibsOfCleanup
                 _curEditorHelper.WriteMessage($"\nLayer [{oldName}] renamed to [{newName}].");
                 return newName;
             }
-            catch (Exception e)
+            catch
             {
                 _cleantypes[newName] = _layerTableId[newName];
                 return null;

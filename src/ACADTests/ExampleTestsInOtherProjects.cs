@@ -4,7 +4,7 @@ using Autodesk.AutoCAD.Geometry;
 using NUnit.Framework;
 using TestRunnerACAD;
 
-namespace ACADExampleTest
+namespace ACADTests
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]

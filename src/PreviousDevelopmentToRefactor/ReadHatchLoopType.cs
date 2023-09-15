@@ -35,7 +35,6 @@ namespace PreviousDevelopmentToRefactor
             var result = new List<ObjectId>();
             foreach (var id in SelectHatches().GetObjectIds())
             {
-                var plot = true;
                 var hatch = GetObjectForRead(id) as Hatch;
                 var prompt = hatch.GetHatchLoopTypes();
 

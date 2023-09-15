@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+using ACADReferenceCodes;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.DatabaseServices.Filters;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Geometry;
 using Autodesk.AutoCAD.Runtime;
-using PreviousDevelopmentToRefactor;
 using Exception = System.Exception;
 using MgdAcApplication = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 [assembly: CommandClass(typeof(XClipRetriever))]
 
-namespace PreviousDevelopmentToRefactor
+namespace ACADReferenceCodes
 {
     public class XClipRetriever
     {
