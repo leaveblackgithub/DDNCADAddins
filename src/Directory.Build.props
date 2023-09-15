@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+   <PropertyGroup>
+      <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+      <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+      <OutputPath>..\bin\</OutputPath>
+   </PropertyGroup>
+</Project>
