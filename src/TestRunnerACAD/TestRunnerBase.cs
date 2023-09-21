@@ -23,6 +23,7 @@ namespace TestRunnerACAD
             }.ToArray();
 
             new AutoRun(assembly).Execute(nunitArgs);
+            TestReportGenerator.CreateTestReport(directoryPlugin);
         }
     }
 }

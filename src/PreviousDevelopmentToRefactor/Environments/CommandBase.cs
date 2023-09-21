@@ -22,8 +22,7 @@ namespace PreviousDevelopmentToRefactor.Environments
         }
 
         internal abstract CommandTransBase InitCommandTransBase(Transaction acTrans);
-
-        [CommandMethod("DDNCrop")]
+        
         public virtual void Run()
         {
             using (var acTrans = CurDocHelper.StartTransaction())

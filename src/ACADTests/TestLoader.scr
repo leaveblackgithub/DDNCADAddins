@@ -3,4 +3,3 @@ trustedpaths
 D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/
 netload D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/ACADTests.dll
 RunTests
-
