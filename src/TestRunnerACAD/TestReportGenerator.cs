@@ -5,20 +5,16 @@ namespace TestRunnerACAD
 {
     public class TestReportGenerator
     {
-        public static void CreateTestReport(string assemblyPath)
+        public static void CreateTestReport()
         {
-            if (assemblyPath == null)
-                return;
-
-            var directoryReportUnit = Path.Combine(assemblyPath, TestRunnerConsts.ReportToolFolderName);
-            Directory.CreateDirectory(directoryReportUnit);
+            var directoryReportUnit =  TestRunnerConsts.ReportToolFolderName;
             var fileInputXml = Path.Combine(directoryReportUnit, TestRunnerConsts.ReportNunitXml);
             if (!File.Exists(fileInputXml))
                 return;
             var fileOutputHtml = Path.Combine(directoryReportUnit, TestRunnerConsts.ReportOutputHtml);
             if (File.Exists(fileOutputHtml))
                 File.Delete(fileOutputHtml);
-            var generatorReportUnit = Path.Combine(assemblyPath, TestRunnerConsts.ReportToolFolderName,
+            var generatorReportUnit = Path.Combine(TestRunnerConsts.ReportToolFolderName,
                 TestRunnerConsts.ReportToolFileName);
             //The extentreports-dotnet-cli deprecates ReportUnit. Can only define output folder and  export to default index.html
             CreateHtmlReport(fileInputXml, directoryReportUnit, generatorReportUnit);

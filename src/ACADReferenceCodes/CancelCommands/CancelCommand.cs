@@ -28,7 +28,7 @@ namespace ACADReferenceCodes.CancelCommands
                     break;
                 }
 
-                ed.WriteMessage("nInside while loop...");
+                ed.WriteMessage("nInside while loop ...");
             }
 
             // We're done - remove the message filter

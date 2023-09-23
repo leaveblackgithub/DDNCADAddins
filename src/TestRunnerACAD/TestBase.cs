@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using NUnit.Framework;
@@ -24,7 +25,7 @@ namespace TestRunnerACAD
             {
                 defaultDrawing = true;
                 // Should this be executing assembly path instead?
-                drawingFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TestDrawing.dwg");
+                //drawingFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TestDrawing.dwg");
             }
             else
             {
@@ -73,5 +74,6 @@ namespace TestRunnerACAD
             // Sometimes Autocad crashes when exception throws.
             if (exception != null) throw exception;
         }
+       
     }
 }

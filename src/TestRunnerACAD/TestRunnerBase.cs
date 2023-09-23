@@ -7,23 +7,22 @@ namespace TestRunnerACAD
 {
     public class TestRunnerBase
     {
-        public void RunTestsBase(Assembly assembly, string directoryPlugin)
+        public static void RunTestsBase(Assembly assembly)
         {
-            if (directoryPlugin == null)
-                return;
-
-            var directoryReportUnit = Path.Combine(directoryPlugin, TestRunnerConsts.ReportToolFolderName);
-            Directory.CreateDirectory(directoryReportUnit);
+            var directoryReportUnit = TestRunnerConsts.ReportToolFolderName;
+            if (!Directory.Exists(directoryReportUnit)) return;
             var fileInputXml = Path.Combine(directoryReportUnit, TestRunnerConsts.ReportNunitXml);
             if (File.Exists(fileInputXml))
                 File.Delete(fileInputXml);
             var nunitArgs = new List<string>
             {
-                "--trace=verbose", "--result=" + fileInputXml
+                "--trace=verbose", 
+                "--result=" + fileInputXml
             }.ToArray();
 
             new AutoRun(assembly).Execute(nunitArgs);
-            TestReportGenerator.CreateTestReport(directoryPlugin);
+
+            TestReportGenerator.CreateTestReport();
         }
     }
 }

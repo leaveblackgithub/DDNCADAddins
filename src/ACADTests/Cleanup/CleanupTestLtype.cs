@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using NUnit.Framework;
@@ -22,8 +23,6 @@ namespace ACADTests.Cleanup
                     Assert.IsTrue(ltypes.Has(CleanupTestConsts.TestLType));
                 }
             }
-
-
             // Run the tests
             ExecuteTestActions(CleanupTestConsts.CleanupTestDwg, Action1);
         }

@@ -8,14 +8,13 @@ using TestRunnerACAD;
 
 namespace ACADTests
 {
-    public class TestRunner : TestRunnerBase
+    public class TestRunner 
     {
         [CommandMethod("RunTests", CommandFlags.Session)]
-        public void RunTests()
+        public static void RunTests()
         {
             var assembly = Assembly.GetExecutingAssembly();
-            var directoryPlugin = Path.GetDirectoryName(assembly.Location);
-            RunTestsBase(assembly, directoryPlugin);
+            TestRunnerBase.RunTestsBase(assembly);
         }
     }
 }

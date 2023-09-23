@@ -51,7 +51,7 @@ namespace ACADTests
             }
 
             // Run the tests
-            ExecuteTestActions(null, Action1, Action2);
+            ExecuteTestActions(@"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg", Action1, Action2);
         }
     }
 }
