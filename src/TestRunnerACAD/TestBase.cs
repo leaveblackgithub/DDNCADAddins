@@ -57,12 +57,11 @@ namespace TestRunnerACAD
                         catch (Exception e)
                         {
                             exception = e;
-
-                            tr.Commit();
+                            
                             break;
                         }
-
-                        tr.Commit();
+                        finally{ tr.Commit(); }
+                        
                     }
 
                 // Change the database back to the original.

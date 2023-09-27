@@ -1,6 +1,6 @@
 ﻿namespace ACADTests.Cleanup
 {
-    public abstract class CleanupTestConsts
+    public static class CleanupTestConsts
     {
         public const string CleanupTestDwg =
             @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\examples\drawing to cleanup.dwg";
