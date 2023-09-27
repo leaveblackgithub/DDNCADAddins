@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
+using CommonUtils;
 using Domain.Shared;
 
 namespace ACADWrappers.Shared
@@ -15,7 +16,7 @@ namespace ACADWrappers.Shared
         public Database DwgDatabase { get; }
 
         //give a string of symboltable name, add "Id" as suffix, use reflection to get the related symboltableid property of database,return as string
-        public IntPtr GetSymbolTableId(string symbolTableName)
+        public IntPtr GetSymbolTableIdIntPtr(string symbolTableName)
         {
             var symbolTableIdValue = DwgDatabase.GetType().GetProperty(symbolTableName + "Id")?.GetValue(DwgDatabase, null);
             if (symbolTableIdValue != null)
@@ -26,42 +27,34 @@ namespace ACADWrappers.Shared
             return IntPtr.Zero;
         }
 
-        //give a IntPtr of symboltableid, covert to objectid,
-        //get names and objectid IntPtr of all symboltablerecord of this symboltable via getenumrator, return as dictionary<string,string>
-        //use transaction to deal with object
-        public Dictionary<string, IntPtr> GetSymbolTableRecordNames(IntPtr symbolTableId)
+        public bool RunInTransaction(Action<Transaction> action)
         {
-            var symbolTableRecordNames = new Dictionary<string, IntPtr>();
-            var symbolTableRecordId = new ObjectId(symbolTableId);
+            bool result= false;
             using (var tr = DwgDatabase.TransactionManager.StartTransaction())
             {
                 try
                 {
-                    var symbolTableRecord = tr.GetObject(symbolTableRecordId, OpenMode.ForRead) as SymbolTable;
-                    if (symbolTableRecord != null)
-                    {
-                        //getenumberator is a method of symboltable, return a symboltableenumerator
-                        var symbolTableRecordEnumerator = symbolTableRecord.GetEnumerator();
-                        //use enumerator to get all symboltablerecord names and objectids as string
-                        while (symbolTableRecordEnumerator.MoveNext())
-                        {
-                            var recordId = symbolTableRecordEnumerator.Current;
-                            //use transaction to get record name
-                            using (var record = tr.GetObject(recordId, OpenMode.ForRead) as SymbolTableRecord)
-                            {
-                                if (record != null) symbolTableRecordNames.Add(record.Name, recordId.OldIdPtr);
-                            }
-                        }
-                    }
+                    action(tr);
+                    result = true;
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-                    
+
                 }
-                finally { tr.Commit(); }
+                finally
+                {
+                    tr.Commit();
+                }
+                return result;
             }
-            return symbolTableRecordNames;
+        }
+
+        public Dictionary<string, IntPtr> GetSymbolTableRecordNames(IntPtr symbolTableId)
+        {
+            ISymbolTableWrapper symbolTableWrapper = new SymbolTableWrapper(this, new ObjectId(symbolTableId));
+            symbolTableWrapper.GetSymbolTableRecordNames();
+            return symbolTableWrapper.SymbolTableRecordNames;
         }
     }
 }

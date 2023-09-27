@@ -64,11 +64,18 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\DatabaseWrapper.cs" />
     <Compile Include="Shared\DocumentWrapper.cs" />
+    <Compile Include="Shared\SymbolTableExtension.cs" />
+    <Compile Include="Shared\SymbolTableWrapper.cs" />
+    <Compile Include="Shared\TransactionExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+      <Project>{C868F6F9-7EFB-4925-9D71-34E8DF45E2B4}</Project>
+      <Name>CommonUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Domain\Domain.csproj">
       <Project>{3a27a9fa-9878-4fa2-8e38-cb9bc045e46d}</Project>
       <Name>Domain</Name>

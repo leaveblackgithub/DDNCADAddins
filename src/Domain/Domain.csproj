@@ -58,6 +58,7 @@
     <Compile Include="Cleanup\LTypeCleaner.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\ACADConsts.cs" />
+    <Compile Include="Shared\ISymbolTableWrapper.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

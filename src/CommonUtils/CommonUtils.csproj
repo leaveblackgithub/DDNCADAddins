@@ -62,6 +62,7 @@
     <Compile Include="DisposableClassBase.cs" />
     <Compile Include="GenUtils.cs" />
     <Compile Include="GenUtilsTest.cs" />
+    <Compile Include="IEnumerableExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -21,9 +21,9 @@ namespace ACADTests.Shared
             void Action1(Database db, Transaction tr)
             {
                 IDatabaseWrapper dbWrapper = new DatabaseWrapper(db);
-                IntPtr ltypeTableId1 = dbWrapper.GetSymbolTableId(nameof(LinetypeTable));
+                IntPtr ltypeTableId1 = dbWrapper.GetSymbolTableIdIntPtr(nameof(LinetypeTable));
                 Assert.AreEqual(db.LinetypeTableId.OldIdPtr, ltypeTableId1);
-                Assert.AreEqual(IntPtr.Zero,dbWrapper.GetSymbolTableId("test"));
+                Assert.AreEqual(IntPtr.Zero,dbWrapper.GetSymbolTableIdIntPtr("test"));
             }
             // Run the tests
             ExecuteTestActions(CleanupTestConsts.CleanupTestDwg, Action1);
@@ -36,9 +36,9 @@ namespace ACADTests.Shared
             void Action1(Database db, Transaction tr)
             {
                 IDatabaseWrapper dbWrapper = new DatabaseWrapper(db);
-                IntPtr ltypeTableId1 = dbWrapper.GetSymbolTableId(nameof(LinetypeTable));
+                IntPtr ltypeTableId1 = dbWrapper.GetSymbolTableIdIntPtr(nameof(LinetypeTable));
                 Dictionary<string,IntPtr> dictionary1=dbWrapper.GetSymbolTableRecordNames(ltypeTableId1);
-                Dictionary<string, IntPtr> dictionary2 = dbWrapper.GetSymbolTableRecordNames(dbWrapper.GetSymbolTableId("test"));
+                Dictionary<string, IntPtr> dictionary2 = dbWrapper.GetSymbolTableRecordNames(dbWrapper.GetSymbolTableIdIntPtr("test"));
                 Assert.IsTrue(dictionary1.ContainsKey(CleanupTestConsts.TestLType));
                 Assert.AreEqual(0,dictionary2.Count);
             }

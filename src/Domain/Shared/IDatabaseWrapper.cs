@@ -5,7 +5,7 @@ namespace Domain.Shared
 {
     public interface IDatabaseWrapper
     {
-        IntPtr GetSymbolTableId(string symbolTableName);
+        IntPtr GetSymbolTableIdIntPtr(string symbolTableName);
         Dictionary<string, IntPtr> GetSymbolTableRecordNames(IntPtr symbolTableId);
     }
 }
