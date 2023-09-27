@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
 using Domain.Shared;
+using static CommonUtils.SharedDelegate;
 
 namespace ACADWrappers.Shared
 {
     public static class TransactionExtension
     {
 
-        public static bool Read<T>(this Transaction transaction,ObjectId objectId, Action<T> action) where T : DBObject
+        public static bool ReadDbObject<T>(this Transaction transaction,ObjectId objectId, ActionWithResult<T> action) where T : DBObject
         {
             try
             {
@@ -16,7 +17,7 @@ namespace ACADWrappers.Shared
                 {
                     if (dbObject != null)
                     {
-                        action((T)dbObject);
+                        if (!action((T)dbObject)) { return false; }
                     }
                 }
                 return true;

@@ -19,19 +19,20 @@ namespace ACADWrappers.Shared
         }
         public bool GetSymbolTableRecordNames()
         {
-            DbWrapper.RunInTransaction(GetSymbolTable);
-            return true;
+            return DbWrapper.RunInTransaction(GetSymbolTable);
 
         }
 
-        private void GetSymbolTable(Transaction transaction)
+        private bool GetSymbolTable(Transaction transaction)
         {
             SymbolTableRecordNames= new Dictionary<string, IntPtr>();
-            transaction.Read<SymbolTable>(SymbolTableId, table => table.CycleRecord(transaction,ReadRecordName));
+            return transaction.ReadDbObject<SymbolTable>(SymbolTableId, table => table.CycleReadRecord(transaction,ReadRecordName));
         }
-        private void ReadRecordName(SymbolTableRecord record)
+        private bool ReadRecordName(SymbolTableRecord record)
         {
+            if (record == null) return false;
             SymbolTableRecordNames.Add(record.Name, record.Id.OldIdPtr);
+            return true;
         }
     }
 }

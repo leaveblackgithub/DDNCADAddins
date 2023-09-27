@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
 using Domain.Shared;
+using static CommonUtils.SharedDelegate;
 
 namespace ACADWrappers.Shared
 {
@@ -27,20 +28,21 @@ namespace ACADWrappers.Shared
             return IntPtr.Zero;
         }
 
-        public bool RunInTransaction(Action<Transaction> action)
+        public bool RunInTransaction(ActionWithResult<Transaction> action)
         {
             bool result= false;
             using (var tr = DwgDatabase.TransactionManager.StartTransaction())
             {
                 try
                 {
-                    action(tr);
-                    result = true;
+                    if (action(tr))
+                    {
+                        result=true;
+                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
-
                 }
                 finally
                 {
