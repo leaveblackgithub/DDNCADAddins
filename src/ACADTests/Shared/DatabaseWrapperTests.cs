@@ -1,19 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Threading;
 using ACADTests.Cleanup;
+using ACADWrappers.Shared;
 using Autodesk.AutoCAD.DatabaseServices;
 using Domain.Shared;
 using NUnit.Framework;
-using System.Threading;
-using ACADWrappers.Shared;
-using Autodesk.AutoCAD.ApplicationServices.Core;
 using TestRunnerACAD;
 
 namespace ACADTests.Shared
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]
-    public class DatabaseWrapperTests : TestBase
+    public class DatabaseWrapperTests
     {
         [Test]
         public void GetSymbolTableId()
@@ -21,30 +19,28 @@ namespace ACADTests.Shared
             void Action1(Database db, Transaction tr)
             {
                 IDatabaseWrapper dbWrapper = new DatabaseWrapper(db);
-                IntPtr ltypeTableId1 = dbWrapper.GetSymbolTableIdIntPtr(nameof(LinetypeTable));
+                var ltypeTableId1 = dbWrapper.GetSymbolTableIdIntPtr(nameof(LinetypeTable));
                 Assert.AreEqual(db.LinetypeTableId.OldIdPtr, ltypeTableId1);
-                Assert.AreEqual(IntPtr.Zero,dbWrapper.GetSymbolTableIdIntPtr("test"));
+                Assert.Throws<ArgumentException>(() => dbWrapper.GetSymbolTableIdIntPtr("test"));
             }
+
             // Run the tests
-            ExecuteTestActions(CleanupTestConsts.CleanupTestDwg, Action1);
+            TestBaseWDb.ExecuteTestActions(CleanupTestConsts.CleanupTestDwg, Action1);
         }
 
 
         [Test]
         public void GetSymbolTableRecordNames()
         {
-            void Action1(Database db, Transaction tr)
+            void Action1(IDatabaseWrapper dbWrapper)
             {
-                IDatabaseWrapper dbWrapper = new DatabaseWrapper(db);
-                IntPtr ltypeTableId1 = dbWrapper.GetSymbolTableIdIntPtr(nameof(LinetypeTable));
-                Dictionary<string,IntPtr> dictionary1=dbWrapper.GetSymbolTableRecordNames(ltypeTableId1);
-                Dictionary<string, IntPtr> dictionary2 = dbWrapper.GetSymbolTableRecordNames(dbWrapper.GetSymbolTableIdIntPtr("test"));
+                var ltypeTableId1 = dbWrapper.GetSymbolTableIdIntPtr(nameof(LinetypeTable));
+                var dictionary1 = dbWrapper.GetSymbolTableRecordNames(ltypeTableId1);
                 Assert.IsTrue(dictionary1.ContainsKey(CleanupTestConsts.TestLType));
-                Assert.AreEqual(0,dictionary2.Count);
             }
-            // Run the tests
-            ExecuteTestActions(CleanupTestConsts.CleanupTestDwg, Action1);
-        }
 
+            // Run the tests
+            TestBaseWDbWrapper.ExecuteTestActions(CleanupTestConsts.CleanupTestDwg, Action1);
+        }
     }
 }

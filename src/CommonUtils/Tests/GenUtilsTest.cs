@@ -1,6 +1,7 @@
-﻿using NUnit.Framework;
+﻿using General;
+using NUnit.Framework;
 
-namespace General
+namespace CommonUtils.Tests
 {
     [TestFixture]
     public class GenUtilsTest

@@ -93,6 +93,8 @@
     <Compile Include="ExampleTestsInOtherProjects.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shared\DatabaseWrapperTests.cs" />
+    <Compile Include="Shared\TestBaseWDbWrapper.cs" />
+    <Compile Include="Shared\TransactionExtensionTests.cs" />
     <Compile Include="TestRunner.cs" />
   </ItemGroup>
   <ItemGroup>

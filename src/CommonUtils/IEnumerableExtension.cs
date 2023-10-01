@@ -6,14 +6,13 @@ namespace CommonUtils
 {
     public static class IEnumerableExtension
     {
-        public static bool Cycle<T>(this IEnumerable enumerable, SharedDelegate.ActionWithResult<T> action)
+        public static void Cycle<T>(this IEnumerable enumerable,Action<T> action)
         {
             var enumerator = enumerable.GetEnumerator();
             while (enumerator.MoveNext())
             {
-                if (!action((T)enumerator.Current)) return false;
+                action((T)enumerator.Current) ;
             }
-            return true;
         }
     }
 }

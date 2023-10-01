@@ -8,7 +8,7 @@ namespace ACADTests
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]
-    public class ExampleTestsInOtherProjects : TestBase
+    public class ExampleTestsInOtherProjects : TestBaseExecution
     {
         [Test]
         public void OtherTest_Pass()
@@ -51,7 +51,7 @@ namespace ACADTests
             }
 
             // Run the tests
-            ExecuteTestActions(@"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg", Action1, Action2);
+            TestBaseWDb.ExecuteTestActions(@"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg", Action1, Action2);
         }
     }
 }

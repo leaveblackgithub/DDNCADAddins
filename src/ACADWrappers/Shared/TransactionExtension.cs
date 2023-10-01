@@ -1,32 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
-using Domain.Shared;
-using static CommonUtils.SharedDelegate;
 
 namespace ACADWrappers.Shared
 {
     public static class TransactionExtension
     {
-
-        public static bool ReadDbObject<T>(this Transaction transaction,ObjectId objectId, ActionWithResult<T> action) where T : DBObject
+        public static void ReadDbObject<T>(this Transaction transaction, ObjectId objectId, Action<T> action)
+            where T : DBObject
         {
-            try
+            ArgumentException argumentException = new ArgumentException(
+                $"{objectId.ToString()} is not a valid DbObject of type {typeof(T).Name}");
+            if (!objectId.IsValid) throw argumentException;
+            using (var dbObject = transaction.GetObject(objectId, OpenMode.ForRead))
             {
-                using (var dbObject = transaction.GetObject(objectId, OpenMode.ForRead))
+                var t = dbObject as T;
+                if (dbObject == null || t is null)
                 {
-                    if (dbObject != null)
-                    {
-                        if (!action((T)dbObject)) { return false; }
-                    }
+                    throw argumentException;
                 }
-                return true;
+
+                action(t);
             }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                return false;
-            }
+        }
+        public static void ReadDbObject<T>(this Transaction transaction, IntPtr objectIdIntPtr, Action<T> action)
+            where T : DBObject
+        {
+            ObjectId objectId=new ObjectId(objectIdIntPtr);
+           transaction.ReadDbObject<T>(objectId,action);
         }
     }
 }

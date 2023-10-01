@@ -1,14 +1,15 @@
-﻿using Autodesk.AutoCAD.DatabaseServices;
+﻿using System;
+using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
 
 namespace ACADWrappers.Shared
 {
     public static class SymbolTableExtension
     {
-        public static bool CycleReadRecord(this SymbolTable table, Transaction transaction,
-            SharedDelegate.ActionWithResult<SymbolTableRecord> action)
+        public static void CycleReadRecord(this SymbolTable table, Transaction transaction,
+            Action<SymbolTableRecord> action)
         {
-            return table.Cycle<ObjectId>(id => transaction.ReadDbObject(id, action));
+            table.Cycle<ObjectId>(id => transaction.ReadDbObject(id, action));
         }
     }
 }

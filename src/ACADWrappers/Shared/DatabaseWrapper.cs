@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
 using Domain.Shared;
-using static CommonUtils.SharedDelegate;
 
 namespace ACADWrappers.Shared
 {
@@ -19,43 +18,31 @@ namespace ACADWrappers.Shared
         //give a string of symboltable name, add "Id" as suffix, use reflection to get the related symboltableid property of database,return as string
         public IntPtr GetSymbolTableIdIntPtr(string symbolTableName)
         {
-            var symbolTableIdValue = DwgDatabase.GetType().GetProperty(symbolTableName + "Id")?.GetValue(DwgDatabase, null);
-            if (symbolTableIdValue != null)
-            {
-                ObjectId symbolTableId = (ObjectId) symbolTableIdValue;
-                return symbolTableId.OldIdPtr;
-            }
-            return IntPtr.Zero;
+            return DwgDatabase.GetPropertyValue<ObjectId>(symbolTableName + "Id").OldIdPtr;
         }
-
-        public bool RunInTransaction(ActionWithResult<Transaction> action)
+        public void RunInTransaction(Action<Transaction> action)
         {
-            bool result= false;
+            Exception exception = null;
             using (var tr = DwgDatabase.TransactionManager.StartTransaction())
             {
                 try
                 {
-                    if (action(tr))
-                    {
-                        result=true;
-                    }
+                    action(tr);
+                    tr.Commit();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    exception= e;
+                    tr.Abort();
                 }
-                finally
-                {
-                    tr.Commit();
-                }
-                return result;
+                if (exception != null) throw exception;
             }
         }
 
         public Dictionary<string, IntPtr> GetSymbolTableRecordNames(IntPtr symbolTableId)
         {
             ISymbolTableWrapper symbolTableWrapper = new SymbolTableWrapper(this, new ObjectId(symbolTableId));
-            symbolTableWrapper.GetSymbolTableRecordNames();
+            symbolTableWrapper.ReadSymbolTableRecordNames();
             return symbolTableWrapper.SymbolTableRecordNames;
         }
     }

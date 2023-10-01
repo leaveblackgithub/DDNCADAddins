@@ -70,9 +70,11 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TestBase.cs" />
+    <Compile Include="TestBaseWDb.cs" />
     <Compile Include="TestPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestBase.cs" />
+    <Compile Include="TestBaseExecution.cs" />
     <Compile Include="TestReportGenerator.cs" />
     <Compile Include="TestRunnerBase.cs" />
     <Compile Include="TestRunnerConsts.cs" />

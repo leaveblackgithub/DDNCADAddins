@@ -1,6 +1,4 @@
-﻿using System;
-using System.IO;
-using Autodesk.AutoCAD.ApplicationServices;
+﻿using System.IO;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using NUnit.Framework;
@@ -12,67 +10,46 @@ namespace TestRunnerACAD
     /// </summary>
     public abstract class TestBase
     {
-        /// <summary>
-        ///     Executes a list of delegate actions
-        /// </summary>
-        /// <param name="drawingFile">Path to the test drawing file.</param>
-        /// <param name="testActions">Test actions to execute.</param>
-        protected static void ExecuteTestActions(string drawingFile = "",
-            params Action<Database, Transaction>[] testActions)
+        public TestBase(string drawingFile = "")
         {
-            bool defaultDrawing;
+            DrawingFile = drawingFile;
             if (string.IsNullOrEmpty(drawingFile))
             {
-                defaultDrawing = true;
+                DefaultDrawing = true;
                 // Should this be executing assembly path instead?
                 //drawingFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TestDrawing.dwg");
             }
             else
             {
-                defaultDrawing = false;
+                DefaultDrawing = false;
                 if (!File.Exists(drawingFile)) Assert.Fail($"Drawing file {drawingFile} does not exist.");
             }
+        }
 
-            Exception exception = null;
+        protected string DrawingFile { get; }
+        protected Database Db { get; set; }
+        protected bool DefaultDrawing { get; }
+
+        public void Execute()
+        {
             var document = Application.DocumentManager.MdiActiveDocument;
 
             // Lock the document and execute the test actions.
             using (document.LockDocument())
-            using (var db = new Database(defaultDrawing, false))
+            using (Db = new Database(DefaultDrawing, false))
             {
-                if (!string.IsNullOrEmpty(drawingFile))
-                    db.ReadDwgFile(drawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
-
+                if (!string.IsNullOrEmpty(DrawingFile))
+                    Db.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
+                RunTestActions();
                 var oldDb = HostApplicationServices.WorkingDatabase;
-                HostApplicationServices.WorkingDatabase = db; // change to the current database.
+                HostApplicationServices.WorkingDatabase = Db; // change to the current database.
 
-                foreach (var testAction in testActions)
-                    using (var tr = db.TransactionManager.StartTransaction())
-                    {
-                        try
-                        {
-                            // Execute the test action.
-                            testAction(db, tr);
-                        }
-                        catch (Exception e)
-                        {
-                            exception = e;
-                            
-                            break;
-                        }
-                        finally{ tr.Commit(); }
-                        
-                    }
 
                 // Change the database back to the original.
                 HostApplicationServices.WorkingDatabase = oldDb;
             }
-
-            // From CADBloke
-            // Throw exception outside of transaction.
-            // Sometimes Autocad crashes when exception throws.
-            if (exception != null) throw exception;
         }
-       
+
+        protected abstract void RunTestActions();
     }
 }

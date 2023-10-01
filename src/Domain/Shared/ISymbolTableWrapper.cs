@@ -6,6 +6,6 @@ namespace Domain.Shared
     public interface ISymbolTableWrapper
     {
         Dictionary<string, IntPtr> SymbolTableRecordNames { get; set; }
-        bool GetSymbolTableRecordNames();
+        void ReadSymbolTableRecordNames();
     }
 }
