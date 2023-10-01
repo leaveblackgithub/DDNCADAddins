@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
 using Domain.Shared;
@@ -19,9 +20,12 @@ namespace ACADWrappers.Shared
         public IntPtr GetSymbolTableIdIntPtr(string symbolTableName)
         {
             return DwgDatabase.GetPropertyValue<ObjectId>(symbolTableName + "Id").OldIdPtr;
-        }
+        }// EntryPoint may vary across autocad versions
+        [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
+        public static extern void acedDisableDefaultARXExceptionHandler(int value);
         public void RunInTransaction(Action<Transaction> action)
         {
+            acedDisableDefaultARXExceptionHandler(1);
             Exception exception = null;
             using (var tr = DwgDatabase.TransactionManager.StartTransaction())
             {
@@ -38,7 +42,11 @@ namespace ACADWrappers.Shared
                 if (exception != null) throw exception;
             }
         }
-
+        /// <summary>
+        /// 是否有必要？
+        /// </summary>
+        /// <param name="symbolTableId"></param>
+        /// <returns></returns>
         public Dictionary<string, IntPtr> GetSymbolTableRecordNames(IntPtr symbolTableId)
         {
             ISymbolTableWrapper symbolTableWrapper = new SymbolTableWrapper(this, new ObjectId(symbolTableId));

@@ -10,16 +10,22 @@ namespace ACADWrappers.Shared
         {
             ArgumentException argumentException = new ArgumentException(
                 $"{objectId.ToString()} is not a valid DbObject of type {typeof(T).Name}");
-            if (!objectId.IsValid) throw argumentException;
-            using (var dbObject = transaction.GetObject(objectId, OpenMode.ForRead))
+            try
             {
-                var t = dbObject as T;
-                if (dbObject == null || t is null)
+                using (var dbObject = transaction.GetObject(objectId, OpenMode.ForRead))
                 {
-                    throw argumentException;
-                }
+                    var t = dbObject as T;
+                    if (dbObject == null || t is null)
+                    {
+                        throw argumentException;
+                    }
 
-                action(t);
+                    action(t);
+                }
+            }
+            catch 
+            {
+                throw argumentException;
             }
         }
         public static void ReadDbObject<T>(this Transaction transaction, IntPtr objectIdIntPtr, Action<T> action)
