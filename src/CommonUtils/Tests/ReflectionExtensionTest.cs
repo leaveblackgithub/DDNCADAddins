@@ -20,6 +20,8 @@ namespace CommonUtils.Tests
         [Test]
         public void TryGetPropertyTest()
         {
+            LoggerHelper._.Info("这是System日志");
+
             PropertyInfo property;
             Assert.True(_testClass.TryGetProperty<bool>(_realproperty, out property));
             Assert.NotNull(property);

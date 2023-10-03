@@ -14,6 +14,12 @@ namespace ACADTests.Shared
     public class DatabaseWrapperTests
     {
         [Test]
+        public void TestPass()
+        {
+            Assert.Pass("pass");
+        }
+
+        [Test]
         public void GetSymbolTableId()
         {
             void Action1(Database db, Transaction tr)
