@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using NLog;
 using NUnit.Framework;
 
 namespace CommonUtils.Tests
@@ -20,8 +21,7 @@ namespace CommonUtils.Tests
         [Test]
         public void TryGetPropertyTest()
         {
-            LoggerHelper._.Info("这是System日志");
-
+            LogManager.GetCurrentClassLogger().Info("TryGetPropertyTest");
             PropertyInfo property;
             Assert.True(_testClass.TryGetProperty<bool>(_realproperty, out property));
             Assert.NotNull(property);

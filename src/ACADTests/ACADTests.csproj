@@ -115,6 +115,10 @@
       <Project>{f4787a76-101d-4590-8b04-7633a2ad0a84}</Project>
       <Name>ACADWrappers</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+      <Project>{C868F6F9-7EFB-4925-9D71-34E8DF45E2B4}</Project>
+      <Name>CommonUtils</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Domain\Domain.csproj">
       <Project>{3a27a9fa-9878-4fa2-8e38-cb9bc045e46d}</Project>
       <Name>Domain</Name>

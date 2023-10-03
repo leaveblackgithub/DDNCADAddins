@@ -63,7 +63,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LoggerHelper.cs" />
     <Compile Include="DisposableClassBase.cs" />
     <Compile Include="GenUtils.cs" />
     <Compile Include="Tests\GenUtilsTest.cs" />
@@ -72,13 +71,6 @@
     <Compile Include="Tests\ReflectionExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Nlog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="NLog.xsd">
-      <SubType>Designer</SubType>
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup />
