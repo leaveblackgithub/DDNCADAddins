@@ -1,5 +1,8 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Runtime;
+using NLog;
+using Exception = System.Exception;
 
 namespace ACADWrappers.Shared
 {
@@ -8,31 +11,37 @@ namespace ACADWrappers.Shared
         public static void ReadDbObject<T>(this Transaction transaction, ObjectId objectId, Action<T> action)
             where T : DBObject
         {
-            ArgumentException argumentException = new ArgumentException(
-                $"{objectId.ToString()} is not a valid DbObject of type {typeof(T).Name}");
+            var argumentException = new ArgumentException(
+                $"{objectId.ToString()} is not a valid ObjectId for DbObject of type {typeof(T).Name}");
             try
             {
                 using (var dbObject = transaction.GetObject(objectId, OpenMode.ForRead))
                 {
                     var t = dbObject as T;
-                    if (dbObject == null || t is null)
-                    {
-                        throw argumentException;
-                    }
-
+                    if (dbObject == null || t is null) return;
                     action(t);
+                    argumentException = null;
                 }
             }
-            catch 
+            catch (Exception e)
             {
-                throw argumentException;
+                LogManager.GetCurrentClassLogger().Error(e);
+            }
+            finally
+            {
+                if (argumentException != null)
+                {
+                    LogManager.GetCurrentClassLogger().Error(argumentException);
+                    throw argumentException;
+                }
             }
         }
+
         public static void ReadDbObject<T>(this Transaction transaction, IntPtr objectIdIntPtr, Action<T> action)
             where T : DBObject
         {
-            ObjectId objectId=new ObjectId(objectIdIntPtr);
-           transaction.ReadDbObject<T>(objectId,action);
+            var objectId = new ObjectId(objectIdIntPtr);
+            transaction.ReadDbObject(objectId, action);
         }
     }
 }

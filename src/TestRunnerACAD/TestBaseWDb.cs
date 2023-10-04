@@ -1,5 +1,6 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
+using NLog;
 
 namespace TestRunnerACAD
 {
@@ -33,6 +34,7 @@ namespace TestRunnerACAD
                     catch (Exception e)
                     {
                         exception = e;
+                        LogManager.GetCurrentClassLogger().Error(e);
                         tr.Abort();
                         break;
                     }

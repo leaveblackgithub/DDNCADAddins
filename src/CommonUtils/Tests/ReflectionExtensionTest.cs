@@ -21,7 +21,6 @@ namespace CommonUtils.Tests
         [Test]
         public void TryGetPropertyTest()
         {
-            LogManager.GetCurrentClassLogger().Info("TryGetPropertyTest");
             PropertyInfo property;
             Assert.True(_testClass.TryGetProperty<bool>(_realproperty, out property));
             Assert.NotNull(property);

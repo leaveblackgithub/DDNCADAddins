@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
 using Domain.Shared;
+using NLog;
 
 namespace ACADWrappers.Shared
 {
@@ -36,7 +37,8 @@ namespace ACADWrappers.Shared
                 }
                 catch (Exception e)
                 {
-                    exception= e;
+                    LogManager.GetCurrentClassLogger().Error(e);
+                    exception = e;
                     tr.Abort();
                 }
                 if (exception != null) throw exception;

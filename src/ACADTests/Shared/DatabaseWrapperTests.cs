@@ -22,13 +22,7 @@ namespace ACADTests.Shared
         [Test]
         public void TestPass()
         {
-            NLog.LogManager.ThrowExceptions = true; // TODO Remove this when done trouble-shooting
-            NLog.Common.InternalLogger.LogLevel = LogLevel.Debug;
-            NLog.Common.InternalLogger.LogToConsole = true;
-            NLog.Common.InternalLogger.LogFile = "c:\temp\nlog-internal.txt"; // On Linux one can use "/home/nlog-internal.txt"
-            Logger logger = LogManager.GetLogger("DatabaseWrapperTests");
-            logger.Info("Program started");
-            LogManager.Shutdown();  // Remember to flush
+            LogManager.GetCurrentClassLogger().Info("pass");
             Assert.Pass("pass");
         }
 

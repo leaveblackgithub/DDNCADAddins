@@ -3,6 +3,7 @@ using ACADTests.Cleanup;
 using ACADWrappers.Shared;
 using Autodesk.AutoCAD.DatabaseServices;
 using Domain.Shared;
+using NLog;
 using TestRunnerACAD;
 
 namespace ACADTests.Shared
@@ -35,6 +36,7 @@ namespace ACADTests.Shared
                 }
                 catch (Exception e)
                 {
+                    LogManager.GetCurrentClassLogger().Error(e);
                     exception = e;
 
                     break;

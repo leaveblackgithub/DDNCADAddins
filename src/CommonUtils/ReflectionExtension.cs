@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using General;
+using NLog;
 
 namespace CommonUtils
 {
@@ -17,7 +18,12 @@ namespace CommonUtils
         {
             PropertyInfo property;
             obj.TryGetProperty<T>(propertyName, out property);
-            if (property==null) throw new ArgumentException($"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
+            if (property == null)
+            {
+                var argumentException = new ArgumentException($"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
+                LogManager.GetCurrentClassLogger().Error(argumentException);
+                throw argumentException;
+            }
             return property;
         }
 
