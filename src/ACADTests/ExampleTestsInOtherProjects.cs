@@ -51,7 +51,8 @@ namespace ACADTests
             }
 
             // Run the tests
-            TestBaseWDb.ExecuteTestActions(@"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg", Action1, Action2);
+            TestBaseWDb.ExecuteTestActions(
+                @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg", Action1, Action2);
         }
     }
 }

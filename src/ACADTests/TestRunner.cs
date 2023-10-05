@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Reflection;
+﻿using System.Reflection;
 using ACADTests;
 using Autodesk.AutoCAD.Runtime;
 using TestRunnerACAD;
@@ -8,7 +7,7 @@ using TestRunnerACAD;
 
 namespace ACADTests
 {
-    public class TestRunner 
+    public class TestRunner
     {
         [CommandMethod("RunTests", CommandFlags.Session)]
         public static void RunTests()

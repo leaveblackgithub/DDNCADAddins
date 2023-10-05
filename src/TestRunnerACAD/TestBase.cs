@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using NUnit.Framework;
@@ -10,6 +11,8 @@ namespace TestRunnerACAD
     /// </summary>
     public abstract class TestBase
     {
+        protected Document DwgDocument;
+
         public TestBase(string drawingFile = "")
         {
             DrawingFile = drawingFile;
@@ -27,22 +30,22 @@ namespace TestRunnerACAD
         }
 
         protected string DrawingFile { get; }
-        protected Database Db { get; set; }
+        protected Database DwgDatabase { get; set; }
         protected bool DefaultDrawing { get; }
 
         public void Execute()
         {
-            var document = Application.DocumentManager.MdiActiveDocument;
+            DwgDocument = Application.DocumentManager.MdiActiveDocument;
 
             // Lock the document and execute the test actions.
-            using (document.LockDocument())
-            using (Db = new Database(DefaultDrawing, false))
+            using (DwgDocument.LockDocument())
+            using (DwgDatabase = new Database(DefaultDrawing, false))
             {
                 if (!string.IsNullOrEmpty(DrawingFile))
-                    Db.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
+                    DwgDatabase.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
                 RunTestActions();
                 var oldDb = HostApplicationServices.WorkingDatabase;
-                HostApplicationServices.WorkingDatabase = Db; // change to the current database.
+                HostApplicationServices.WorkingDatabase = DwgDatabase; // change to the current database.
 
 
                 // Change the database back to the original.

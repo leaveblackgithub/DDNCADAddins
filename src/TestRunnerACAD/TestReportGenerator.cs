@@ -7,7 +7,7 @@ namespace TestRunnerACAD
     {
         public static void CreateTestReport()
         {
-            var directoryReportUnit =  TestRunnerConsts.ReportToolFolderName;
+            var directoryReportUnit = TestRunnerConsts.ReportToolFolderName;
             var fileInputXml = Path.Combine(directoryReportUnit, TestRunnerConsts.ReportNunitXml);
             if (!File.Exists(fileInputXml))
                 return;

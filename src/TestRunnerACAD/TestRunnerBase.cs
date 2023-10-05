@@ -16,7 +16,7 @@ namespace TestRunnerACAD
                 File.Delete(fileInputXml);
             var nunitArgs = new List<string>
             {
-                "--trace=verbose", 
+                "--trace=verbose",
                 "--result=" + fileInputXml
             }.ToArray();
 
