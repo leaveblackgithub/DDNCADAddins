@@ -24,28 +24,4 @@ namespace ACADBase
                 
         }
     }
-
-    public class ArgumentExceptionOfInvalidId: ArgumentException
-    {
-        public ArgumentExceptionOfInvalidId(string message) : base(message)
-        {
-        }
-
-        public static ArgumentExceptionOfInvalidId _(ObjectId id)
-        {
-            return new ArgumentExceptionOfInvalidId($"{id} is not a valid ObjectId.");
-        }
-    }
-
-    public class ArgumentExceptionOfIdReferToWrongType : ArgumentException
-    {
-        public ArgumentExceptionOfIdReferToWrongType(string message) : base(message)
-        {
-        }
-
-        public static ArgumentExceptionOfIdReferToWrongType _<T>(ObjectId id)
-        {
-            return new ArgumentExceptionOfIdReferToWrongType($"{id} is not referring to a DbObject of Type {typeof(T).Name}.");
-        }
-    }
 }

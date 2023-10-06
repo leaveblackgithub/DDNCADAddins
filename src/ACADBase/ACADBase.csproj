@@ -78,6 +78,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArgumentExceptionOfIdReferToWrongType.cs" />
+    <Compile Include="ArgumentExceptionOfInvalidId.cs" />
     <Compile Include="DatabaseExtension.cs" />
     <Compile Include="DwgCommandBase.cs" />
     <Compile Include="IDwgCommandBase.cs" />

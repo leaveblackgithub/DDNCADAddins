@@ -1,34 +1,39 @@
-﻿namespace CommonUtils
+﻿using NLog;
+using System.Reflection;
+using System;
+
+namespace CommonUtils
 {
     public static class ReflectionExtension
     {
-        public static bool ContainProperty(this object instance, string propertyName)
+        public static bool TryGetProperty<T>(this object obj, string propertyName, out PropertyInfo property)
         {
-            if (instance != null && !string.IsNullOrEmpty(propertyName))
+            property = null;
+            Type type = obj.GetType();
+            property = type.GetProperty(propertyName, typeof(T));
+            return property != null;
+        }
+        public static PropertyInfo MustGetProperty<T>(this object obj, string propertyName)
+        {
+            PropertyInfo property;
+            obj.TryGetProperty<T>(propertyName, out property);
+            if (property == null)
             {
-                var _findedPropertyInfo = instance.GetType().GetProperty(propertyName);
-                return _findedPropertyInfo != null;
+                var argumentException = new ArgumentException($"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
+                LogManager.GetCurrentClassLogger().Error(argumentException);
+                throw argumentException;
             }
-
-            return false;
+            return property;
         }
 
-        public static object GetObjectPropertyValue<T>(T t, string propertyname)
+        public static T GetObjectPropertyValue<T>(this object obj, string propertyname)
         {
-            var type = typeof(T);
-            var property = type.GetProperty(propertyname);
-            if (property == null) return null;
-            var o = property.GetValue(t, null);
-            return o;
+            return (T)obj.MustGetProperty<T>(propertyname).GetValue(obj, null);
         }
 
-        public static bool SetObjectPropertyValue<T>(T t, string propertyname, object value)
+        public static void SetObjectPropertyValue<T>(this object obj, string propertyname, object value)
         {
-            var type = typeof(T);
-            var property = type.GetProperty(propertyname);
-            if (property == null) return false;
-            property.SetValue(t, value);
-            return true;
+            obj.MustGetProperty<T>(propertyname).SetValue(obj, value, null);
         }
     }
 }

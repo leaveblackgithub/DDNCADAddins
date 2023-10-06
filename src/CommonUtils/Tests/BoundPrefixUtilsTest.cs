@@ -1,9 +1,9 @@
 ﻿using NUnit.Framework;
 
-namespace CommonUtils
+namespace CommonUtils.Tests
 {
     [TestFixture]
-    public class CommonUtilsTest
+    public class BoundPrefixUtilsTest
     {
         [Test]
         public void HasBoundPrefixTest()

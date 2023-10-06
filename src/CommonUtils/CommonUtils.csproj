@@ -64,14 +64,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BoundPrefixUtils.cs" />
+    <Compile Include="Class1.cs" />
     <Compile Include="DateTimeUtils.cs" />
-    <Compile Include="CommonUtilsTest.cs" />
     <Compile Include="DisposableClass.cs" />
     <Compile Include="ReflectionExtension.cs" />
+    <Compile Include="Tests\BoundPrefixUtilsTest.cs" />
+    <Compile Include="Tests\ReflectionExtensionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
