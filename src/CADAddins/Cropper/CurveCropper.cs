@@ -2,6 +2,7 @@
 using Autodesk.AutoCAD.BoundaryRepresentation;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using CADAddins.Archive;
 using CADAddins.Environments;
 
 namespace CADAddins.Cropper
@@ -9,7 +10,7 @@ namespace CADAddins.Cropper
     internal class CurveCropper : EntityCropper<Curve>
     {
         public CurveCropper(Curve entity, Curve boundary, WhichSideToKeep whichSideToKeep,
-            CommandTransBase commandTransBase) : base(entity, boundary, whichSideToKeep, commandTransBase)
+            O_CommandTransBase oCommandTransBase) : base(entity, boundary, whichSideToKeep, oCommandTransBase)
         {
         }
 
@@ -33,10 +34,10 @@ namespace CADAddins.Cropper
 
                 if (segmentsToKeep.Count == objs.Count) return new List<ObjectId> { _entity.Id };
                 var blockId = _entity.BlockId;
-                _commandTransBase.GetObjectForWrite(_entity.Id);
+                OCommandTransBase.GetObjectForWrite(_entity.Id);
                 _entity.Erase(true);
                 if (segmentsToKeep.Count == 0) return new List<ObjectId>();
-                _commandTransBase.AddEntsToBlockTableRecord(segmentsToKeep, blockId);
+                OCommandTransBase.AddEntsToBlockTableRecord(segmentsToKeep, blockId);
                 return segmentIdsToKeep;
             }
         }

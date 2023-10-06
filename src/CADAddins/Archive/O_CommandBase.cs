@@ -1,5 +1,5 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
-using General;
+using CommonUtils;
 
 namespace CADAddins.Archive
 {
@@ -9,9 +9,9 @@ namespace CADAddins.Archive
         {
         }
 
-        internal O_DocHelper CurDocHelper => O_CadHelper.CurDocHelper;
-        internal Database AcCurDb => CurDocHelper.AcCurDb;
-        internal O_EditorHelper CurEditorHelper => CurDocHelper.CurEditorHelper;
+        internal O_DocHelper O_CurDocHelper => O_CadHelper.CurDocHelper;
+        internal Database AcCurDb => O_CurDocHelper.AcCurDb;
+        internal O_EditorHelper O_CurEditorHelper => O_CurDocHelper.CurEditorHelper;
 
         public abstract void RunCommand();
 
@@ -27,9 +27,9 @@ namespace CADAddins.Archive
         internal void EndCommands(bool EndOrCancel)
         {
             if (!EndOrCancel)
-                CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Cancelled.");
+                O_CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Cancelled.");
             else
-                CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Succeeded.");
+                O_CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Succeeded.");
             Dispose();
         }
     }

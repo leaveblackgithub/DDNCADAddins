@@ -2,6 +2,7 @@
 using CADAddins;
 using CADAddins.Archive;
 using CADAddins.Environments;
+using CADAddins.LibsOfCleanupTextStyles;
 
 [assembly: CommandClass(typeof(CleanupTextStyles))]
 
@@ -13,15 +14,15 @@ namespace CADAddins
 
         public TextStyleHelper CurTextStyleHelper =>
             _curTextStyleHelper ?? (_curTextStyleHelper =
-                new TextStyleHelper(AcCurDb.TextStyleTableId, CurDocHelper));
+                new TextStyleHelper(AcCurDb.TextStyleTableId, O_CurDocHelper));
 
         [CommandMethod("CleanupTextStyles")]
         public override void RunCommand()
         {
-            CurDocHelper.PurgeAll();
+            O_CurDocHelper.PurgeAll();
             //            HostApplicationServicesExtensions.CallUserBreak();
             CurTextStyleHelper.Cleanup();
-            CurDocHelper.PurgeAll();
+            O_CurDocHelper.PurgeAll();
         }
     }
 }

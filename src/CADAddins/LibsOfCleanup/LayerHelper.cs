@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
-using General;
+using CommonUtils;
 
 namespace CADAddins.LibsOfCleanup
 {
@@ -188,7 +188,7 @@ namespace CADAddins.LibsOfCleanup
         private void MoveEntToByLayer(string layerShtName, Color color, dynamic ent)
         {
             string ltypeName = ent.Linetype;
-            var ltypeShtName = GenUtils.RemoveBoundPrefix(ltypeName);
+            var ltypeShtName = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
             var tgtLayerName = GetNewName(layerShtName, ltypeShtName);
             var layer = GetLayer(tgtLayerName, ltypeShtName, color);
 
@@ -346,7 +346,7 @@ namespace CADAddins.LibsOfCleanup
         private static string GetNewName(string layerName, string ltypeName)
         {
             if (layerName.StartsWith(ltypeName)) return layerName;
-            var shortName = GenUtils.RemoveBoundPrefix(layerName).ToUpper();
+            var shortName = BoundPrefixUtils.RemoveBoundPrefix(layerName).ToUpper();
             var newName = string.Join(_layerSep, new List<string> { ltypeName, shortName });
             return newName;
         }
@@ -360,7 +360,7 @@ namespace CADAddins.LibsOfCleanup
         {
             var ltype = layer.LinetypeObjectId;
             string ltypeName = ltype.Name;
-            if (!GenUtils.HasBoundPrefix(ltypeName)) return ltypeName;
+            if (!BoundPrefixUtils.HasBoundPrefix(ltypeName)) return ltypeName;
             var newLtype = _curLtypeHelper.GetLTypeByCleanName(ltypeName);
             layer.LinetypeObjectId = newLtype;
             string newname = newLtype.Name;

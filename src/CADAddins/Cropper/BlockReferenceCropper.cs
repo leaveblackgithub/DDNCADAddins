@@ -2,15 +2,16 @@
 using System.Linq;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using CADAddins.Archive;
 using CADAddins.Environments;
-using General;
+using CommonUtils;
 
 namespace CADAddins.Cropper
 {
     public class BlockReferenceCropper : EntityCropper<BlockReference>
     {
         public BlockReferenceCropper(BlockReference entity, Curve boundary, WhichSideToKeep whichSideToKeep,
-            CommandTransBase commandTransBase) : base(entity, boundary, whichSideToKeep, commandTransBase)
+            O_CommandTransBase oCommandTransBase) : base(entity, boundary, whichSideToKeep, oCommandTransBase)
         {
         }
 
@@ -18,17 +19,17 @@ namespace CADAddins.Cropper
         {
             var wcsToMcs = _entity.BlockTransform.Inverse();
             var newbtrId =
-                _commandTransBase.DuplicateBlockDef(_entity.BlockTableRecord,
-                    GenUtils.AddTimeStampSuffix(_entity.Name));
-            var newbtr = _commandTransBase.GetObjectForWrite(newbtrId) as BlockTableRecord;
-            var newBoundaryId = _commandTransBase.DuplicateEntity(_boundary);
-            using (var newBoundary = _commandTransBase.GetObjectForWrite(newBoundaryId) as Curve)
+                OCommandTransBase.DuplicateBlockDef(_entity.BlockTableRecord,
+                    DateTimeUtils.AddTimeStampSuffix(_entity.Name));
+            var newbtr = OCommandTransBase.GetObjectForWrite(newbtrId) as BlockTableRecord;
+            var newBoundaryId = OCommandTransBase.DuplicateEntity(_boundary);
+            using (var newBoundary = OCommandTransBase.GetObjectForWrite(newBoundaryId) as Curve)
             {
                 newBoundary.TransformBy(wcsToMcs);
                 var objectIds = new List<ObjectId>();
                 foreach (var id in newbtr) objectIds.Add(id);
 
-                var result = _commandTransBase.CropEntitiesWithBoundary(objectIds, newBoundary, _whichSideToKeep);
+                var result = OCommandTransBase.CropEntitiesWithBoundary(objectIds, newBoundary, _whichSideToKeep);
                 newBoundary.Erase(true);
                 if (!result.Any())
                 {
@@ -36,7 +37,7 @@ namespace CADAddins.Cropper
                     return result;
                 }
 
-                _commandTransBase.GetObjectForWrite(_entity.Id);
+                OCommandTransBase.GetObjectForWrite(_entity.Id);
                 _entity.BlockTableRecord = newbtrId;
                 return new List<ObjectId> { _entity.Id };
             }

@@ -1,6 +1,7 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using CADAddins;
+using CADAddins.Archive;
 using CADAddins.Environments;
 using CADAddins.LibsOfDDNCrop;
 
@@ -8,7 +9,7 @@ using CADAddins.LibsOfDDNCrop;
 
 namespace CADAddins
 {
-    public class DDNCrop : CommandBase
+    public class DDNCrop : O_CommandBase2
     {
         [CommandMethod("DDNCrop")]
         public override void Run()
@@ -16,9 +17,9 @@ namespace CADAddins
             base.Run();
         }
 
-        internal override CommandTransBase InitCommandTransBase(Transaction acTrans)
+        internal override O_CommandTransBase InitCommandTransBase(Transaction acTrans)
         {
-            return new CommandTransBaseOfDDNCrop(acTrans);
+            return new OCommandTransBaseOfDdnCrop(acTrans);
         }
     }
 }

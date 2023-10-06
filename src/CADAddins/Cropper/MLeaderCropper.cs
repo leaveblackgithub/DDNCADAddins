@@ -1,5 +1,6 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
+using CADAddins.Archive;
 using CADAddins.Environments;
 
 namespace CADAddins.Cropper
@@ -7,7 +8,7 @@ namespace CADAddins.Cropper
     public class MLeaderCropper : EntityCropper<MLeader>
     {
         public MLeaderCropper(MLeader entity, Curve boundary, WhichSideToKeep whichSideToKeep,
-            CommandTransBase commandTransBase) : base(entity, boundary, whichSideToKeep, commandTransBase)
+            O_CommandTransBase oCommandTransBase) : base(entity, boundary, whichSideToKeep, oCommandTransBase)
         {
         }
 

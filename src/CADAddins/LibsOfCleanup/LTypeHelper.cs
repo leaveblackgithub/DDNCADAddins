@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using CADAddins.Archive;
-using General;
+using CommonUtils;
 
 namespace CADAddins.LibsOfCleanup
 {
@@ -30,13 +30,13 @@ namespace CADAddins.LibsOfCleanup
             foreach (var ltype in ltypes)
             {
                 string ltypeName = ltype.Name;
-                if (!GenUtils.HasBoundPrefix(ltypeName))
+                if (!BoundPrefixUtils.HasBoundPrefix(ltypeName))
                 {
                     Cleantypes[ltypeName] = ltype;
                     continue;
                 }
 
-                var cleanname = GenUtils.RemoveBoundPrefix(ltypeName);
+                var cleanname = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
                 if (!dirtytypes.ContainsKey(cleanname)) dirtytypes[cleanname] = new List<dynamic>();
                 dirtytypes[cleanname].Add(ltype);
             }
@@ -75,10 +75,10 @@ namespace CADAddins.LibsOfCleanup
         public dynamic GetLTypeByCleanName(string name)
         {
             string cleanname;
-            if (!GenUtils.HasBoundPrefix(name))
+            if (!BoundPrefixUtils.HasBoundPrefix(name))
                 cleanname = name;
             else
-                cleanname = GenUtils.RemoveBoundPrefix(name);
+                cleanname = BoundPrefixUtils.RemoveBoundPrefix(name);
 
             dynamic result;
             if (!Cleantypes.TryGetValue(cleanname, out result))

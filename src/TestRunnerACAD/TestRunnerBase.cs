@@ -7,6 +7,7 @@ namespace TestRunnerACAD
 {
     public class TestRunnerBase
     {
+        //TODO This can only be reference as project not dll.
         public static void RunTestsBase(Assembly assembly)
         {
             var directoryReportUnit = TestRunnerConsts.ReportToolFolderName;

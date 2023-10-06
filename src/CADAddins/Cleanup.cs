@@ -15,25 +15,25 @@ namespace CADAddins
 
         public LayerHelper CurLayerHelper =>
             _curLayerHelper ?? (_curLayerHelper =
-                new LayerHelper(AcCurDb.LayerTableId, CurDocHelper, CurLTypeHelper));
+                new LayerHelper(AcCurDb.LayerTableId, O_CurDocHelper, CurLTypeHelper));
 
         public LTypeHelper CurLTypeHelper =>
             _curLTypeHelper ?? (_curLTypeHelper =
-                new LTypeHelper(AcCurDb.LinetypeTableId, CurDocHelper));
+                new LTypeHelper(AcCurDb.LinetypeTableId, O_CurDocHelper));
 
         [CommandMethod("Cleanup")]
         public override void RunCommand()
         {
-            CurEditorHelper.WriteMessage($"\n开始清理文件[{CurDocHelper.Name}]...");
-            CurDocHelper.StopHatchAssoc();
+            O_CurEditorHelper.WriteMessage($"\n开始清理文件[{O_CurDocHelper.Name}]...");
+            O_CurDocHelper.StopHatchAssoc();
             CurLTypeHelper.Cleanup();
             CurLayerHelper.Cleanup();
-            CurDocHelper.Audit();
-            CurDocHelper.PurgeAll();
+            O_CurDocHelper.Audit();
+            O_CurDocHelper.PurgeAll();
             CurLayerHelper.CleanupEnts();
             CurLayerHelper.CleanupBlocks();
-            CurDocHelper.SetByLayer();
-            CurDocHelper.PurgeAll();
+            O_CurDocHelper.SetByLayer();
+            O_CurDocHelper.PurgeAll();
             O_CadHelper.Quit();
         }
     }
