@@ -6,6 +6,7 @@ using Autodesk.AutoCAD.Runtime;
 
 namespace ACADReferenceCodes.CancelCommands
 {
+    //TODO 把取消程序加到长程序里，并设置UNDO
     public class CancelCommand
     {
         [CommandMethod("loop")]

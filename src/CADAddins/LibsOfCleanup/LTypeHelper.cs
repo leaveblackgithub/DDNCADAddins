@@ -10,6 +10,10 @@ namespace CADAddins.LibsOfCleanup
         private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly dynamic _lTypeTableId;
+        public dynamic Ltypes { get; private set; }
+        public Dictionary<string, List<dynamic>> Dirtytypes { get; private set; }
+        public bool CleanTag { get; private set; }
+        private Dictionary<string, dynamic> Cleantypes { get; set; }
 
         public LTypeHelper(dynamic lTypeTableId, O_DocHelper docHelper)
         {
@@ -17,41 +21,20 @@ namespace CADAddins.LibsOfCleanup
             _curDocHelper = docHelper;
             _curEditorHelper = _curDocHelper.CurEditorHelper;
             CleanTag = false;
+            Cleantypes = new Dictionary<string, dynamic>();
+            Dirtytypes = new Dictionary<string, List<dynamic>>();
+            Ltypes = _lTypeTableId;
         }
 
-        public bool CleanTag { get; private set; }
-        private Dictionary<string, dynamic> Cleantypes { get; set; }
 
         public void Cleanup()
         {
-            Cleantypes = new Dictionary<string, dynamic>();
-            var dirtytypes = new Dictionary<string, List<dynamic>>();
-            var ltypes = _lTypeTableId;
-            foreach (var ltype in ltypes)
-            {
-                string ltypeName = ltype.Name;
-                if (!BoundPrefixUtils.HasBoundPrefix(ltypeName))
-                {
-                    Cleantypes[ltypeName] = ltype;
-                    continue;
-                }
-
-                var cleanname = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
-                if (!dirtytypes.ContainsKey(cleanname)) dirtytypes[cleanname] = new List<dynamic>();
-                dirtytypes[cleanname].Add(ltype);
-            }
-
-            if (dirtytypes.Count == 0)
-            {
-                _curEditorHelper.WriteMessage("All linetypes are fine without bound prefix.");
-                CleanTag = true;
-                return;
-            }
+            if (Check()) return;
 
             var count = 0;
             using (var trans = _curDocHelper.StartTransaction())
             {
-                var ge = dirtytypes.GetEnumerator();
+                var ge = Dirtytypes.GetEnumerator();
                 while (ge.MoveNext())
                 {
                     var cleanname = ge.Current.Key;
@@ -70,6 +53,32 @@ namespace CADAddins.LibsOfCleanup
             }
 
             _curEditorHelper.WriteMessage($"\n{count} Linetypes renamed in total.");
+        }
+
+        public bool Check()
+        {
+            foreach (var ltype in Ltypes)
+            {
+                string ltypeName = ltype.Name;
+                if (!BoundPrefixUtils.HasBoundPrefix(ltypeName))
+                {
+                    Cleantypes[ltypeName] = ltype;
+                    continue;
+                }
+
+                var cleanname = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
+                if (!Dirtytypes.ContainsKey(cleanname)) Dirtytypes[cleanname] = new List<dynamic>();
+                Dirtytypes[cleanname].Add(ltype);
+            }
+
+            if (Dirtytypes.Count == 0)
+            {
+                _curEditorHelper.WriteMessage("\nAll linetypes are fine without bound prefix.");
+                CleanTag = true;
+                return true;
+            }
+
+            return false;
         }
 
         public dynamic GetLTypeByCleanName(string name)

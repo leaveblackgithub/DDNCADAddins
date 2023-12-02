@@ -13,11 +13,15 @@ namespace ACADTests
         [CommandMethod("RunTests", CommandFlags.Session)]
         public static void RunTests()
         {
-            // var _dwgCommandBaseTest = new DwgCommandBase(
+            // var DwgCommandHelperTest = new DwgCommandHelper(
             //     @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg");
-            // _dwgCommandBaseTest.Execute(ExceptionMethod);
+            // DwgCommandHelperTest.Execute(ExceptionMethod);
             var assembly = Assembly.GetExecutingAssembly();
-            TestRunnerBase.RunTestsBase(assembly);
+#if AcConsole
+            TestRunnerBase.RunTestsBase(assembly, "ACADTests.UnitTests.AcConsoleTests");
+#else
+            TestRunnerBase.RunTestsBase(assembly, "ACADTests.UnitTests.ACADAppTests");
+#endif
         }
 
         // private static void ExceptionMethod(Database db, Transaction tr)

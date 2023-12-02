@@ -79,14 +79,15 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DDNCrop.cs" />
     <Compile Include="Archive\O_CadHelper2.cs" />
-    <Compile Include="Archive\O_CommandBase2.cs" />
     <Compile Include="Archive\O_CommandTransBase.cs" />
     <Compile Include="Cropper\BlockReferenceCropper.cs" />
     <Compile Include="Archive\O_GeoExt.cs" />
+    <Compile Include="Environments\CommandBase.cs" />
     <Compile Include="LibsOfDDNCrop\OCommandTransBaseOfDdnCrop.cs" />
     <Compile Include="Archive\O_DocHelper2.cs" />
     <Compile Include="Archive\O_EditorHelper2.cs" />
@@ -125,13 +126,12 @@
     <Compile Include="LibsOfDDNCrop\XClipRetriever.cs" />
     <Compile Include="Archive\O_CadHelper.cs" />
     <Compile Include="Environments\TransExt.cs" />
+    <Compile Include="Reference\GetCommandLineText.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Reference\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
       <Project>{486d3f43-ef27-4f68-8ede-3df2e6c546d6}</Project>

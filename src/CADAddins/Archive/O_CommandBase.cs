@@ -5,13 +5,13 @@ namespace CADAddins.Archive
 {
     public abstract class O_CommandBase : DisposableClass
     {
-        internal O_CommandBase()
+        protected O_CommandBase()
         {
         }
 
-        internal O_DocHelper O_CurDocHelper => O_CadHelper.CurDocHelper;
-        internal Database AcCurDb => O_CurDocHelper.AcCurDb;
-        internal O_EditorHelper O_CurEditorHelper => O_CurDocHelper.CurEditorHelper;
+        public O_DocHelper O_CurDocHelper => O_CadHelper.CurDocHelper;
+        public Database AcCurDb => O_CurDocHelper.AcCurDb;
+        public O_EditorHelper O_CurEditorHelper => O_CurDocHelper.CurEditorHelper;
 
         public abstract void RunCommand();
 
@@ -24,7 +24,7 @@ namespace CADAddins.Archive
         {
         }
 
-        internal void EndCommands(bool EndOrCancel)
+        protected void EndCommands(bool EndOrCancel)
         {
             if (!EndOrCancel)
                 O_CurEditorHelper.WriteMessage($"\nCommand [{GetType().Name}] Cancelled.");

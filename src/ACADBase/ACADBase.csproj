@@ -81,8 +81,8 @@
     <Compile Include="ArgumentExceptionOfIdReferToWrongType.cs" />
     <Compile Include="ArgumentExceptionOfInvalidId.cs" />
     <Compile Include="DatabaseExtension.cs" />
-    <Compile Include="DwgCommandBase.cs" />
-    <Compile Include="IDwgCommandBase.cs" />
+    <Compile Include="DwgCommandHelper.cs" />
+    <Compile Include="IDwgCommandHelper.cs" />
     <Compile Include="IMessageProvider.cs" />
     <Compile Include="MessageProviderOfMessageBox.cs" />
     <Compile Include="TransactionExtension.cs" />

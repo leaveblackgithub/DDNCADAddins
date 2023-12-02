@@ -2,7 +2,7 @@
 
 namespace CADAddins.Archive
 {
-    internal class O_CadHelper
+    public class O_CadHelper
     {
         private O_DocHelper _curDocHelper;
 

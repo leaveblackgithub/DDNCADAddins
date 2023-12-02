@@ -8,7 +8,7 @@ namespace TestRunnerACAD
     public class TestRunnerBase
     {
         //TODO This can only be reference as project not dll.
-        public static void RunTestsBase(Assembly assembly)
+        public static void RunTestsBase(Assembly assembly,string prefilter="")
         {
             var directoryReportUnit = TestRunnerConsts.ReportToolFolderName;
             if (!Directory.Exists(directoryReportUnit)) return;
@@ -19,9 +19,10 @@ namespace TestRunnerACAD
             {
                 "--trace=verbose",
                 "--result=" + fileInputXml
-            }.ToArray();
+            };
+            if (!string.IsNullOrEmpty(prefilter)) nunitArgs.Add($"--prefilter={prefilter}");
 
-            new AutoRun(assembly).Execute(nunitArgs);
+            new AutoRun(assembly).Execute(nunitArgs.ToArray());
 
             TestReportGenerator.CreateTestReport();
         }

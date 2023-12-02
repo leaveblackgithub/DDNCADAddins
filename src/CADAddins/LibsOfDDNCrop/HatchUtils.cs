@@ -5,7 +5,7 @@ using CADAddins.Environments;
 
 namespace CADAddins.LibsOfDDNCrop
 {
-    public class HatchUtils : O_CommandBase2
+    public class HatchUtils : CommandBase
     {
         internal override O_CommandTransBase InitCommandTransBase(Transaction acTrans)
         {

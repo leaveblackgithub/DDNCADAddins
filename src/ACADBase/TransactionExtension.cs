@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using Autodesk.AutoCAD.DatabaseServices;
+using NLog;
 
 namespace ACADBase
 {
@@ -19,6 +20,7 @@ namespace ACADBase
             }
             catch (InvalidCastException  e)
             {
+                LogManager.GetCurrentClassLogger().Error(e);
                 throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId);
             }
                 
