@@ -26,6 +26,8 @@ namespace ACADTests.IntegrateTests
         {
             O_CurEditorHelper.WriteMessage($"\nCleanup Result Check [{O_CurDocHelper.Name}]...");
             CurLTypeHelper.Check();
+            CurLayerHelper.Check();
+            // O_CurEditorHelper.WriteMessage($"\n{LayerHelper.GetNewName(@"7715_SP01$0$Text & Dims", "Continuous")}");
             O_CadHelper.Quit();
         }
     }

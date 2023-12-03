@@ -17,6 +17,7 @@ namespace CADAddins
     /// TODO: 3. 重构代码，增加UNIT TEST，增加LOG，增加脱离ACAD的单独测试
     /// TODO: 4. 增加按颜色拆分的选项
     /// TODO: 5. 如果不拆分颜色，要SETBYLAYER
+    /// TODO: 6. 图纸空间和模型空间的图层要分开处理
     /// 
     /// </summary>
     public class Cleanup : O_CommandBase

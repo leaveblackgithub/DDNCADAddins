@@ -19,6 +19,8 @@ namespace CADAddins.LibsOfCleanup
         private readonly dynamic _layerTableId;
 
         private Dictionary<string, dynamic> _cleantypes;
+        private List<string> _listFrozenNplt;
+        
 
         public LayerHelper(dynamic layerTableId, O_DocHelper docHelper, LTypeHelper ltypeHelper)
         {
@@ -31,13 +33,24 @@ namespace CADAddins.LibsOfCleanup
             _dirtytypes = new Dictionary<string, List<string>>();
             _dictFrozenNpltSpecial = new Dictionary<string, dynamic>();
             _dictOffSpecial = new Dictionary<string, dynamic>();
+            _listFrozenNplt = new List<string>();
         }
 
         public void Cleanup()
         {
+            PrepareLayers();
+
+            DelFrozenNpltLayers();
+            MergeDirtyLayers();
+//            _curEditorHelper.WriteMessage(_dirtytypes);
+            DelSpecialFrozenNpltLayers();
+            Make0CurLayer();
+        }
+
+        public void PrepareLayers()
+        {
             var layers = _layerTableId;
             var lockCount = 0;
-            var listFrozenNplt = new List<string>();
             using (var trans = _curDocHelper.StartTransaction())
             {
                 foreach (var layer in layers)
@@ -54,7 +67,7 @@ namespace CADAddins.LibsOfCleanup
                                 continue;
                             }
 
-                            listFrozenNplt.Add(layerName);
+                            _listFrozenNplt.Add(layerName);
                             continue;
                         }
 
@@ -73,12 +86,34 @@ namespace CADAddins.LibsOfCleanup
                     ? $"\nAll {lockCount} locked layers unlocked."
                     : "\n No layers locked.");
             }
+        }
 
-            DelFrozenNpltLayers(listFrozenNplt);
-            MergeDirtyLayers();
-//            _curEditorHelper.WriteMessage(_dirtytypes);
-            DelSpecialFrozenNpltLayers();
-            Make0CurLayer();
+        public bool Check()
+        {
+            if (CheckFrozenNplt()&&CheckDirtytypes()) return true;
+            return false;
+        }
+
+        private bool CheckDirtytypes()
+        {
+            if (_dirtytypes.Count == 0)
+            {
+                _curEditorHelper.WriteMessage("\nAll Layernames are fine without bound prefix.");
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool CheckFrozenNplt()
+        {
+            if (_listFrozenNplt.Count == 0)
+            {
+                _curEditorHelper.WriteMessage("\nFrozen or non-plottable layers found.");
+                return true;
+            }
+
+            return false;
         }
 
         public void CleanupBlocks()
@@ -248,7 +283,7 @@ namespace CADAddins.LibsOfCleanup
                     O_EntExt.EraseEnts(ents);
                     _curEditorHelper.WriteMessage($"\nAll {ents.Length} entities on Layer [{layerName}] deleted.");
                 }
-
+                
                 ge.Dispose();
                 trans.Commit();
             }
@@ -256,7 +291,7 @@ namespace CADAddins.LibsOfCleanup
 
         private void MergeDirtyLayers()
         {
-            if (_dirtytypes.Count == 0) return;
+            if (CheckDirtytypes()) return;
             using (var trans = _curDocHelper.StartTransaction())
             {
                 var ge = _dirtytypes.GetEnumerator();
@@ -272,17 +307,13 @@ namespace CADAddins.LibsOfCleanup
             }
         }
 
-        private void DelFrozenNpltLayers(List<string> listFrozenNplt)
+        private void DelFrozenNpltLayers()
         {
-            if (listFrozenNplt.Count == 0)
-            {
-                _curEditorHelper.WriteMessage("\n No layers froze or non-plottable.");
-                return;
-            }
+            if(CheckFrozenNplt()) return;
 
             using (var trans = _curDocHelper.StartTransaction())
             {
-                DelLayers(listFrozenNplt);
+                DelLayers(_listFrozenNplt);
                 trans.Commit();
             }
         }
@@ -343,7 +374,7 @@ namespace CADAddins.LibsOfCleanup
             dirtyLayers.Add(layer.Name);
         }
 
-        private static string GetNewName(string layerName, string ltypeName)
+        public static string GetNewName(string layerName, string ltypeName)
         {
             if (layerName.StartsWith(ltypeName)) return layerName;
             var shortName = BoundPrefixUtils.RemoveBoundPrefix(layerName).ToUpper();
