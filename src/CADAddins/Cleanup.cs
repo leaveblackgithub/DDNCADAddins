@@ -1,7 +1,10 @@
-﻿using Autodesk.AutoCAD.Runtime;
+﻿using System.Collections.Generic;
+using Autodesk.AutoCAD.EditorInput;
+using Autodesk.AutoCAD.Runtime;
 using CADAddins;
 using CADAddins.Archive;
 using CADAddins.LibsOfCleanup;
+using CommonUtils;
 
 [assembly: CommandClass(typeof(Cleanup))]
 
@@ -18,6 +21,7 @@ namespace CADAddins
     /// TODO: 4. 增加按颜色拆分的选项
     /// TODO: 5. 如果不拆分颜色，要SETBYLAYER
     /// TODO: 6. 图纸空间和模型空间的图层要分开处理
+    /// TODO: 8. HATCHTOBACK
     /// 
     /// </summary>
     public class Cleanup : O_CommandBase
@@ -37,17 +41,21 @@ namespace CADAddins
         [CommandMethod("Cleanup")]
         public override void RunCommand()
         {
+
+            AddMessageFilter();
+            O_CurEditorHelper.Command(new List<string>(){"textscr",""});
             O_CurEditorHelper.WriteMessage($"\n开始清理文件[{O_CurDocHelper.Name}]...");
             O_CurDocHelper.StopHatchAssoc();
             CurLTypeHelper.Cleanup();
             CurLayerHelper.Cleanup();
             O_CurDocHelper.Audit();
             O_CurDocHelper.PurgeAll();
-            CurLayerHelper.CleanupEnts();
+            CurLayerHelper.CleanupEntsOfNonByLayer();
             CurLayerHelper.CleanupBlocks();
             O_CurDocHelper.SetByLayer();
             O_CurDocHelper.PurgeAll();
             O_CadHelper.Quit();
+            RemoveMessageFilter();
         }
     }
 }

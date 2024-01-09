@@ -10,17 +10,21 @@ namespace CADAddins.LibsOfCleanup
     public class LayerHelper
     {
         private const string _layerSep = "___";
+        public const string Layer0Name = "0";
+        public const string LayerDefpointsName = "DEFPOINTS";
+
+        private readonly Dictionary<string, dynamic> _cleantypes;
         private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly LTypeHelper _curLtypeHelper;
-        private readonly Dictionary<string, dynamic> _dictFrozenNpltSpecial;
-        private readonly Dictionary<string, dynamic> _dictOffSpecial;
+        private readonly Dictionary<string, dynamic> _dictFrozenNpltOf0Defpoints;
+        private readonly Dictionary<string, dynamic> _dictOffOf0Defpoints;
         private readonly Dictionary<string, List<string>> _dirtytypes;
         private readonly dynamic _layerTableId;
-
-        private Dictionary<string, dynamic> _cleantypes;
-        private List<string> _listFrozenNplt;
-        
+        private readonly List<string> _listFrozenNplt;
+        private readonly List<dynamic> _listLayerLock;
+        private readonly List<dynamic> _listLayerOffToRemoveNonBlk;
+        private object dynamic;
 
         public LayerHelper(dynamic layerTableId, O_DocHelper docHelper, LTypeHelper ltypeHelper)
         {
@@ -28,53 +32,63 @@ namespace CADAddins.LibsOfCleanup
             _curDocHelper = docHelper;
             _curEditorHelper = _curDocHelper.CurEditorHelper;
             _curLtypeHelper = ltypeHelper;
+            _listLayerOffToRemoveNonBlk = new List<dynamic>();
             if (!_curLtypeHelper.CleanTag) throw new SystemException("\nLinetypes not cleaned up.");
             _cleantypes = new Dictionary<string, dynamic>();
             _dirtytypes = new Dictionary<string, List<string>>();
-            _dictFrozenNpltSpecial = new Dictionary<string, dynamic>();
-            _dictOffSpecial = new Dictionary<string, dynamic>();
+            _dictFrozenNpltOf0Defpoints = new Dictionary<string, dynamic>();
+            _dictOffOf0Defpoints = new Dictionary<string, dynamic>();
             _listFrozenNplt = new List<string>();
+            _listLayerLock = new List<dynamic>();
         }
 
-        public void Cleanup()
+        public CmdCancelled Cleanup()
         {
             PrepareLayers();
-
+            DelNonBlkEntsOnOffLayers();
+            TryCleanDirtyNames();
             DelFrozenNpltLayers();
-            MergeDirtyLayers();
+            if (MergeDirtyLayers() == CmdCancelled.Cancelled) return CmdCancelled.Cancelled;
 //            _curEditorHelper.WriteMessage(_dirtytypes);
-            DelSpecialFrozenNpltLayers();
+            DelEntsOnLayer0Defpoints();
             Make0CurLayer();
+            return CmdCancelled.Succeeded;
         }
 
         public void PrepareLayers()
         {
             var layers = _layerTableId;
-            var lockCount = 0;
             using (var trans = _curDocHelper.StartTransaction())
             {
                 foreach (var layer in layers)
                     try
                     {
-                        string layerName = layer.Name;
-                        if (UnLock(layer)) lockCount++;
-                        if (layer.IsFrozen || !layer.IsPlottable)
+                        string layerName = layer.Name.ToUpper();
+                        layer.Name = layerName;
+                        if (TryUnLock(layer)) _listLayerLock.Add(layer);
+                        if (Is0OrDefpoints(layerName))
                         {
-                            layer.IsFrozen = false;
-                            if (Is0OrDefpoints(layerName))
+                            if (TryThaw(layer) || !layer.IsPlottable)
                             {
-                                _dictFrozenNpltSpecial[layerName] = layer;
+                                _dictFrozenNpltOf0Defpoints[layerName] = layer;
                                 continue;
                             }
 
+                            if (TryLayerOn(layer))
+                            {
+                                _dictOffOf0Defpoints[layerName] = layer;
+                                continue;
+                            }
+                        }
+
+                        if (TryThaw(layer) || !layer.IsPlottable)
+                        {
                             _listFrozenNplt.Add(layerName);
                             continue;
                         }
 
-                        if (layer.IsOff) layerName = DelNonBlkEntsOnOffLayer(layer);
-
-                        string ltypeName = CheckLType(layer);
-                        AddToDirtyDict(layerName, ltypeName, layer);
+                        if (TryLayerOn(layer)) _listLayerOffToRemoveNonBlk.Add(layer);
+                        TryAddToDirtyDict(layer);
                     }
                     catch (Exception e)
                     {
@@ -82,38 +96,72 @@ namespace CADAddins.LibsOfCleanup
                     }
 
                 trans.Commit();
-                _curEditorHelper.WriteMessage(lockCount > 0
-                    ? $"\nAll {lockCount} locked layers unlocked."
-                    : "\n No layers locked.");
+                NotHaveLockedLayers();
             }
+        }
+
+        private bool NotHaveLockedLayers()
+        {
+            var lockCount = _listLayerLock.Count;
+            _curEditorHelper.WriteMessage(lockCount > 0
+                ? $"\nAll {lockCount} locked layers unlocked."
+                : "\n No layers locked.");
+            return lockCount == 0;
+        }
+
+        private void DelNonBlkEntsOnOffLayers()
+        {
+            foreach (var layer in _listLayerOffToRemoveNonBlk) DelNonBlkEntsOnOffLayer(layer);
         }
 
         public bool Check()
         {
-            if (CheckFrozenNplt()&&CheckDirtytypes()) return true;
-            return false;
+            return NotHaveFrozenNplt()
+                   && NotHaveDirtytypes()
+                   && NotHave0FrozenNpltOff()
+                   && NotHaveEntsOnDefpoints()
+                   && NotHaveOffLayers()
+                   && NotHaveLockedLayers();
         }
 
-        private bool CheckDirtytypes()
-        {
-            if (_dirtytypes.Count == 0)
-            {
-                _curEditorHelper.WriteMessage("\nAll Layernames are fine without bound prefix.");
-                return true;
-            }
 
-            return false;
+        private bool NotHaveDirtytypes()
+        {
+            var count = _dirtytypes.Count;
+            _curEditorHelper.WriteMessage($"\n{count} Layernames are found with bound prefix.");
+            return count == 0;
         }
 
-        private bool CheckFrozenNplt()
+        private bool NotHaveOffLayers()
         {
-            if (_listFrozenNplt.Count == 0)
-            {
-                _curEditorHelper.WriteMessage("\nFrozen or non-plottable layers found.");
-                return true;
-            }
+            var count = _listLayerOffToRemoveNonBlk.Count;
+            _curEditorHelper.WriteMessage($"\n{count} Layers are found Off.");
+            return count == 0;
+        }
 
-            return false;
+        private bool NotHaveFrozenNplt()
+        {
+            var count = _listFrozenNplt.Count;
+            _curEditorHelper.WriteMessage($"\n{count} Layers are found frozen.");
+            return count == 0;
+        }
+
+        private bool NotHaveEntsOnDefpoints()
+        {
+            var isEmpty = _curEditorHelper.SelectEntsOnLayer(LayerDefpointsName) == null ? "" : "not";
+            _curEditorHelper.WriteMessage($"\nLayer {LayerDefpointsName} is {isEmpty} empty.");
+            return isEmpty == "";
+        }
+
+        private bool NotHave0FrozenNpltOff()
+        {
+            var layer0 = _layerTableId[Layer0Name];
+            var isFrozenNpltOff = layer0.IsFrozen || layer0.IsOff || !layer0.IsPlottable
+                ? ""
+                : "not";
+            _curEditorHelper.WriteMessage(
+                $"\nLayer {Layer0Name} is {isFrozenNpltOff} frozen or off or Nonplt");
+            return isFrozenNpltOff == "not";
         }
 
         public void CleanupBlocks()
@@ -131,29 +179,34 @@ namespace CADAddins.LibsOfCleanup
         {
             foreach (var ent in blk)
             {
-                string layerName = ent.Layer;
-                if (_dictFrozenNpltSpecial.ContainsKey(layerName))
+                string entLayerName = ent.Layer;
+
+                var entLayer = _layerTableId[entLayerName];
+                if (_dictFrozenNpltOf0Defpoints.ContainsKey(entLayerName))
                 {
                     ent.Erase();
+                    _dictFrozenNpltOf0Defpoints.Remove(entLayerName);
                     continue;
                 }
 
-                if (_dictOffSpecial.ContainsKey(layerName) && O_EntExt.GetEntClassName(ent) == "AcDbBlockReference")
+                if (_dictOffOf0Defpoints.ContainsKey(entLayerName) &&
+                    O_EntExt.GetEntClassName(ent) == "AcDbBlockReference")
                 {
                     ent.Erase();
+                    _dictOffOf0Defpoints.Remove(entLayerName);
                     continue;
                 }
 
-                string ltypeName = ent.Linetype;
-                if (ltypeName.ToUpper() == "BYLAYER") continue;
-                if (ltypeName.ToUpper() == "BYBLOCK" && layerName != "0")
+                if (LTypeHelper.IsByBlock(ent.Linetype))
                 {
-                    ent.Layer = "0";
-                    ent.Linetype = "BYLAYER";
+                    SetEntByLayer(ent, Layer0Name);
                     continue;
                 }
 
-                MoveEntToByLayer(layerName, ent);
+                var tgtLayer = IsDirtyName(entLayer)
+                    ? TryGetCleanLayer(GetNewNameOfLayer(entLayer), entLayer.Color, GetEntLtypeShtName(entLayer, ent))
+                    : entLayer;
+                MoveEntToLayerOfSameLtype(tgtLayer, ent);
             }
 
 
@@ -163,118 +216,138 @@ namespace CADAddins.LibsOfCleanup
         }
 
 
-        public void CleanupEnts()
+        public void CleanupEntsOfNonByLayer()
         {
             var layers = _layerTableId;
-            _cleantypes = new Dictionary<string, dynamic>();
-            var layersToClean = new List<dynamic>();
             foreach (var layer in layers)
             {
-//                    MessageBox.Show(layer.Name);
-                _cleantypes[layer.Name] = layer;
-                layersToClean.Add(layer);
-            }
-
-            foreach (var layer in layersToClean)
-            {
                 _curEditorHelper.WriteMessage($"\nCleaning up entities on Layer [{layer.Name}]...");
-                CleanupEntsByLayer(layer);
+                MoveEntsToLayerOfSameLtype(layer);
             }
         }
 
-        private void CleanupEntsByLayer(dynamic layer)
+        private string GetShtNameOfNewName(dynamic layer)
         {
-            string layerName = layer.Name;
             var ltype = layer.LinetypeObjectId;
             string ltypeName = ltype.Name;
-            MakeEntsLtypesBylayer(layerName, ltypeName);
-            var layerShtName = GetShtName(layerName, ltypeName);
-            Color color = layer.Color;
-            MoveEntsToByLayer(layerName, layerShtName, color);
+            return layer.Name.Replace(ltypeName + _layerSep, "");
         }
 
-        private string GetShtName(string layerName, string ltypeName)
-        {
-            return layerName.Replace(ltypeName + _layerSep, "");
-        }
 
-        private void MoveEntsToByLayer(string layerName, string layerShtName, Color color)
+        private void MoveEntsToLayerOfSameLtype(dynamic layer)
         {
-            var ents = _curEditorHelper.SelectEntsOnLayerOfLTypeNotByLayer(layerName);
+            var ents = _curEditorHelper.SelectEntsOnLayerOfLTypeNotByLayer(layer.Name); //TODO:Add color option.
             if (ents == null) return;
-            _curEditorHelper.WriteMessage($"\nCleaning up {ents.Length} entities of non-BYLAYER linetypes...");
+            _curEditorHelper.WriteMessage(
+                $"\nCleaning up {ents.Length} entities on layer [{layer.Name}] of non-BYLAYER linetypes...");
             using (var trans = _curDocHelper.StartTransaction())
             {
-                foreach (var ent in ents) MoveEntToByLayer(layerShtName, color, ent);
+                foreach (var ent in ents) MoveEntToLayerOfSameLtype(layer, ent);
                 trans.Commit();
             }
         }
 
-        private void MoveEntToByLayer(string layerName, dynamic ent)
+        private void MoveEntToLayerOfSameLtype(dynamic layer, dynamic ent)
         {
-            var layer = _cleantypes[layerName];
-            var ltype = layer.LinetypeObjectId;
-            string ltypeName = ltype.Name;
-            var layerShtName = GetShtName(layerName, ltypeName);
-            Color color = layer.Color;
-            MoveEntToByLayer(layerShtName, color, ent);
+            string tgtLayerName = "";
+
+            if (!IsNewName(layer.Name, ent.Linetype))
+            {
+                var entLtypeShtName = GetEntLtypeShtName(layer, ent);
+                tgtLayerName = GetNewNameOfLayer(layer, entLtypeShtName);
+                TryGetCleanLayer(tgtLayerName, layer.Color, entLtypeShtName);
+
+            }
+
+            SetEntByLayer(ent.Id,tgtLayerName);
         }
 
-        private void MoveEntToByLayer(string layerShtName, Color color, dynamic ent)
+        private void SetEntByLayer(ObjectId entId,string layerName = "")
         {
-            string ltypeName = ent.Linetype;
-            var ltypeShtName = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
-            var tgtLayerName = GetNewName(layerShtName, ltypeShtName);
-            var layer = GetLayer(tgtLayerName, ltypeShtName, color);
 
-            ent.Layer = tgtLayerName;
-            ent.Linetype = "BYLAYER";
+            using (var trans = _curDocHelper.StartTransaction())
+            using (var layerTable = trans.GetObject(_layerTableId, OpenMode.ForRead) as LayerTable)
+            using (var ent = trans.GetObject(entId, OpenMode.ForWrite) as Entity)
+            {
+                if (layerName != "") ent.LayerId = layerTable[layerName];
+                ent.Linetype = LTypeHelper.LtypeByLayerName;
+                ent.Color = Color.FromColorIndex(ColorMethod.ByLayer, 256);
+                trans.Commit();
+            }
         }
 
-        private dynamic GetLayer(string tgtLayerName, string ltypeShtName, Color color)
+        private dynamic GetEntLtypeShtName(dynamic layer, dynamic ent)
+        {
+            string entLtypeName = ent.Linetype;
+            var layerName = layer.Name;
+            var entLtypeShtName = LTypeHelper.IsByLayerOrByBlock(entLtypeName)
+                ? CheckFixLType(layerName)
+                : BoundPrefixUtils.RemoveBoundPrefix(entLtypeName);
+            return entLtypeShtName;
+        }
+
+        private dynamic TryGetCleanLayer(string tgtLayerName, Color color, string ltypeShtName = "")
         {
             dynamic result;
-            if (_cleantypes.TryGetValue(tgtLayerName, out result)) return result;
-            result = new LayerTableRecord();
-            result.Name = tgtLayerName;
-            result.LinetypeObjectId = _curLtypeHelper.GetLTypeByCleanName(ltypeShtName);
-            result.Color = color;
-            _layerTableId.Add(result);
-            result = _layerTableId[tgtLayerName];
-            _cleantypes[tgtLayerName] = result;
-            _curEditorHelper.WriteMessage($"\nNew layer [{tgtLayerName}] added.");
-            return result;
-        }
-
-        private void MakeEntsLtypesBylayer(string layerName, string ltypeName)
-        {
             using (var trans = _curDocHelper.StartTransaction())
+            using (var layerTable = trans.GetObject(_layerTableId, OpenMode.ForRead) as LayerTable)
             {
-                var ents = _curEditorHelper.SelectEntsOnLayerOfLType(layerName, ltypeName);
-                if (ents == null) return;
-                O_EntExt.ChangeLType(ents, "BYLAYER");
-                _curEditorHelper.WriteMessage(
-                    $"\nLinetypes of {ents.Length} entities on Layer [{layerName}] changed to BYLAYER.");
-                trans.Commit();
+                if (layerTable.Has(tgtLayerName))
+                {
+                    result = layerTable[tgtLayerName];
+                    trans.Commit();
+                    return result;
+                }
+                else
+                {
+                    return CreateNewLayer(tgtLayerName, color, ltypeShtName);
+                }
             }
         }
+
+        private dynamic CreateNewLayer(string tgtLayerName, Color color, string ltypeShtName)
+        {
+            dynamic resultId;
+            using (var trans = _curDocHelper.StartTransaction())
+                
+                using (var layerTable = trans.GetObject(_layerTableId, OpenMode.ForWrite) as LayerTable)
+               using (LayerTableRecord result= new LayerTableRecord())
+            {
+                result.Name = tgtLayerName;
+                if (ltypeShtName != "")
+                    result.LinetypeObjectId = _curLtypeHelper.GetLTypeByCleanName(ltypeShtName);
+                result.Color = color;
+                    layerTable.Add(result);
+                trans.AddNewlyCreatedDBObject(result, true);
+                resultId = layerTable[tgtLayerName];
+                _curEditorHelper.WriteMessage($"\nNew layer [{tgtLayerName}] added.");
+                trans.Commit();
+                return resultId;
+            }
+        }
+
+        private void With(object dynamic, object startTransaction)
+        {
+            throw new NotImplementedException();
+        }
+
 
         private void Make0CurLayer()
         {
-            if (_curDocHelper.CLayer.Name == "0") return;
+            if (_curDocHelper.CLayer.Name == Layer0Name) return;
             using (var trans = _curDocHelper.StartTransaction())
             {
-                _curDocHelper.CLayer = _layerTableId["0"];
+                _curDocHelper.CLayer = _layerTableId[Layer0Name];
                 trans.Commit();
             }
         }
 
-        private void DelSpecialFrozenNpltLayers()
+        private void DelEntsOnLayer0Defpoints()
         {
-            if (_dictFrozenNpltSpecial.Count == 0) return;
+            if (_dictFrozenNpltOf0Defpoints.Count == 0) return;
             using (var trans = _curDocHelper.StartTransaction())
             {
-                var ge = _dictFrozenNpltSpecial.GetEnumerator();
+                var ge = _dictFrozenNpltOf0Defpoints.GetEnumerator();
                 while (ge.MoveNext())
                 {
                     var layerName = ge.Current.Key;
@@ -283,15 +356,15 @@ namespace CADAddins.LibsOfCleanup
                     O_EntExt.EraseEnts(ents);
                     _curEditorHelper.WriteMessage($"\nAll {ents.Length} entities on Layer [{layerName}] deleted.");
                 }
-                
+
                 ge.Dispose();
                 trans.Commit();
             }
         }
 
-        private void MergeDirtyLayers()
+        private CmdCancelled MergeDirtyLayers()
         {
-            if (CheckDirtytypes()) return;
+            if (NotHaveDirtytypes()) return CmdCancelled.Succeeded;
             using (var trans = _curDocHelper.StartTransaction())
             {
                 var ge = _dirtytypes.GetEnumerator();
@@ -299,17 +372,25 @@ namespace CADAddins.LibsOfCleanup
                 {
                     var newName = ge.Current.Key;
                     var layers = ge.Current.Value;
-                    MergeLayers(layers, _cleantypes[newName].Name);
+                    if (MergeLayers(layers, _cleantypes[newName].Name) == CmdCancelled.Cancelled)
+                    {
+                        trans.Commit();
+                        return CmdCancelled.Cancelled;
+                    }
+
+                    ;
                 }
 
                 ge.Dispose();
                 trans.Commit();
             }
+
+            return CmdCancelled.Succeeded;
         }
 
         private void DelFrozenNpltLayers()
         {
-            if(CheckFrozenNplt()) return;
+            if (NotHaveFrozenNplt()) return;
 
             using (var trans = _curDocHelper.StartTransaction())
             {
@@ -318,11 +399,12 @@ namespace CADAddins.LibsOfCleanup
             }
         }
 
-        private void MergeLayers(List<string> SrclayerNames, string tgtLayerName)
+        private CmdCancelled MergeLayers(List<string> SrclayerNames, string tgtLayerName)
         {
             var cmdlist = new List<string> { "-laymrg" };
             foreach (var layername in SrclayerNames)
             {
+                if (O_CommandBase.CancelLoop(_curEditorHelper)) return CmdCancelled.Cancelled;
                 cmdlist.Add("n");
                 cmdlist.Add(layername);
             }
@@ -335,6 +417,7 @@ namespace CADAddins.LibsOfCleanup
             cmdlist.Add("Y");
             _curEditorHelper.Command(cmdlist);
             _curEditorHelper.WriteMessage($"\nAll {SrclayerNames.Count} layers merged to layer [{tgtLayerName}].");
+            return CmdCancelled.Succeeded;
         }
 
         private void DelLayers(List<string> layerNames)
@@ -350,64 +433,116 @@ namespace CADAddins.LibsOfCleanup
             cmdlist.Add("Y");
             _curEditorHelper.Command(cmdlist);
             _curEditorHelper.WriteMessage($"\nAll {layerNames.Count} frozen or non-plottable layers deleted.");
+            //TODO 到这死机了？
         }
 
-        private void AddToDirtyDict(string layerName, string ltypeName, dynamic layer)
+        private void TryAddToDirtyDict(dynamic layer)
         {
-            if (Is0OrDefpoints(layerName)) return;
-            var newName = GetNewName(layerName, ltypeName);
-            List<string> dirtyLayers;
-            if (!_cleantypes.ContainsKey(newName.ToUpper()))
-                if (string.Equals(layerName, newName, StringComparison.CurrentCultureIgnoreCase) ||
-                    Rename(layer, newName) != null)
+            string layerName = layer.Name;
+            if (!IsDirtyName(layer)) return;
+            var newName = GetNewNameOfLayer(layer);
+            if (_dirtytypes.TryGetValue(newName, out List<string> _))
+                _dirtytypes[newName] = new List<string>();
+            _dirtytypes[newName].Add(layerName);
+        }
+
+        private bool TryCleanDirtyNames()
+        {
+            var result = true;
+            foreach (var dirtytype in _dirtytypes)
+            {
+                dynamic layer = dirtytype.Value[0];
+                var layerName = layer.Name;
+                var newName = dirtytype.Key;
+                if (_cleantypes.ContainsKey(newName)) continue;
+                if (Rename(layer) == null)
                 {
-                    _cleantypes[newName.ToUpper()] = layer;
-                    return;
+                    _curEditorHelper.WriteMessage(
+                        $"\nFailed to rename {layerName} to {newName}.");
+                    //TODO:should log here
+                    result = false;
+                    continue;
                 }
 
-            if (!_dirtytypes.TryGetValue(newName.ToUpper(), out dirtyLayers))
-            {
-                _dirtytypes[newName.ToUpper()] = new List<string>();
-                dirtyLayers = _dirtytypes[newName.ToUpper()];
+                _cleantypes[newName] = layer;
+                _dirtytypes.Remove(layerName);
             }
 
-            dirtyLayers.Add(layer.Name);
+            return result;
         }
 
-        public static string GetNewName(string layerName, string ltypeName)
+        public static bool IsDirtyName(dynamic layer)
         {
-            if (layerName.StartsWith(ltypeName)) return layerName;
-            var shortName = BoundPrefixUtils.RemoveBoundPrefix(layerName).ToUpper();
-            var newName = string.Join(_layerSep, new List<string> { ltypeName, shortName });
-            return newName;
+            string layerName = layer.Name;
+            if (Is0OrDefpoints(layerName)) return false;
+            return BoundPrefixUtils.HasBoundPrefix(layerName);
+        }
+
+        public string GetNewNameFrFlds(string layerShtName, string ltyeShtName)
+        {
+            return string.Join(_layerSep, new List<string> { ltyeShtName, layerShtName });
+        }
+
+        public string GetNewNameOfLayer(dynamic layer, string ltypeName = "")
+        {
+            if (ltypeName == "") ltypeName = CheckFixLType(layer.Name);
+            string layerName = layer.Name;
+            if (IsNewName(layerName, ltypeName)) return layerName;
+            var shortName = GetShtNameOfDirtyLayer(layerName);
+
+            return GetNewNameFrFlds(shortName, ltypeName);
+        }
+
+
+        private static string GetShtNameOfDirtyLayer(string layerName)
+        {
+            if (Is0OrDefpoints(layerName)) return layerName;
+            var shortName = BoundPrefixUtils.RemoveBoundPrefix(layerName);
+            return shortName;
+        }
+
+        private bool IsNewName(string layerName, string ltypeName)
+        {
+            if (layerName.StartsWith(ltypeName)) return true;
+            return false;
         }
 
         private static bool Is0OrDefpoints(string layerName)
         {
-            return layerName == "0" || layerName == "Defpoints";
+            return IsLayer0(layerName) || IsLayerDefpoints(layerName);
         }
 
-        public string CheckLType(dynamic layer)
+        private static bool IsLayerDefpoints(string layerName)
         {
-            var ltype = layer.LinetypeObjectId;
+            return layerName == LayerDefpointsName;
+        }
+
+        private static bool IsLayer0(string layerName)
+        {
+            return layerName == Layer0Name;
+        }
+
+        public string CheckFixLType(string layerName)
+        {
+            var layer = _layerTableId[layerName];
+            var ltype = layer.LinetypeObjectId; //Can't be ByLayer or ByBlock
             string ltypeName = ltype.Name;
-            if (!BoundPrefixUtils.HasBoundPrefix(ltypeName)) return ltypeName;
+            if (!LTypeHelper.IsDirtyName(ltype)) return ltypeName;
             var newLtype = _curLtypeHelper.GetLTypeByCleanName(ltypeName);
             layer.LinetypeObjectId = newLtype;
-            string newname = newLtype.Name;
+            string newLtypeName = newLtype.Name;
             _curEditorHelper.WriteMessage(
-                $"\nLinetype of Layer [{layer.Name}] changed from [{ltypeName}] to [{newname}]");
-            return newname;
+                $"\nLinetype of Layer [{layerName}] changed from [{ltypeName}] to [{newLtypeName}]");
+            return newLtypeName;
         }
 
         public string DelNonBlkEntsOnOffLayer(dynamic layer)
         {
-            LayerOn(layer);
             string layerName = layer.Name;
             if (Is0OrDefpoints(layerName))
-                _dictOffSpecial[layerName] = layer;
+                _dictOffOf0Defpoints[layerName] = layer;
             else
-                layerName = Rename(layer, AddOffSuffix(layerName));
+                layerName = Rename(layer, AddOffSuffix(layerName)); //TODO: OFFSUFFIX LAYER?
             var ents = _curEditorHelper.SelectNoneBlkOnLayer(layerName);
             if (ents != null)
             {
@@ -425,7 +560,7 @@ namespace CADAddins.LibsOfCleanup
         }
 
 
-        private bool UnLock(dynamic layer)
+        private bool TryUnLock(dynamic layer)
         {
             if (layer.IsLocked == false) return false;
             layer.IsLocked = false;
@@ -433,7 +568,24 @@ namespace CADAddins.LibsOfCleanup
             return true;
         }
 
-        private bool LayerOn(dynamic layer)
+        private bool TryPlttable(dynamic layer)
+        {
+            if (IsLayerDefpoints(layer.Name)) return false;
+            if (layer.IsPlottable == false) return false;
+            layer.IsLocked = false;
+            //            _curEditorHelper.WriteMessage($"\nLayer [{layer.Name}] unlocked.");
+            return true;
+        }
+
+        private bool TryThaw(dynamic layer)
+        {
+            if (layer.IsFrozen == false) return false;
+            layer.IsFrozen = false;
+            //            _curEditorHelper.WriteMessage($"\nLayer [{layer.Name}] unlocked.");
+            return true;
+        }
+
+        private bool TryLayerOn(dynamic layer)
         {
             if (layer.IsOff == false) return false;
             layer.IsOff = false;
@@ -441,21 +593,25 @@ namespace CADAddins.LibsOfCleanup
             return true;
         }
 
-        private string Rename(dynamic layer, string newName)
+        private string Rename(dynamic layer, string newName = "")
         {
+            string result = null;
+            if (newName == "") newName = GetNewNameOfLayer(layer);
             string oldName = layer.Name;
-            if (string.Equals(oldName, newName, StringComparison.CurrentCultureIgnoreCase)) return null;
+            if (string.Equals(oldName, newName, StringComparison.CurrentCultureIgnoreCase)) return result;
             try
             {
                 layer.Name = newName;
                 _curEditorHelper.WriteMessage($"\nLayer [{oldName}] renamed to [{newName}].");
-                return newName;
+                result = newName;
             }
             catch (Exception e)
             {
-                _cleantypes[newName] = _layerTableId[newName];
-                return null;
+                _curEditorHelper.WriteMessage($"\nLayer [{oldName}] failed to rename to [{newName}].");
+                result = null;
             }
+
+            return result;
         }
     }
 }

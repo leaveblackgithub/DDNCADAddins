@@ -82,6 +82,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Archive\CmdCancelled.cs" />
     <Compile Include="DDNCrop.cs" />
     <Compile Include="Archive\O_CadHelper2.cs" />
     <Compile Include="Archive\O_CommandTransBase.cs" />

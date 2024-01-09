@@ -1,5 +1,6 @@
 ﻿using ACADReferenceCodes.CancelCommands;
 using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 
 [assembly: CommandClass(typeof(CancelCommand))]
@@ -20,20 +21,27 @@ namespace ACADReferenceCodes.CancelCommands
             // Start the loop
             while (true)
             {
-                // Check for user input events
-                System.Windows.Forms.Application.DoEvents();
-                // Check whether the filter has set the flag
-                if (filter.bCanceled)
-                {
-                    ed.WriteMessage("nLoop cancelled.");
-                    break;
-                }
+                if (CancelLoop(filter, ed)) break;
 
                 ed.WriteMessage("nInside while loop ...");
             }
 
             // We're done - remove the message filter
             System.Windows.Forms.Application.RemoveMessageFilter(filter);
+        }
+
+        private static bool CancelLoop(MyMessageFilter filter, Editor ed)
+        {
+            // Check for user input events
+            System.Windows.Forms.Application.DoEvents();
+            // Check whether the filter has set the flag
+            if (filter.bCanceled)
+            {
+                ed.WriteMessage("nLoop cancelled.");
+                return true;
+            }
+
+            return false;
         }
     }
     // Our message filter class

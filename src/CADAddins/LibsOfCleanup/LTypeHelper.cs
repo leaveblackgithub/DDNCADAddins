@@ -59,15 +59,17 @@ namespace CADAddins.LibsOfCleanup
         {
             foreach (var ltype in Ltypes)
             {
-                string ltypeName = ltype.Name;
-                if (!BoundPrefixUtils.HasBoundPrefix(ltypeName))
+                string ltypeName = ltype.Name.ToUpper();
+                ltype.Name = ltypeName;
+                if (IsByLayerOrByBlock(ltypeName))continue;
+                if (!IsDirtyName(ltype))
                 {
                     Cleantypes[ltypeName] = ltype;
                     continue;
                 }
-
                 var cleanname = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
-                if (!Dirtytypes.ContainsKey(cleanname)) Dirtytypes[cleanname] = new List<dynamic>();
+                if (!Dirtytypes.TryGetValue(cleanname, out _))
+                    Dirtytypes[cleanname]=new List<dynamic>() ;
                 Dirtytypes[cleanname].Add(ltype);
             }
 
@@ -81,17 +83,39 @@ namespace CADAddins.LibsOfCleanup
             return false;
         }
 
-        public dynamic GetLTypeByCleanName(string name)
+        public static bool IsDirtyName(dynamic ltype)
         {
-            string cleanname;
-            if (!BoundPrefixUtils.HasBoundPrefix(name))
-                cleanname = name;
-            else
-                cleanname = BoundPrefixUtils.RemoveBoundPrefix(name);
+            var ltypeName = ltype.Name;
+            if (IsByLayerOrByBlock(ltypeName)) return false;
+            return BoundPrefixUtils.HasBoundPrefix(ltypeName);
+        }
+        public static bool IsByLayer(string ltypeName)
+        {
+            return string.Equals(ltypeName, LtypeByLayerName, StringComparison.OrdinalIgnoreCase);
+        }
+        public static bool IsByLayerOrByBlock(string ltypeName)
+        {
+            return IsByLayer(ltypeName)||
+                IsByBlock(ltypeName) ;
+        }
 
+        public static bool IsByBlock(string ltypeName)
+        {
+            return string.Equals(ltypeName, LtypeByBlockName, StringComparison.OrdinalIgnoreCase);
+        }
+
+        public dynamic GetLTypeByCleanName(string ltypeName)
+        {
+            if (IsByLayerOrByBlock(ltypeName))
+            {
+                _curEditorHelper.WriteMessage(
+                    $"{LtypeByLayerName} or {LtypeByBlockName} is not a real linetype");
+                return null;
+            }
+            string cleanname = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
             dynamic result;
             if (!Cleantypes.TryGetValue(cleanname, out result))
-                throw new SystemException($"Can't find Linetype[{cleanname}]");
+                throw new SystemException($"Can't find Linetype[{cleanname}]");//TODO:LOG LATER
             return result;
         }
 
@@ -105,5 +129,8 @@ namespace CADAddins.LibsOfCleanup
         {
             throw new NotImplementedException();
         }
+
+        public const string LtypeByLayerName = "BYLAYER";
+        public const string LtypeByBlockName = "BYBLOCK";
     }
 }

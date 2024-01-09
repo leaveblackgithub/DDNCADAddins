@@ -118,7 +118,7 @@
     <Compile Include="UnitTests\AcConsoleTests\TransactionExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
+    <None Include="app.configfail" />
     <None Include="packages.config" />
     <None Include="TestDrawing.dwg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -61,6 +61,7 @@ namespace CADAddins.Archive
         {
             var promptSelectionResult = _acEditor.SelectAll(filter);
             if (promptSelectionResult.Status == PromptStatus.OK) return promptSelectionResult.Value.GetObjectIds();
+            
             return null;
         }
 
