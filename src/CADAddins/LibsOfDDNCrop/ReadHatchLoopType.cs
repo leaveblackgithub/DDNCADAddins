@@ -5,7 +5,7 @@ using CADAddins.Environments;
 
 namespace CADAddins.LibsOfDDNCrop
 {
-    public class ReadHatchLoopType : CommandBase
+    public class ReadHatchLoopType : CommandBaseOfDDNCrop
     {
         [CommandMethod("RLT")]
         public override void Run()

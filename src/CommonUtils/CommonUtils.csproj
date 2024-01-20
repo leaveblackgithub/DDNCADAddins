@@ -63,12 +63,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BoundPrefixUtils.cs" />
-    <Compile Include="Class1.cs" />
+    <Compile Include="LibsOfString\BoundPrefixUtils.cs" />
+    <Compile Include="EnumerableExtension.cs" />
     <Compile Include="DateTimeUtils.cs" />
     <Compile Include="DisposableClass.cs" />
+    <Compile Include="LibsOfString\LayerNameUtils.cs" />
     <Compile Include="ReflectionExtension.cs" />
-    <Compile Include="Tests\BoundPrefixUtilsTest.cs" />
+    <Compile Include="Tests\LibsOfString\BoundPrefixUtilsTest.cs" />
+    <Compile Include="LibsOfString\StringUtils.cs" />
+    <Compile Include="Tests\LibsOfString\LayerNameUtilsTests.cs" />
+    <Compile Include="Tests\LibsOfString\StringUtilsTests.cs" />
     <Compile Include="Tests\ReflectionExtensionTests.cs" />
   </ItemGroup>
   <ItemGroup>

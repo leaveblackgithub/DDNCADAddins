@@ -4,12 +4,12 @@ using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
 using CommonUtils;
+using CommonUtils.LibsOfString;
 
 namespace CADAddins.LibsOfCleanup
 {
     public class LayerHelper
     {
-        private const string _layerSep = "___";
         private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly LTypeHelper _curLtypeHelper;
@@ -56,12 +56,12 @@ namespace CADAddins.LibsOfCleanup
                 foreach (var layer in layers)
                     try
                     {
-                        string layerName = layer.Name;
+                        string layerName = MakeLayerNameUpper(layer);
                         if (UnLock(layer)) lockCount++;
                         if (layer.IsFrozen || !layer.IsPlottable)
                         {
                             layer.IsFrozen = false;
-                            if (Is0OrDefpoints(layerName))
+                            if (LayerNameUtils.Is0OrDefpoints(layerName))
                             {
                                 _dictFrozenNpltSpecial[layerName] = layer;
                                 continue;
@@ -86,6 +86,13 @@ namespace CADAddins.LibsOfCleanup
                     ? $"\nAll {lockCount} locked layers unlocked."
                     : "\n No layers locked.");
             }
+        }
+
+        private static string MakeLayerNameUpper(dynamic layer)
+        {
+            string upperName = layer.Name.ToUpper();
+            layer.Name = upperName;
+            return upperName;
         }
 
         public bool Check()
@@ -195,7 +202,7 @@ namespace CADAddins.LibsOfCleanup
 
         private string GetShtName(string layerName, string ltypeName)
         {
-            return layerName.Replace(ltypeName + _layerSep, "");
+            return layerName.Replace(ltypeName + LayerNameUtils.LayerSep, "");
         }
 
         private void MoveEntsToByLayer(string layerName, string layerShtName, Color color)
@@ -224,7 +231,7 @@ namespace CADAddins.LibsOfCleanup
         {
             string ltypeName = ent.Linetype;
             var ltypeShtName = BoundPrefixUtils.RemoveBoundPrefix(ltypeName);
-            var tgtLayerName = GetNewName(layerShtName, ltypeShtName);
+            var tgtLayerName = LayerNameUtils.AddLtypePrefixAndUpper(layerShtName, ltypeShtName);
             var layer = GetLayer(tgtLayerName, ltypeShtName, color);
 
             ent.Layer = tgtLayerName;
@@ -354,8 +361,8 @@ namespace CADAddins.LibsOfCleanup
 
         private void AddToDirtyDict(string layerName, string ltypeName, dynamic layer)
         {
-            if (Is0OrDefpoints(layerName)) return;
-            var newName = GetNewName(layerName, ltypeName);
+            if (LayerNameUtils.Is0OrDefpoints(layerName)) return;
+            var newName = LayerNameUtils.AddLtypePrefixAndUpper(layerName, ltypeName);
             List<string> dirtyLayers;
             if (!_cleantypes.ContainsKey(newName.ToUpper()))
                 if (string.Equals(layerName, newName, StringComparison.CurrentCultureIgnoreCase) ||
@@ -372,19 +379,6 @@ namespace CADAddins.LibsOfCleanup
             }
 
             dirtyLayers.Add(layer.Name);
-        }
-
-        public static string GetNewName(string layerName, string ltypeName)
-        {
-            if (layerName.StartsWith(ltypeName)) return layerName;
-            var shortName = BoundPrefixUtils.RemoveBoundPrefix(layerName).ToUpper();
-            var newName = string.Join(_layerSep, new List<string> { ltypeName, shortName });
-            return newName;
-        }
-
-        private static bool Is0OrDefpoints(string layerName)
-        {
-            return layerName == "0" || layerName == "Defpoints";
         }
 
         public string CheckLType(dynamic layer)
@@ -404,7 +398,7 @@ namespace CADAddins.LibsOfCleanup
         {
             LayerOn(layer);
             string layerName = layer.Name;
-            if (Is0OrDefpoints(layerName))
+            if (LayerNameUtils.Is0OrDefpoints(layerName))
                 _dictOffSpecial[layerName] = layer;
             else
                 layerName = Rename(layer, AddOffSuffix(layerName));
@@ -421,7 +415,7 @@ namespace CADAddins.LibsOfCleanup
 
         private string AddOffSuffix(string layerName)
         {
-            return string.Join(_layerSep, layerName, "OFF");
+            return string.Join(LayerNameUtils.LayerSep, layerName, "OFF");
         }
 
 

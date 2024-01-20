@@ -9,7 +9,7 @@ using CADAddins.LibsOfDDNCrop;
 
 namespace CADAddins
 {
-    public class DDNCrop : CommandBase
+    public class DDNCrop : CommandBaseOfDDNCrop
     {
         [CommandMethod("DDNCrop")]
         public override void Run()

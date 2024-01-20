@@ -1,6 +1,9 @@
-﻿using Autodesk.AutoCAD.Runtime;
+﻿using ACADBase;
+using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Runtime;
 using CADAddins;
 using CADAddins.Archive;
+using CADAddins.Environments;
 using CADAddins.LibsOfCleanup;
 
 [assembly: CommandClass(typeof(Cleanup))]
@@ -20,7 +23,7 @@ namespace CADAddins
     /// TODO: 6. 图纸空间和模型空间的图层要分开处理
     /// 
     /// </summary>
-    public class Cleanup : O_CommandBase
+    public class Cleanup : CommandBase
     {
         private LayerHelper _curLayerHelper;
         private LTypeHelper _curLTypeHelper;
@@ -38,16 +41,16 @@ namespace CADAddins
         public override void RunCommand()
         {
             O_CurEditorHelper.WriteMessage($"\n开始清理文件[{O_CurDocHelper.Name}]...");
-            O_CurDocHelper.StopHatchAssoc();
-            CurLTypeHelper.Cleanup();
-            CurLayerHelper.Cleanup();
-            O_CurDocHelper.Audit();
-            O_CurDocHelper.PurgeAll();
-            CurLayerHelper.CleanupEnts();
-            CurLayerHelper.CleanupBlocks();
-            O_CurDocHelper.SetByLayer();
-            O_CurDocHelper.PurgeAll();
-            O_CadHelper.Quit();
+             O_CurDocHelper.StopHatchAssoc();
+             CurLTypeHelper.Cleanup();
+             CurLayerHelper.Cleanup();
+             O_CurDocHelper.Audit();
+             O_CurDocHelper.PurgeAll();
+             CurLayerHelper.CleanupEnts();
+             CurLayerHelper.CleanupBlocks();
+             O_CurDocHelper.SetByLayer();
+             O_CurDocHelper.PurgeAll();
+             O_CadHelper.Quit();
         }
     }
 }

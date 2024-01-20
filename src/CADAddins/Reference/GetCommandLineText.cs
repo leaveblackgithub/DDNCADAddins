@@ -7,6 +7,7 @@ using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using CADAddins.Archive;
 using CADAddins.Environments;
+using CADAddins.LibsOfDDNCrop;
 using CADCleanup.Reference;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -14,7 +15,7 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace CADCleanup.Reference
 {
-    public class GetCommandLineText:CommandBase
+    public class GetCommandLineText:CommandBaseOfDDNCrop
     {
         //COULD USE IN ACCORECONSOLE
         [CommandMethod("CEDDTACTDP1")]

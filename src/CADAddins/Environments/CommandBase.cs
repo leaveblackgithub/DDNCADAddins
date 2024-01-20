@@ -1,46 +1,24 @@
-﻿using Autodesk.AutoCAD.DatabaseServices;
+﻿using System;
+using ACADBase;
+using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
 
 namespace CADAddins.Environments
 {
-    public abstract class CommandBase
+    public class CommandBase : O_CommandBase
     {
-        internal CommandBase()
+        public IDwgCommandHelper ActiveDwgCommandHelper;
+
+        public CommandBase()
         {
+            ActiveDwgCommandHelper = new DwgCommandHelper("",
+                new MessageProviderOfEditor(Application.DocumentManager.CurrentDocument.Editor));
         }
 
-        internal O_DocHelper2 CurODocHelper2 => O_CadHelper2.CurODocHelper2;
-        internal O_EditorHelper2 CurOEditorHelper2 => CurODocHelper2.CurOEditorHelper2;
-
-        internal void EndCommands(bool EndOrCancel)
+        public override void RunCommand()
         {
-            if (!EndOrCancel)
-                CurOEditorHelper2.WriteMessage($"\nCommand [{GetType().Name}] Cancelled.");
-            else
-                CurOEditorHelper2.WriteMessage($"\nCommand [{GetType().Name}] Succeeded.");
-            O_CadHelper2.Quit();
-        }
-
-        internal abstract O_CommandTransBase InitCommandTransBase(Transaction acTrans);
-        
-        public virtual void Run()
-        {
-            using (var acTrans = CurODocHelper2.StartTransaction())
-            {
-                using (var cmd = InitCommandTransBase(acTrans))
-                {
-                    if (cmd.Run())
-                    {
-                        acTrans.Commit();
-                        EndCommands(true);
-                    }
-                    else
-                    {
-                        acTrans.Abort();
-                        EndCommands(false);
-                    }
-                }
-            }
+            throw new NotImplementedException();
         }
     }
 }

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using CADAddins.Archive;
 using CommonUtils;
+using CommonUtils.LibsOfString;
 
 namespace CADAddins.LibsOfCleanup
 {
     public class LTypeHelper : DisposableClass
     {
+        public const string LTypeByLayer = "ByLayer";
+        public const string LTypeByBlock = "ByBlock";
         private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly dynamic _lTypeTableId;
@@ -59,7 +62,8 @@ namespace CADAddins.LibsOfCleanup
         {
             foreach (var ltype in Ltypes)
             {
-                string ltypeName = ltype.Name;
+                
+                string ltypeName = MakeLtypeNameUpper(ltype);
                 if (!BoundPrefixUtils.HasBoundPrefix(ltypeName))
                 {
                     Cleantypes[ltypeName] = ltype;
@@ -79,6 +83,13 @@ namespace CADAddins.LibsOfCleanup
             }
 
             return false;
+        }
+
+        private static string MakeLtypeNameUpper(dynamic ltype)
+        {
+            string upperName = ltype.Name.ToUpper();
+            ltype.Name = upperName;
+            return upperName;
         }
 
         public dynamic GetLTypeByCleanName(string name)

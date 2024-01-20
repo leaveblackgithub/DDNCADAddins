@@ -88,6 +88,8 @@
     <Compile Include="Cropper\BlockReferenceCropper.cs" />
     <Compile Include="Archive\O_GeoExt.cs" />
     <Compile Include="Environments\CommandBase.cs" />
+    <Compile Include="Environments\MessageProviderOfEditor.cs" />
+    <Compile Include="LibsOfDDNCrop\CommandBaseOfDDNCrop.cs" />
     <Compile Include="LibsOfDDNCrop\OCommandTransBaseOfDdnCrop.cs" />
     <Compile Include="Archive\O_DocHelper2.cs" />
     <Compile Include="Archive\O_EditorHelper2.cs" />
@@ -133,6 +135,10 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <ProjectReference Include="..\ACADBase\ACADBase.csproj">
+      <Project>{BE20882C-1C31-4005-A734-64DB8F050F90}</Project>
+      <Name>ACADBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
       <Project>{486d3f43-ef27-4f68-8ede-3df2e6c546d6}</Project>
       <Name>CommonUtils</Name>

@@ -5,7 +5,7 @@ using CADAddins.Environments;
 
 namespace CADAddins.LibsOfDDNCrop
 {
-    internal class CopyBlock : CommandBase
+    internal class CopyBlock : CommandBaseOfDDNCrop
     {
         internal override O_CommandTransBase InitCommandTransBase(Transaction acTrans)
         {
