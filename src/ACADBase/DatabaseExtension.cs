@@ -44,5 +44,10 @@ namespace ACADBase
                 return resultObjId;
             });
         }
+
+        public static string GetDwgName(this Database database)
+        {
+            return database.OriginalFileName ;
+        }
     }
 }

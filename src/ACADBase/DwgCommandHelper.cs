@@ -59,6 +59,16 @@ namespace ACADBase
             ReadDwgAndExecute();
         }
 
+        public void WriteMessage(string message)
+        {
+            _messageProvider.Show(message);
+        }
+
+        public void ShowError(Exception exception)
+        {
+            _messageProvider.Error(exception);
+        }    
+
 
         //TODO Can't verify if acedDisableDefaultARXExceptionHandler is working
         // EntryPoint may vary across autocad versions

@@ -9,6 +9,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
 {
     public class DwgCommandDataBaseTestBase
     {
+        protected const string TestDrawingPath = @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg";
         protected IDwgCommandHelper DwgCommandHelperTest;
         protected IDwgCommandHelper DwgCommandHelperActive;
         protected Mock<IMessageProvider> _mockMessageProvider;
@@ -21,7 +22,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             _mockMessageProvider = new Mock<IMessageProvider>();
             var messageProvider = _mockMessageProvider.Object;
             DwgCommandHelperTest = new DwgCommandHelper(
-                @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg", messageProvider);
+                TestDrawingPath, messageProvider);
             DwgCommandHelperActive = new DwgCommandHelper("", messageProvider);
             emptyDbAction = (db => LogManager.GetCurrentClassLogger().Info("EmptyDbAction"));
             _exception = new Exception("Test Exception in Execution");

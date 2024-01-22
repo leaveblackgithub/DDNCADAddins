@@ -40,17 +40,23 @@ namespace CADAddins
         [CommandMethod("Cleanup")]
         public override void RunCommand()
         {
-            O_CurEditorHelper.WriteMessage($"\n开始清理文件[{O_CurDocHelper.Name}]...");
-             O_CurDocHelper.StopHatchAssoc();
-             CurLTypeHelper.Cleanup();
-             CurLayerHelper.Cleanup();
-             O_CurDocHelper.Audit();
-             O_CurDocHelper.PurgeAll();
-             CurLayerHelper.CleanupEnts();
-             CurLayerHelper.CleanupBlocks();
-             O_CurDocHelper.SetByLayer();
-             O_CurDocHelper.PurgeAll();
-             O_CadHelper.Quit();
+            ActiveDwgCommandHelper.ExecuteDataBaseActions(CleanupDatabase);
+            //O_CurEditorHelper.WriteMessage($"\n开始清理文件[{O_CurDocHelper.Name}]...");
+             // O_CurDocHelper.StopHatchAssoc();
+             // CurLTypeHelper.Cleanup();
+             // CurLayerHelper.Cleanup();
+             // O_CurDocHelper.Audit();
+             // O_CurDocHelper.PurgeAll();
+             // CurLayerHelper.CleanupEnts();
+             // CurLayerHelper.CleanupBlocks();
+             // O_CurDocHelper.SetByLayer();
+             // O_CurDocHelper.PurgeAll();
+             // O_CadHelper.Quit();
+        }
+
+        private void CleanupDatabase(Database db)
+        {
+            ActiveDwgCommandHelper.WriteMessage($"\n开始清理文件[{db.GetDwgName()}]...");
         }
     }
 }

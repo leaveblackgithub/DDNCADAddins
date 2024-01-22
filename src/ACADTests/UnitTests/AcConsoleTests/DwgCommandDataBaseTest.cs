@@ -76,5 +76,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
             Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
             _mockMessageProvider.Verify(m => m.Error(_exception), Times.Once);
         }
+        
     }
 }
