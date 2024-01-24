@@ -1,0 +1,7 @@
+setvar
+trustedpaths
+D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/
+filedia 0
+hotloading_dll D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/ACADTests.dll
+filedia 1
+RunTests
