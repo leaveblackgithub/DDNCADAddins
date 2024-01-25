@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AcConsoleTest|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files\Autodesk\AutoCAD 2019\accoreconsole.exe</StartProgram>
+    <StartArguments>/s "D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestLoaderInConsole.scr"</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AppCleanupTest|AnyCPU'">
+    <StartAction>Program</StartAction>
+    <StartProgram>C:\Program Files\Autodesk\AutoCAD 2019\acad.exe</StartProgram>
+    <StartArguments>"D:\leaveblackgithub\DDNCADAddinsForRevitImport\examples\drawing to cleanup small.dwg" /b "D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestLoaderInApp.scr"</StartArguments>
+  </PropertyGroup>
+</Project>
