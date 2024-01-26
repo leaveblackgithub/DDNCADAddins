@@ -52,7 +52,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestAddLineInTestDwg()
         {
             // Run the tests
-            DwgCommandHelperTest.ExecuteDataBaseActions(AddLine, CheckLine);
+            DwgCommandHelperOfTestDwg.ExecuteDataBaseActions(AddLine, CheckLine);
         }
 
         [Test]
@@ -73,12 +73,16 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgNotThrowingInRunCommandActions()
         {
-            var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", MsgProviderMockInitInBase.Object);
-            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
-            dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
-            // ExampleShowsVerifyCheckingExactlySameObject();
+            DwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
+            DwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
+            ExampleShowsVerifyCheckingExactlySameObject();
             MsgProviderShowExInitInBaseOnce();
-            // Assert.Throws<MockException>(MsgProviderShowExInitInBaseOnce);
+            ExampleOfVerifyOnlyWorkOnce();
+        }
+
+        private void ExampleOfVerifyOnlyWorkOnce()
+        {
+            Assert.Throws<MockException>(MsgProviderShowExInitInBaseOnce);
         }
 
         private void ExampleShowsVerifyCheckingExactlySameObject()
@@ -90,8 +94,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgWMsgBox()
         {
-            var dwgCommandHelperOfMsgBox = new DwgCommandHelper("");
-            dwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
+            DwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
         }
 
 

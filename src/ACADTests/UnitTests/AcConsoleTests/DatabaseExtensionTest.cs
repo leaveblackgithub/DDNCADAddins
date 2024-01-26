@@ -26,7 +26,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void GetDwgNameTest()
         {
             string dwgName = "";
-            DwgCommandHelperTest.ExecuteDataBaseActions(db => dwgName=db.GetDwgName());
+            DwgCommandHelperOfTestDwg.ExecuteDataBaseActions(db => dwgName=db.GetDwgName());
             Assert.AreEqual(TestDrawingPath, dwgName);
 
             DwgCommandHelperActive.ExecuteDataBaseActions(db => dwgName = db.GetDwgName());
