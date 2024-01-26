@@ -108,6 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IntegrateTests\CleanupCheck.cs" />
+    <Compile Include="TestException.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="UnitTests\ACADAppTests\CleanupTests.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DatabaseExtensionTest.cs" />

@@ -1,10 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
+using System.Windows.Forms;
 using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Runtime;
 using Moq;
 using Moq.Protected;
+using NLog;
 using NUnit.Framework;
+using Exception = System.Exception;
 
 namespace ACADTests.UnitTests.AcConsoleTests
 {
@@ -13,12 +20,15 @@ namespace ACADTests.UnitTests.AcConsoleTests
     public class DwgCommandDataBaseTest : DwgCommandDataBaseTestBase
     {
         private long _lineId;
+        private TestException _exInitInSetup;
 
         [SetUp]
         public override void SetUp()
         {
             base.SetUp();
             _lineId = 0;
+
+            _exInitInSetup = new TestException(nameof(_exInitInSetup));
         }
         //Use a new drawing
 
@@ -59,18 +69,59 @@ namespace ACADTests.UnitTests.AcConsoleTests
                 @"D:\NonExisting.dwg"));
         }
 
+
         [Test]
-        public void TestExceptionInRunCommandActions()
+        public void TestWritingExMsgNotThrowingInRunCommandActions()
         {
             var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", _mockMessageProvider.Object);
-            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(_exception);
+            var exInitInMethod = new TestException("exInitInmethod");
+            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(exInitInMethod);
             dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(emptyDbAction);
+            //Example shows parameter verify should be exactly the same object.
             Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
-            _mockMessageProvider.Verify(m => m.Error(_exception), Times.Once);
+            _mockMessageProvider.Verify(m => m.Error(It.Is<TestException>(e => e.Message== "exInitInmethod")), Times.Once);
         }
 
         [Test]
-        public void TestExceptionInExecuteDatabase()
+        public void TestWritingExMsgWMsgBox()
+        {
+            var dwgCommandHelperOfMsgBox = new DwgCommandHelper("");
+            dwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
+            // Test Verify local variable and test field show same tracks.
+            var exInitInMethod = new TestException("exInitInmethod");
+        }
+
+
+
+        [Test]
+        public void TestExceptionScopeAndTrack()
+        {
+            var msgProviderMock=new Mock<IMessageProvider>();
+            StringBuilder exscopeandtrack=new StringBuilder();
+            msgProviderMock.Setup(m => m.Error(It.IsAny<Exception>()))
+                .Callback<Exception>(e => exscopeandtrack.AppendLine($"[{e.Message}]:{e.StackTrace}"));
+            var dwgCommandHelperOfRecordingExScopeAndTrack = new DwgCommandHelper("",msgProviderMock.Object);
+            var exInitInMethod = new TestException("exInitInmethod");
+            dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw exInitInMethod);
+            dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw _exInitInSetup);
+            dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInBase);
+            LogManager.GetCurrentClassLogger().Info(exscopeandtrack.ToString());
+            ExceptionsOfDifScopeHasSameStackTraceFrLine2(exscopeandtrack);
+        }
+
+        private static void ExceptionsOfDifScopeHasSameStackTraceFrLine2(StringBuilder exscopeandtrack)
+        {
+            string[] stackTraceList = exscopeandtrack.ToString().Split('\n');
+            int lines = stackTraceList.Length;
+            for (int i = 1; i < lines / 3; i++)
+            {
+                Assert.AreEqual(stackTraceList[i], stackTraceList[i + lines / 3]);
+                Assert.AreEqual(stackTraceList[i], stackTraceList[i + lines / 3 * 2]);
+            }
+        }
+
+        [Test]
+        public void TestWritingExMsgNotThrowingInExecuteDataBase()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => throw _exception);
             Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));

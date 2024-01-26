@@ -16,6 +16,8 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected Exception _exception;
         protected Action<Database> emptyDbAction;
 
+        protected TestException ExInitInBase;
+
         [SetUp]
         public virtual void SetUp()
         {
@@ -26,6 +28,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             DwgCommandHelperActive = new DwgCommandHelper("", messageProvider);
             emptyDbAction = (db => LogManager.GetCurrentClassLogger().Info("EmptyDbAction"));
             _exception = new Exception("Test Exception in Execution");
+            ExInitInBase=new TestException(nameof(ExInitInBase));
         }
     }
 }

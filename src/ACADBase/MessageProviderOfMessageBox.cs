@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using NLog;
 
 namespace ACADBase
 {
@@ -12,7 +13,9 @@ namespace ACADBase
 
         public void Error(Exception exception)
         {
-            Show(exception.ToString());
+            string exString = exception.ToString();
+            LogManager.GetCurrentClassLogger().Error(exString);
+            Show(exString);
         }
     }
 }
