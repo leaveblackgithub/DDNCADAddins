@@ -1,5 +1,4 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,56 +17,61 @@ namespace ACADBase
     public class DwgCommandHelper : IDwgCommandHelper
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
-        private readonly IMessageProvider? _messageProvider;
+        private string _drawingFile;
+        private IMessageProvider _messageProvider;
         protected Document DwgDocument;
-        protected ExceptionDispatchInfo? ExceptionInfo;
+        protected ExceptionDispatchInfo ExceptionInfo;
 
-        public DwgCommandHelper(string drawingFile = "", IMessageProvider? messageProvider = null)
+        public DwgCommandHelper(string drawingFile = "", IMessageProvider messageProvider = null)
         {
             DrawingFile = drawingFile;
-            _messageProvider = messageProvider;
-            if (messageProvider == null) _messageProvider = new MessageProviderOfMessageBox();
-            DatabaseActions = new List<Action<Database>>();
+            ActiveMsgProvider = messageProvider;
             DwgDocument = Application.DocumentManager.MdiActiveDocument;
-            if (string.IsNullOrEmpty(DrawingFile))
+        }
+
+        protected string DrawingFile
+        {
+            get => _drawingFile;
+            set
             {
-                DefaultDrawing = true;
-                // Should this be executing assembly path instead?
-                //drawingFile = Path.Combine(TestContext.CurrentContext.TestDirectory, "TestDrawing.dwg");
-            }
-            else
-            {
+                _drawingFile = value;
+                if (string.IsNullOrEmpty(_drawingFile)) return;
                 DefaultDrawing = false;
-                if (!File.Exists(drawingFile))
-                {
-                    var argumentException = new ArgumentException($"Drawing file {drawingFile} does not exist.");
-                    _logger.Error(argumentException);
-                    throw argumentException;
-                }
+                if (File.Exists(_drawingFile)) return;
+                var argumentException = new ArgumentException($"Drawing file {_drawingFile} does not exist.");
+                _logger.Error(argumentException);
+                throw argumentException;
             }
         }
 
-        protected string DrawingFile { get; }
-        public List<Action<Database>> DatabaseActions { get; set; }
-        protected Database? DwgDatabase { get; set; }
-        protected bool DefaultDrawing { get; }
-        
-        public void ExecuteDataBaseActions(params Action<Database>[]? databaseActions)
+        public List<Action<Database>> DatabaseActions { get; set; } = new List<Action<Database>>();
+
+        protected Database DwgDatabase { get; set; }
+
+        protected bool DefaultDrawing { get; private set; } = true;
+
+        public IMessageProvider ActiveMsgProvider
         {
-            if (databaseActions == null) return;
+            get => _messageProvider;
+            private set => _messageProvider = value ?? new MessageProviderOfMessageBox();
+        }
+
+        public void ExecuteDataBaseActions(params Action<Database>[] databaseActions)
+        {
+            if (databaseActions == null || databaseActions.Length == 0) return;
             DatabaseActions = databaseActions.ToList();
             ReadDwgAndExecute();
         }
 
         public void WriteMessage(string message)
         {
-            _messageProvider.Show(message);
+            ActiveMsgProvider.Show(message);
         }
 
         public void ShowError(Exception exception)
         {
-            _messageProvider.Error(exception);
-        }    
+            ActiveMsgProvider.Error(exception);
+        }
 
 
         //TODO Can't verify if acedDisableDefaultARXExceptionHandler is working
@@ -108,7 +112,7 @@ namespace ACADBase
                 // Change the database back to the original.
                 if (oldDb != null) HostApplicationServices.WorkingDatabase = oldDb;
                 //TODO Throw exception here will cause fatal error and can not be catch by Nunit.
-                if (ExceptionInfo != null) _messageProvider!.Error(ExceptionInfo.SourceException);
+                if (ExceptionInfo != null) ActiveMsgProvider!.Error(ExceptionInfo.SourceException);
             }
         }
 

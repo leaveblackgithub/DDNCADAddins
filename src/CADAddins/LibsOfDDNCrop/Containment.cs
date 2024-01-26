@@ -5,7 +5,6 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Runtime;
 using CADAddins.Archive;
-using CADAddins.Environments;
 using CADAddins.LibsOfDDNCrop;
 // acdbmgdbrep.dll
 using AcBr = Autodesk.AutoCAD.BoundaryRepresentation;

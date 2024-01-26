@@ -3,7 +3,6 @@ using System.Linq;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using CADAddins.Archive;
-using CADAddins.Environments;
 
 namespace CADAddins.Cropper
 {
@@ -21,11 +20,11 @@ namespace CADAddins.Cropper
     public class EntityCropper<T> : EntityCropperInterface<T> where T : Entity
     {
         internal Curve _boundary;
-        internal O_CommandTransBase OCommandTransBase;
         internal T _entity;
         internal Point3dCollection _ptIntersects;
         internal WhichSideToKeep _whichSideToKeep;
         internal string _whichSideToKeepString;
+        internal O_CommandTransBase OCommandTransBase;
 
         public EntityCropper(T entity, Curve boundary, WhichSideToKeep whichSideToKeep,
             O_CommandTransBase oCommandTransBase)

@@ -5,10 +5,6 @@ namespace CADAddins.Archive
 {
     public abstract class O_CommandBase : DisposableClass
     {
-        protected O_CommandBase()
-        {
-        }
-
         public O_DocHelper O_CurDocHelper => O_CadHelper.CurDocHelper;
         public Database AcCurDb => O_CurDocHelper.AcCurDb;
         public O_EditorHelper O_CurEditorHelper => O_CurDocHelper.CurEditorHelper;

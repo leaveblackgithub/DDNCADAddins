@@ -22,7 +22,7 @@ namespace CADAddins.LibsOfDDNCrop
         }
 
         internal abstract O_CommandTransBase InitCommandTransBase(Transaction acTrans);
-        
+
         public virtual void Run()
         {
             using (var acTrans = CurODocHelper2.StartTransaction())

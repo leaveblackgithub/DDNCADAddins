@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using Autodesk.AutoCAD.DatabaseServices;
+using Autodesk.AutoCAD.Internal;
 using Autodesk.AutoCAD.Runtime;
 using Autodesk.AutoCAD.Windows;
 using CADAddins.Archive;
-using CADAddins.Environments;
 using CADAddins.LibsOfDDNCrop;
 using CADCleanup.Reference;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
@@ -15,21 +16,21 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace CADCleanup.Reference
 {
-    public class GetCommandLineText:CommandBaseOfDDNCrop
+    public class GetCommandLineText : CommandBaseOfDDNCrop
     {
         //COULD USE IN ACCORECONSOLE
         [CommandMethod("CEDDTACTDP1")]
         public void CEDDTACTDP1()
         {
-            CurOEditorHelper2.Command(new List<string>(){ "Time", "", "" });
+            CurOEditorHelper2.Command(new List<string> { "Time", "", "" });
 //            ed.Command(new object[] { "CEDDTACTDP2 ", "" });
         }
-        
+
 
         [CommandMethod("CEDDTACTDP2")]
         public void CEDDTACTDP2()
         {
-            string acCommandLineList = GetCommandLineValue();
+            var acCommandLineList = GetCommandLineValue();
             MessageBox.Show(acCommandLineList);
         }
 
@@ -43,26 +44,25 @@ namespace CADCleanup.Reference
             window.WindowState = Window.State.Normal;
             window.DeviceIndependentLocation = tl;
             window.DeviceIndependentSize = new Size(size.Width / 2, size.Height);
-            Autodesk.AutoCAD.Internal.Utils.ShowHideTextWindow(true);
+            Utils.ShowHideTextWindow(true);
         }
 
         private string GetCommandLineValue()
         {
             //COULD NOT USE IN ACCORECONSOLE, BELONG TO ACMGD.DLL
-            List<string> acCommandLineList = Autodesk.AutoCAD.Internal.Utils.GetLastCommandLines(11, true);
+            var acCommandLineList = Utils.GetLastCommandLines(11, true);
             acCommandLineList.Reverse();
             acCommandLineList.RemoveAt(7);
             acCommandLineList.RemoveAt(6);
             acCommandLineList.RemoveAt(6);
-            string commandLineValue = Path.GetFullPath(CurODocHelper2.Name)+"\n";
+            var commandLineValue = Path.GetFullPath(CurODocHelper2.Name) + "\n";
             commandLineValue += string.Join("\n", acCommandLineList);
             return commandLineValue;
         }
 
         internal override O_CommandTransBase InitCommandTransBase(Transaction acTrans)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
     }
 }
-

@@ -1,7 +1,6 @@
 ﻿using Autodesk.AutoCAD.Runtime;
 using CADAddins;
 using CADAddins.Archive;
-using CADAddins.Environments;
 using CADAddins.LibsOfCleanupTextStyles;
 
 [assembly: CommandClass(typeof(CleanupTextStyles))]

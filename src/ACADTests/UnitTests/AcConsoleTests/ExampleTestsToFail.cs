@@ -7,7 +7,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
     [Apartment(ApartmentState.STA)]
     public class ExampleTestsToFail
     {
-
         [Test]
         public void ExampleTest_Fail()
         {

@@ -5,14 +5,13 @@ namespace CommonUtils.LibsOfString
 {
     public static class BoundPrefixUtils
     {
+        public const string BoundPrefixPattern = @"\$\d\$";
         private static readonly Regex BoundPrefixRegex;
 
         static BoundPrefixUtils()
         {
             BoundPrefixRegex = new Regex(BoundPrefixPattern);
         }
-
-        public const string BoundPrefixPattern = @"\$\d\$";
 
         public static bool HasBoundPrefix(string name)
         {
@@ -21,7 +20,7 @@ namespace CommonUtils.LibsOfString
 
         public static string RemoveBoundPrefix(string name)
         {
-            if (!BoundPrefixUtils.HasBoundPrefix(name)) return name;
+            if (!HasBoundPrefix(name)) return name;
             var result = BoundPrefixRegex.Split(name);
             return result.Last();
         }

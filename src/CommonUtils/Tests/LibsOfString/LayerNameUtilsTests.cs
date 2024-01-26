@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using CommonUtils.LibsOfString;
+﻿using CommonUtils.LibsOfString;
+using NUnit.Framework;
 
 namespace CommonUtils.Tests.LibsOfString
 {
@@ -18,38 +18,38 @@ namespace CommonUtils.Tests.LibsOfString
         [Test]
         public void AddLtypePrefixAndToUpperTest()
         {
-            Assert.AreEqual("LTYPE1___LAYER1", LayerNameUtils.AddLtypePrefixAndUpper(Layer1Lower,Ltype1Lower));
+            Assert.AreEqual("LTYPE1___LAYER1", LayerNameUtils.AddLtypePrefixAndUpper(Layer1Lower, Ltype1Lower));
             Assert.AreNotEqual("LTYPE1___LAYER1", LayerNameUtils.AddLtypePrefixAndUpper(Layer1Lower, Ltype2Lower));
             Assert.AreEqual("LTYPE2___LAYER1", LayerNameUtils.AddLtypePrefixAndUpper(Layer1Lower, Ltype2Lower));
-            Assert.AreEqual($"LTYPE2___{Layer3WoBoundPrefix}", LayerNameUtils.AddLtypePrefixAndUpper(Layer2WBoundPrefix, Ltype2Lower));
-            Assert.AreEqual($"LTYPE2___{LayerDefpoints}", LayerNameUtils.AddLtypePrefixAndUpper(LayerDefpoints, Ltype2Lower));
+            Assert.AreEqual($"LTYPE2___{Layer3WoBoundPrefix}",
+                LayerNameUtils.AddLtypePrefixAndUpper(Layer2WBoundPrefix, Ltype2Lower));
+            Assert.AreEqual($"LTYPE2___{LayerDefpoints}",
+                LayerNameUtils.AddLtypePrefixAndUpper(LayerDefpoints, Ltype2Lower));
         }
+
         // Add true and false tests for HasCorrectLtypePrefix
         [Test]
         public void IsCorrectPatternTest()
         {
-            Assert.False(LayerNameUtils.IsCorrectPattern(Layer1Lower,Ltype1Lower));
+            Assert.False(LayerNameUtils.IsCorrectPattern(Layer1Lower, Ltype1Lower));
             Assert.True(LayerNameUtils.IsCorrectPattern("LTYPE1___LAYER1", Ltype1Lower));
             Assert.False(LayerNameUtils.IsCorrectPattern("LTYPE1___LAYER1", Ltype2Lower));
             Assert.False(LayerNameUtils.IsCorrectPattern($"LTYPE2___{Layer2WBoundPrefix}", Ltype2Lower));
             Assert.True(LayerNameUtils.IsCorrectPattern($"LTYPE2___{Layer3WoBoundPrefix}", Ltype2Lower));
             Assert.True(LayerNameUtils.IsCorrectPattern($"LTYPE2___{LayerDefpoints}", Ltype2Lower));
         }
+
         // Add true and false tests for GetUpperShortName
         [Test]
         public void GetUpperShortNameTest()
         {
             Assert.AreEqual(Layer1Upper, LayerNameUtils.GetUpperShortName("LTYPE1___LAYER1"));
-            Assert.AreNotEqual(Layer1Lower , LayerNameUtils.GetUpperShortName("LTYPE1___LAYER1"));
+            Assert.AreNotEqual(Layer1Lower, LayerNameUtils.GetUpperShortName("LTYPE1___LAYER1"));
             Assert.AreNotEqual(Layer1Upper, LayerNameUtils.GetUpperShortName("LTYPE1___LAYER2"));
             Assert.AreEqual(Layer3WoBoundPrefix, LayerNameUtils.GetUpperShortName($"LTYPE2___{Layer2WBoundPrefix}"));
             Assert.AreEqual(Layer3WoBoundPrefix, LayerNameUtils.GetUpperShortName($"LTYPE2___{Layer3WoBoundPrefix}"));
             Assert.AreEqual(LayerDefpoints, LayerNameUtils.GetUpperShortName($"LTYPE2___{LayerDefpoints}"));
             Assert.AreEqual(LayerDefpoints, LayerNameUtils.GetUpperShortName(LayerDefpoints));
         }
-
-
-
-
     }
 }

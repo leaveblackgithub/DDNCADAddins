@@ -3,7 +3,6 @@ using System.Linq;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using CADAddins.Archive;
-using CADAddins.Environments;
 using CommonUtils;
 
 namespace CADAddins.Cropper

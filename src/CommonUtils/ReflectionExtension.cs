@@ -1,6 +1,6 @@
-﻿using NLog;
+﻿using System;
 using System.Reflection;
-using System;
+using NLog;
 
 namespace CommonUtils
 {
@@ -9,20 +9,24 @@ namespace CommonUtils
         public static bool TryGetProperty<T>(this object obj, string propertyName, out PropertyInfo property)
         {
             property = null;
-            Type type = obj.GetType();
+            var type = obj.GetType();
             property = type.GetProperty(propertyName, typeof(T));
             return property != null;
         }
+
         public static PropertyInfo MustGetProperty<T>(this object obj, string propertyName)
         {
             PropertyInfo property;
             obj.TryGetProperty<T>(propertyName, out property);
             if (property == null)
             {
-                var argumentException = new ArgumentException($"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
+                var argumentException =
+                    new ArgumentException(
+                        $"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
                 LogManager.GetCurrentClassLogger().Error(argumentException);
                 throw argumentException;
             }
+
             return property;
         }
 

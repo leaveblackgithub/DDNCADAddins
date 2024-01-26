@@ -12,7 +12,8 @@ namespace ACADBase
 
         public static ArgumentExceptionOfIdReferToWrongType _<T>(ObjectId id)
         {
-            return new ArgumentExceptionOfIdReferToWrongType($"{id} is not referring to a DbObject of Type {typeof(T).Name}.");
+            return new ArgumentExceptionOfIdReferToWrongType(
+                $"{id} is not referring to a DbObject of Type {typeof(T).Name}.");
         }
     }
 }

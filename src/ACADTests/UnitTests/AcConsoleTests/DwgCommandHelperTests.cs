@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Windows.Forms;
 using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
-using Autodesk.AutoCAD.Runtime;
 using Moq;
 using Moq.Protected;
 using NLog;
 using NUnit.Framework;
-using Exception = System.Exception;
 
 namespace ACADTests.UnitTests.AcConsoleTests
 {
@@ -22,8 +17,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
         private long _lineId;
         private TestException _exInitInContext;
 
-        private TestException ExInitInContext=>_exInitInContext??(_exInitInContext=new TestException(nameof(ExInitInContext)));
-        
+        private TestException ExInitInContext =>
+            _exInitInContext ?? (_exInitInContext = new TestException(nameof(ExInitInContext)));
+
         //Use a new drawing
 
         private void AddLine(Database db)
@@ -82,7 +78,8 @@ namespace ACADTests.UnitTests.AcConsoleTests
         private void ExampleShowsVerifyCheckingExactlySameObject()
         {
             //Example shows parameter verify should be exactly the same object.
-            Assert.Throws<MockException>(() => MsgProviderMockInitInBase.Verify(m => m.Error(new Exception()), Times.Once));
+            Assert.Throws<MockException>(() =>
+                MsgProviderMockInitInBase.Verify(m => m.Error(new Exception()), Times.Once));
         }
 
         [Test]
@@ -92,15 +89,14 @@ namespace ACADTests.UnitTests.AcConsoleTests
         }
 
 
-
         [Test]
         public void TestExceptionScopeAndTrack()
         {
-            var msgProviderMock=new Mock<IMessageProvider>();
-            StringBuilder exscopeandtrack=new StringBuilder();
+            var msgProviderMock = new Mock<IMessageProvider>();
+            var exscopeandtrack = new StringBuilder();
             msgProviderMock.Setup(m => m.Error(It.IsAny<Exception>()))
                 .Callback<Exception>(e => exscopeandtrack.AppendLine($"[{e.Message}]:{e.StackTrace}"));
-            var dwgCommandHelperOfRecordingExScopeAndTrack = new DwgCommandHelper("",msgProviderMock.Object);
+            var dwgCommandHelperOfRecordingExScopeAndTrack = new DwgCommandHelper("", msgProviderMock.Object);
             var exInitInMethod = new TestException("exInitInmethod");
             dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw exInitInMethod);
             dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInContext);
@@ -111,9 +107,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         private static void ExceptionsOfDifScopeHasSameStackTraceFrLine2(StringBuilder exscopeandtrack)
         {
-            string[] stackTraceList = exscopeandtrack.ToString().Split('\n');
-            int lines = stackTraceList.Length;
-            for (int i = 1; i < lines / 3; i++)
+            var stackTraceList = exscopeandtrack.ToString().Split('\n');
+            var lines = stackTraceList.Length;
+            for (var i = 1; i < lines / 3; i++)
             {
                 Assert.AreEqual(stackTraceList[i], stackTraceList[i + lines / 3]);
                 Assert.AreEqual(stackTraceList[i], stackTraceList[i + lines / 3 * 2]);
@@ -126,6 +122,5 @@ namespace ACADTests.UnitTests.AcConsoleTests
             DwgCommandHelperActive.ExecuteDataBaseActions(db => throw ExInitInBase);
             MsgProviderMockInitInBase.Verify(m => m.Error(ExInitInBase), Times.Once);
         }
-        
     }
 }

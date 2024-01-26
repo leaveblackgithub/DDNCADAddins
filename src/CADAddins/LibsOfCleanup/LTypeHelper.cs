@@ -13,10 +13,6 @@ namespace CADAddins.LibsOfCleanup
         private readonly O_DocHelper _curDocHelper;
         private readonly O_EditorHelper _curEditorHelper;
         private readonly dynamic _lTypeTableId;
-        public dynamic Ltypes { get; private set; }
-        public Dictionary<string, List<dynamic>> Dirtytypes { get; private set; }
-        public bool CleanTag { get; private set; }
-        private Dictionary<string, dynamic> Cleantypes { get; set; }
 
         public LTypeHelper(dynamic lTypeTableId, O_DocHelper docHelper)
         {
@@ -28,6 +24,11 @@ namespace CADAddins.LibsOfCleanup
             Dirtytypes = new Dictionary<string, List<dynamic>>();
             Ltypes = _lTypeTableId;
         }
+
+        public dynamic Ltypes { get; }
+        public Dictionary<string, List<dynamic>> Dirtytypes { get; }
+        public bool CleanTag { get; private set; }
+        private Dictionary<string, dynamic> Cleantypes { get; set; }
 
 
         public void Cleanup()
@@ -62,7 +63,6 @@ namespace CADAddins.LibsOfCleanup
         {
             foreach (var ltype in Ltypes)
             {
-                
                 string ltypeName = MakeLtypeNameUpper(ltype);
                 if (!BoundPrefixUtils.HasBoundPrefix(ltypeName))
                 {

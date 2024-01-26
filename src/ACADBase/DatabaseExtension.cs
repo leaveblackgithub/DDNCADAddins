@@ -47,7 +47,7 @@ namespace ACADBase
 
         public static string GetDwgName(this Database database)
         {
-            return database.OriginalFileName ;
+            return database.OriginalFileName;
         }
     }
 }

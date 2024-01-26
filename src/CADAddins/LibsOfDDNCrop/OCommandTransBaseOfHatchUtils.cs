@@ -1,7 +1,6 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using CADAddins.Archive;
-using CADAddins.Environments;
 
 [assembly: CommandClass(typeof(CADAddins.LibsOfDDNCrop.HatchUtils))]
 

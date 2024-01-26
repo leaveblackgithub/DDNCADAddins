@@ -1,5 +1,5 @@
-﻿using NUnit.Framework;
-using CommonUtils.LibsOfString;
+﻿using CommonUtils.LibsOfString;
+using NUnit.Framework;
 
 namespace CommonUtils.Tests.LibsOfString
 {
@@ -11,14 +11,14 @@ namespace CommonUtils.Tests.LibsOfString
         public void EqualsIgnoreCaseTest()
         {
             //Arrange
-            string str1 = "Hello";
-            string str2 = "hello";
+            var str1 = "Hello";
+            var str2 = "hello";
             //Act
-            bool result = StringUtils.EqualsIgnoreCase(str1, str2);
+            var result = str1.EqualsIgnoreCase(str2);
             //Assert
             Assert.IsTrue(result);
             //Assert false
-            Assert.IsFalse(StringUtils.EqualsIgnoreCase(str1, "world"));
+            Assert.IsFalse(str1.EqualsIgnoreCase("world"));
         }
 
         //Create a test method for StartsWithIgnoreCase
@@ -26,33 +26,33 @@ namespace CommonUtils.Tests.LibsOfString
         public void StartsWithIgnoreCaseTest()
         {
             //Arrange
-            string str1 = "Hello";
+            var str1 = "Hello";
 
 
-            string str2 = "hello world";
+            var str2 = "hello world";
             //Act
 
             //Assert
-            Assert.IsTrue(StringUtils.StartsWithIgnoreCase(str2, str1));
-            Assert.IsTrue(StringUtils.StartsWithIgnoreCase(str2, str1, " W"));
+            Assert.IsTrue(str2.StartsWithIgnoreCase(str1));
+            Assert.IsTrue(str2.StartsWithIgnoreCase(str1, " W"));
 
-            Assert.IsFalse(StringUtils.StartsWithIgnoreCase(str2, str1,","));
+            Assert.IsFalse(str2.StartsWithIgnoreCase(str1, ","));
         }
+
         //Create a test method for SplitByString
         [Test]
         public void SplitByStringTest()
         {
             //Arrange
-            string str3 = "Hello,world,,";
+            var str3 = "Hello,world,,";
 
             //Act
 
             //Assert
-            Assert.AreEqual(4, StringUtils.SplitByString(str3, ",").Length);
-            Assert.AreEqual(3, StringUtils.SplitByString(str3, "o").Length);
-            Assert.AreEqual(2, StringUtils.SplitByString(str3, "ll").Length);
-            Assert.AreEqual(1, StringUtils.SplitByString(str3, "LL").Length);
+            Assert.AreEqual(4, str3.SplitByString(",").Length);
+            Assert.AreEqual(3, str3.SplitByString("o").Length);
+            Assert.AreEqual(2, str3.SplitByString("ll").Length);
+            Assert.AreEqual(1, str3.SplitByString("LL").Length);
         }
-
     }
 }

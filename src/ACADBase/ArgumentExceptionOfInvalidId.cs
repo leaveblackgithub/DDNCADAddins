@@ -4,7 +4,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 
 namespace ACADBase
 {
-    public class ArgumentExceptionOfInvalidId: ArgumentException
+    public class ArgumentExceptionOfInvalidId : ArgumentException
     {
         public ArgumentExceptionOfInvalidId(string message) : base(message)
         {

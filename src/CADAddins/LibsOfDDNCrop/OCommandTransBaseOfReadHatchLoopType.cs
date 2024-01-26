@@ -4,7 +4,6 @@ using Autodesk.AutoCAD.EditorInput;
 using Autodesk.AutoCAD.Internal;
 using Autodesk.AutoCAD.Runtime;
 using CADAddins.Archive;
-using CADAddins.Environments;
 using CADAddins.LibsOfDDNCrop;
 
 [assembly: CommandClass(typeof(ReadHatchLoopType))]

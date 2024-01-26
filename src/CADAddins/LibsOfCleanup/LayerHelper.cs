@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
-using CommonUtils;
 using CommonUtils.LibsOfString;
 
 namespace CADAddins.LibsOfCleanup
@@ -19,8 +18,8 @@ namespace CADAddins.LibsOfCleanup
         private readonly dynamic _layerTableId;
 
         private Dictionary<string, dynamic> _cleantypes;
-        private List<string> _listFrozenNplt;
-        
+        private readonly List<string> _listFrozenNplt;
+
 
         public LayerHelper(dynamic layerTableId, O_DocHelper docHelper, LTypeHelper ltypeHelper)
         {
@@ -97,7 +96,7 @@ namespace CADAddins.LibsOfCleanup
 
         public bool Check()
         {
-            if (CheckFrozenNplt()&&CheckDirtytypes()) return true;
+            if (CheckFrozenNplt() && CheckDirtytypes()) return true;
             return false;
         }
 
@@ -290,7 +289,7 @@ namespace CADAddins.LibsOfCleanup
                     O_EntExt.EraseEnts(ents);
                     _curEditorHelper.WriteMessage($"\nAll {ents.Length} entities on Layer [{layerName}] deleted.");
                 }
-                
+
                 ge.Dispose();
                 trans.Commit();
             }
@@ -316,7 +315,7 @@ namespace CADAddins.LibsOfCleanup
 
         private void DelFrozenNpltLayers()
         {
-            if(CheckFrozenNplt()) return;
+            if (CheckFrozenNplt()) return;
 
             using (var trans = _curDocHelper.StartTransaction())
             {

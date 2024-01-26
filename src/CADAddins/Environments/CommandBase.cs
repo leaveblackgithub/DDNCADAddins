@@ -1,7 +1,6 @@
 ﻿using System;
 using ACADBase;
 using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
 
 namespace CADAddins.Environments

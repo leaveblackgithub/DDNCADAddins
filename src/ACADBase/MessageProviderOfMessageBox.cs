@@ -13,7 +13,7 @@ namespace ACADBase
 
         public void Error(Exception exception)
         {
-            string exString = exception.ToString();
+            var exString = exception.ToString();
             LogManager.GetCurrentClassLogger().Error(exString);
             Show(exString);
         }

@@ -8,7 +8,7 @@ namespace ACADTests.UnitTests.ACADAppTests
         [Test]
         public void HelloWorld()
         {
-            Assert.True(true,"running cleanup unit test");
+            Assert.True(true, "running cleanup unit test");
         }
     }
 }

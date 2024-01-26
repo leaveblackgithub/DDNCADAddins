@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using NLog;
 using NUnit.Framework;
 
 namespace CommonUtils.Tests
@@ -8,15 +7,15 @@ namespace CommonUtils.Tests
     [TestFixture]
     public class ReflectionExtensionTest
     {
-        private static TestClass _testClass = new TestClass();
-        private string _realproperty = "RealProperty";
-        private string _fakeproperty = "FakeProperty";
-
         [SetUp]
         public void SetUp()
         {
             _testClass = new TestClass();
         }
+
+        private static TestClass _testClass = new TestClass();
+        private readonly string _realproperty = "RealProperty";
+        private readonly string _fakeproperty = "FakeProperty";
 
         [Test]
         public void TryGetPropertyTest()
@@ -29,6 +28,7 @@ namespace CommonUtils.Tests
             Assert.False(_testClass.TryGetProperty<bool>(_fakeproperty, out property));
             Assert.Null(property);
         }
+
         [Test]
         public void MustGetPropertyTest()
         {
@@ -40,10 +40,12 @@ namespace CommonUtils.Tests
             ex = Assert.Throws<ArgumentException>(MustGetFakeProperty);
             Assert.That(ex.Message, Is.EqualTo("Type TestClass doesn't contain property FakeProperty of type Boolean"));
         }
+
         private void MustGetRealPropertyInString()
         {
             _testClass.MustGetProperty<string>(_realproperty);
         }
+
         private void MustGetFakeProperty()
         {
             _testClass.MustGetProperty<bool>(_fakeproperty);
@@ -52,11 +54,11 @@ namespace CommonUtils.Tests
 
     public class TestClass
     {
-        public bool RealProperty { get; }
         public TestClass(bool realProperty = false)
         {
             RealProperty = realProperty;
         }
 
+        public bool RealProperty { get; }
     }
 }

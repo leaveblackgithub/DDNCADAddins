@@ -9,7 +9,7 @@ namespace ACADBase
     {
         //TODO EXCEPTION HANDLE
         public static ObjectId GetObject<T>(this Transaction transaction, ObjectId objectId, OpenMode mode,
-            Func<T, ObjectId>? funcOnDbObject=null)
+            Func<T, ObjectId>? funcOnDbObject = null)
             where T : DBObject
         {
             if (!objectId.IsValid) throw ArgumentExceptionOfInvalidId._(objectId);
@@ -18,12 +18,11 @@ namespace ACADBase
                 using var t = (T)transaction.GetObject(objectId, mode);
                 return funcOnDbObject?.Invoke(t) ?? objectId;
             }
-            catch (InvalidCastException  e)
+            catch (InvalidCastException e)
             {
                 LogManager.GetCurrentClassLogger().Error(e);
                 throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId);
             }
-                
         }
     }
 }

@@ -3,7 +3,6 @@ using Autodesk.AutoCAD.BoundaryRepresentation;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using CADAddins.Archive;
-using CADAddins.Environments;
 
 namespace CADAddins.Cropper
 {
