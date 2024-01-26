@@ -17,3 +17,6 @@ When importing/linking CAD into Revit, usually encounting these problems:
   c. Make objects linestyles/colors "Bylayer"
   d. Audit and purge
 2. Convert all xclip to crop
+
+# Notes
+Based on AutoCAD 2019, SDK Release 23.0, .Net Framework 4.7, c# version 7.3, Microsoft Visual Studio Community 2022 (64-bit) 
