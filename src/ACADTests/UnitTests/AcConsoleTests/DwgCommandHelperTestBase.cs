@@ -12,16 +12,16 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected const string TestDrawingPath = @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg";
         protected IDwgCommandHelper DwgCommandHelperTest;
         protected IDwgCommandHelper DwgCommandHelperActive;
-        protected Mock<IMessageProvider> MsgProviderMockInitInSetup;
+        protected Mock<IMessageProvider> MsgProviderMockInitInSetup =>_msgProviderMockInitInSetup??(_msgProviderMockInitInSetup=new Mock<IMessageProvider>());
         // protected Action<Database> EmptyDbAction;
         private TestException _exInitInBase;
+        private Mock<IMessageProvider> _msgProviderMockInitInSetup;
 
         protected TestException ExInitInBase=>_exInitInBase??(_exInitInBase=new TestException(nameof(ExInitInBase)));
 
         [SetUp]
         public virtual void SetUp()
         {
-            MsgProviderMockInitInSetup = new Mock<IMessageProvider>();//Property will cause error? Must be init for each test
             var messageProvider = MsgProviderMockInitInSetup.Object;
             DwgCommandHelperTest = new DwgCommandHelper(
                 TestDrawingPath, messageProvider);
@@ -29,6 +29,11 @@ namespace ACADTests.UnitTests.AcConsoleTests
             // EmptyDbAction = (db => LogManager.GetCurrentClassLogger().Info("EmptyDbAction"));
         }
 
+        [TearDown]
+        public virtual void TearDown()
+        {
+            MsgProviderMockInitInSetup.Invocations.Clear();
+        }
         protected void EmptyDbAction(Database db)
         {
             LogManager.GetCurrentClassLogger().Info("EmptyDbAction");

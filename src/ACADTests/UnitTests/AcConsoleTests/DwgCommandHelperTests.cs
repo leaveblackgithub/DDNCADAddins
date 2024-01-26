@@ -77,8 +77,11 @@ namespace ACADTests.UnitTests.AcConsoleTests
             dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase).Verifiable(Times.Once);
             dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
             //Example shows parameter verify should be exactly the same object.
-            // Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
+            Assert.Throws<MockException>(() => MsgProviderMockInitInSetup.Verify(m => m.Error(new Exception()), Times.Once));
             MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
+            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
+            MsgProviderMockInitInSetup.Invocations.Clear();
+            Assert.Throws<MockException>(() => MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once));
         }
 
         [Test]
