@@ -7,20 +7,20 @@ using NUnit.Framework;
 namespace ACADTests.UnitTests.AcConsoleTests
 {
     [TestFixture]
-    public class DatabaseExtensionTest:DwgCommandDataBaseTestBase
+    public class DatabaseExtensionTest:DwgCommandHelperTestBase
     {
         [Test]
         public void RunFuncInTransactionExceptionTest()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr =>throw ExInitInBase));
-            _mockMessageProvider.Verify(m => m.Error(ExInitInBase),
+            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase),
                 Times.Once);
         }
         [Test]
         public void CreateObjExceptionTest()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.CreateInModelSpace<Line>(l=>throw ExInitInBase));
-            _mockMessageProvider.Verify(m => m.Error(ExInitInBase),
+            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase),
                 Times.Once);
         }
 

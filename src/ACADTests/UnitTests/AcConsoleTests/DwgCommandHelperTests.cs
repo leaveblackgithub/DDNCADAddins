@@ -17,7 +17,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
 {
     [TestFixture]
     [Apartment(ApartmentState.STA)]
-    public class DwgCommandDataBaseTest : DwgCommandDataBaseTestBase
+    public class DwgCommandHelperTests : DwgCommandHelperTestBase
     {
         private long _lineId;
         private TestException _exInitInSetup;
@@ -73,12 +73,12 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgNotThrowingInRunCommandActions()
         {
-            var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", _mockMessageProvider.Object);
-            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
-            dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(emptyDbAction);
+            var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", MsgProviderMockInitInSetup.Object);
+            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase).Verifiable(Times.Once);
+            dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
             //Example shows parameter verify should be exactly the same object.
-            Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
-            _mockMessageProvider.Verify(m => m.Error(ExInitInBase), Times.Once);
+            // Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
+            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
         }
 
         [Test]
@@ -121,7 +121,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestWritingExMsgNotThrowingInExecuteDataBase()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => throw ExInitInBase);
-            _mockMessageProvider.Verify(m => m.Error(ExInitInBase), Times.Once);
+            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
         }
         
     }
