@@ -14,8 +14,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             ObjectId invalidId = ObjectId.Null;
             DwgCommandHelperActive.ExecuteDataBaseActions(db=>db.RunFuncInTransaction(tr=>tr.GetObject<DBObject>(invalidId, OpenMode.ForRead)));
-            MsgProviderMockInitInSetup.Verify(m => m.Error(Moq.It.IsAny<ArgumentExceptionOfInvalidId>()),
-                Times.Once);
+            MsgProviderVerifyExTypeOnce<ArgumentExceptionOfInvalidId>();
         }
         [Test]
         public void GetObjectInvalidTypeOrActionTest()
@@ -23,11 +22,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
             ObjectId lineId = ObjectId.Null;
             DwgCommandHelperActive.ExecuteDataBaseActions(db => lineId=db.CreateInModelSpace<Line>());
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr => tr.GetObject<Circle>(lineId, OpenMode.ForRead)));
-            MsgProviderMockInitInSetup.Verify(m => m.Error(Moq.It.IsAny<ArgumentExceptionOfIdReferToWrongType>()),
-                Times.Once);
+            MsgProviderVerifyExTypeOnce<ArgumentExceptionOfIdReferToWrongType>();
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr => tr.GetObject<Line>(lineId, OpenMode.ForRead,obj=>throw ExInitInBase)));
-            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase),
-                Times.Once);
+            MsgProviderShowExInitInBaseOnce();
         }
     }
 }

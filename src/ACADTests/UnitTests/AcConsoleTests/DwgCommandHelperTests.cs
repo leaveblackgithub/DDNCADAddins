@@ -73,15 +73,18 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgNotThrowingInRunCommandActions()
         {
-            var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", MsgProviderMockInitInSetup.Object);
-            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase).Verifiable(Times.Once);
+            var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", MsgProviderMockInitInBase.Object);
+            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
             dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
+            // ExampleShowsVerifyCheckingExactlySameObject();
+            MsgProviderShowExInitInBaseOnce();
+            // Assert.Throws<MockException>(MsgProviderShowExInitInBaseOnce);
+        }
+
+        private void ExampleShowsVerifyCheckingExactlySameObject()
+        {
             //Example shows parameter verify should be exactly the same object.
-            Assert.Throws<MockException>(() => MsgProviderMockInitInSetup.Verify(m => m.Error(new Exception()), Times.Once));
-            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
-            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
-            MsgProviderMockInitInSetup.Invocations.Clear();
-            Assert.Throws<MockException>(() => MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once));
+            Assert.Throws<MockException>(() => MsgProviderMockInitInBase.Verify(m => m.Error(new Exception()), Times.Once));
         }
 
         [Test]
@@ -124,7 +127,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestWritingExMsgNotThrowingInExecuteDataBase()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => throw ExInitInBase);
-            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase), Times.Once);
+            MsgProviderMockInitInBase.Verify(m => m.Error(ExInitInBase), Times.Once);
         }
         
     }

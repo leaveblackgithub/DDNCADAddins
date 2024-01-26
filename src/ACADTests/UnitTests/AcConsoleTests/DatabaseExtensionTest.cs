@@ -13,15 +13,13 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void RunFuncInTransactionExceptionTest()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr =>throw ExInitInBase));
-            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase),
-                Times.Once);
+            MsgProviderShowExInitInBaseOnce();
         }
         [Test]
         public void CreateObjExceptionTest()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.CreateInModelSpace<Line>(l=>throw ExInitInBase));
-            MsgProviderMockInitInSetup.Verify(m => m.Error(ExInitInBase),
-                Times.Once);
+            MsgProviderShowExInitInBaseOnce();
         }
 
         [Test]
