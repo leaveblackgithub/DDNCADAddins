@@ -74,12 +74,11 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestWritingExMsgNotThrowingInRunCommandActions()
         {
             var dwgCommandBaseMockProtected = new Mock<DwgCommandHelper>("", _mockMessageProvider.Object);
-            var exInitInMethod = new TestException("exInitInmethod");
-            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(exInitInMethod);
+            dwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
             dwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(emptyDbAction);
             //Example shows parameter verify should be exactly the same object.
             Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
-            _mockMessageProvider.Verify(m => m.Error(It.Is<TestException>(e => e.Message== "exInitInmethod")), Times.Once);
+            _mockMessageProvider.Verify(m => m.Error(ExInitInBase), Times.Once);
         }
 
         [Test]
@@ -87,8 +86,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             var dwgCommandHelperOfMsgBox = new DwgCommandHelper("");
             dwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
-            // Test Verify local variable and test field show same tracks.
-            var exInitInMethod = new TestException("exInitInmethod");
         }
 
 
@@ -123,9 +120,8 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgNotThrowingInExecuteDataBase()
         {
-            DwgCommandHelperActive.ExecuteDataBaseActions(db => throw _exception);
-            Assert.Throws<MockException>(() => _mockMessageProvider.Verify(m => m.Error(new Exception()), Times.Once));
-            _mockMessageProvider.Verify(m => m.Error(_exception), Times.Once);
+            DwgCommandHelperActive.ExecuteDataBaseActions(db => throw ExInitInBase);
+            _mockMessageProvider.Verify(m => m.Error(ExInitInBase), Times.Once);
         }
         
     }

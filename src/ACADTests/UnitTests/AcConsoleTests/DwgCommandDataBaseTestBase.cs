@@ -13,10 +13,10 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected IDwgCommandHelper DwgCommandHelperTest;
         protected IDwgCommandHelper DwgCommandHelperActive;
         protected Mock<IMessageProvider> _mockMessageProvider;
-        protected Exception _exception;
         protected Action<Database> emptyDbAction;
+        private TestException _exInitInBase;
 
-        protected TestException ExInitInBase;
+        protected TestException ExInitInBase=>_exInitInBase??(_exInitInBase=new TestException(nameof(ExInitInBase)));
 
         [SetUp]
         public virtual void SetUp()
@@ -27,8 +27,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
                 TestDrawingPath, messageProvider);
             DwgCommandHelperActive = new DwgCommandHelper("", messageProvider);
             emptyDbAction = (db => LogManager.GetCurrentClassLogger().Info("EmptyDbAction"));
-            _exception = new Exception("Test Exception in Execution");
-            ExInitInBase=new TestException(nameof(ExInitInBase));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using ACADBase;
+﻿using System;
+using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
 using Moq;
 using NUnit.Framework;
@@ -24,8 +25,8 @@ namespace ACADTests.UnitTests.AcConsoleTests
             DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr => tr.GetObject<Circle>(lineId, OpenMode.ForRead)));
             _mockMessageProvider.Verify(m => m.Error(Moq.It.IsAny<ArgumentExceptionOfIdReferToWrongType>()),
                 Times.Once);
-            DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr => tr.GetObject<Line>(lineId, OpenMode.ForRead,obj=>throw _exception)));
-            _mockMessageProvider.Verify(m => m.Error(_exception),
+            DwgCommandHelperActive.ExecuteDataBaseActions(db => db.RunFuncInTransaction(tr => tr.GetObject<Line>(lineId, OpenMode.ForRead,obj=>throw ExInitInBase)));
+            _mockMessageProvider.Verify(m => m.Error(ExInitInBase),
                 Times.Once);
         }
     }
