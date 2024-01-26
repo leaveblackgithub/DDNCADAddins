@@ -33,7 +33,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [SetUp]
         public virtual void SetUp()
         {
-            var messageProvider = MsgProviderMockInitInBase.Object;
             // DwgCommandHelperTest = new DwgCommandHelper(
             //     TestDrawingPath, messageProvider);
             // DwgCommandHelperActive = new DwgCommandHelper("", messageProvider);

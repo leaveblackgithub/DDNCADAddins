@@ -20,16 +20,10 @@ namespace ACADTests.UnitTests.AcConsoleTests
     public class DwgCommandHelperTests : DwgCommandHelperTestBase
     {
         private long _lineId;
-        private TestException _exInitInSetup;
+        private TestException _exInitInContext;
 
-        [SetUp]
-        public override void SetUp()
-        {
-            base.SetUp();
-            _lineId = 0;
-
-            _exInitInSetup = new TestException(nameof(_exInitInSetup));
-        }
+        private TestException ExInitInContext=>_exInitInContext??(_exInitInContext=new TestException(nameof(ExInitInContext)));
+        
         //Use a new drawing
 
         private void AddLine(Database db)
@@ -109,7 +103,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             var dwgCommandHelperOfRecordingExScopeAndTrack = new DwgCommandHelper("",msgProviderMock.Object);
             var exInitInMethod = new TestException("exInitInmethod");
             dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw exInitInMethod);
-            dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw _exInitInSetup);
+            dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInContext);
             dwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInBase);
             LogManager.GetCurrentClassLogger().Info(exscopeandtrack.ToString());
             ExceptionsOfDifScopeHasSameStackTraceFrLine2(exscopeandtrack);
