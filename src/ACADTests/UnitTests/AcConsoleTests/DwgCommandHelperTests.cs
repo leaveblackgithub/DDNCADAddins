@@ -38,15 +38,15 @@ namespace ACADTests.UnitTests.AcConsoleTests
         }
 
 
-        [Test]
-        public void TestWritingExMsgNotThrowingInRunCommandActions()
-        {
-            DwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
-            DwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
-            ExampleShowsVerifyCheckingExactlySameObject();
-            MsgProviderShowExInitInBaseOnce();
-            ExampleOfVerifyOnlyWorkOnce();
-        }
+        // [Test]
+        // public void TestWritingExMsgNotThrowingInRunCommandActions()
+        // {
+        //     DwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
+        //     DwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
+        //     ExampleShowsVerifyCheckingExactlySameObject();
+        //     MsgProviderShowExInitInBaseOnce();
+        //     ExampleOfVerifyOnlyWorkOnce();
+        // }
 
         private void ExampleOfVerifyOnlyWorkOnce()
         {
@@ -72,10 +72,10 @@ namespace ACADTests.UnitTests.AcConsoleTests
             
             DwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInBase);
             LogManager.GetCurrentClassLogger().Info(ExScopeStackTrace.ToString());
-            ExceptionsOfDifScopeHasSameStackTraceFrLine2(ExScopeStackTrace);
+            TestVerifyExceptionReflectingLastMethod(ExScopeStackTrace);
         }
 
-        private static void ExceptionsOfDifScopeHasSameStackTraceFrLine2(StringBuilder exScopeStackTrace)
+        private static void TestVerifyExceptionReflectingLastMethod(StringBuilder exScopeStackTrace)
         {
             Assert.True(exScopeStackTrace.ToString().Contains(nameof(TestExceptionScopeAndTrack)));
         }
@@ -84,7 +84,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestWritingExMsgNotThrowingInExecuteDataBase()
         {
             DwgCommandHelperActive.ExecuteDataBaseActions(db => throw ExInitInBase);
-            MsgProviderMockInitInBase.Verify(m => m.Error(ExInitInBase), Times.Once);
+            ExampleShowsVerifyCheckingExactlySameObject();
+            MsgProviderShowExInitInBaseOnce();
+            ExampleOfVerifyOnlyWorkOnce();
         }
     }
 }

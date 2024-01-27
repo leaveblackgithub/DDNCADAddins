@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
@@ -44,23 +43,12 @@ namespace ACADBase
             }
         }
 
-        public List<Action<Database>> DatabaseActions { get; set; } = new List<Action<Database>>();
-
-        protected Database DwgDatabase { get; set; }
-
         protected bool DefaultDrawing { get; private set; } = true;
 
         public IMessageProvider ActiveMsgProvider
         {
             get => _messageProvider;
             private set => _messageProvider = value ?? new MessageProviderOfMessageBox();
-        }
-
-        public void ExecuteDataBaseActions(params Action<Database>[] databaseActions)
-        {
-            if (databaseActions == null || databaseActions.Length == 0) return;
-            DatabaseActions = databaseActions.ToList();
-            ReadDwgAndExecute();
         }
 
         public void WriteMessage(string message)
@@ -73,56 +61,60 @@ namespace ACADBase
             ActiveMsgProvider.Error(exception);
         }
 
-
-        //TODO Can't verify if acedDisableDefaultARXExceptionHandler is working
-        // EntryPoint may vary across autocad versions
-        [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
-        public static extern void acedDisableDefaultARXExceptionHandler(int value);
-
-        protected void ReadDwgAndExecute()
+        public void ExecuteDataBaseActions(params Action<Database>[] databaseActions)
         {
+            if (databaseActions == null || databaseActions.Length == 0) return;
             ExceptionInfo = null;
             acedDisableDefaultARXExceptionHandler(1);
             // Lock the document and execute the test actions.
             using (DwgDocument.LockDocument())
-            using (DwgDatabase = new Database(DefaultDrawing, false))
+            using (var oldDb = GetActiveDatabaseBeforeCommand())
+            using (var db = GetDwgDatabase())
             {
-                Database oldDb = null!;
-                if (!string.IsNullOrEmpty(DrawingFile))
-                {
-                    DwgDatabase.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
-                    oldDb = HostApplicationServices.WorkingDatabase;
-                }
-                else
-                {
-                    DwgDatabase = DwgDocument.Database;
-                }
-
-                HostApplicationServices.WorkingDatabase = DwgDatabase; // change to the current database.
                 try
                 {
-                    RunCommandActions();
+                    databaseActions.ToList().ForEach(action => action(db));
                 }
+
                 catch (Exception e)
                 {
                     _logger.Error(e);
                     ExceptionInfo = ExceptionDispatchInfo.Capture(e);
                 }
 
-                // Change the database back to the original.
-                if (oldDb != null) HostApplicationServices.WorkingDatabase = oldDb;
-                //TODO Throw exception here will cause fatal error and can not be catch by Nunit.
-                if (ExceptionInfo != null) ActiveMsgProvider!.Error(ExceptionInfo.SourceException);
+                if (!IsNewDrawingOrExisting()) HostApplicationServices.WorkingDatabase = oldDb;
             }
+
+            //TODO Throw exception here will cause fatal error and can not be catch by Nunit.
+            if (ExceptionInfo != null) ActiveMsgProvider.Error(ExceptionInfo.SourceException);
         }
 
-        /// <summary>
-        ///     Override this method to run the command actions.
-        /// </summary>
-        protected virtual void RunCommandActions()
+        protected Database GetActiveDatabaseBeforeCommand()
         {
-            if (!DatabaseActions.Any()) return;
-            DatabaseActions?.ToList().ForEach(action => action(DwgDatabase!));
+            return IsNewDrawingOrExisting() ? null : HostApplicationServices.WorkingDatabase;
         }
+
+        protected Database GetDwgDatabase()
+        {
+            Database dwgDatabase;
+            dwgDatabase = new Database(DefaultDrawing, false);
+
+            if (IsNewDrawingOrExisting())
+                dwgDatabase = DwgDocument.Database;
+            else
+                dwgDatabase.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
+            return dwgDatabase;
+        }
+
+        private bool IsNewDrawingOrExisting()
+        {
+            return string.IsNullOrEmpty(DrawingFile);
+        }
+
+
+        //TODO Can't verify if acedDisableDefaultARXExceptionHandler is working
+        // EntryPoint may vary across autocad versions
+        [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
+        public static extern void acedDisableDefaultARXExceptionHandler(int value);
     }
 }
