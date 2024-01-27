@@ -16,9 +16,9 @@ namespace CADAddins.LibsOfCleanup
         private readonly Dictionary<string, dynamic> _dictOffSpecial;
         private readonly Dictionary<string, List<string>> _dirtytypes;
         private readonly dynamic _layerTableId;
+        private readonly List<string> _listFrozenNplt;
 
         private Dictionary<string, dynamic> _cleantypes;
-        private readonly List<string> _listFrozenNplt;
 
 
         public LayerHelper(dynamic layerTableId, O_DocHelper docHelper, LTypeHelper ltypeHelper)

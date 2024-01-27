@@ -16,16 +16,16 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         private Mock<DwgCommandHelper> _dwgCommandBaseMockProtected;
         private DwgCommandHelper _dwgCommandHelperOfMsgBox;
+        private DwgCommandHelper _dwgCommandHelperOfRecordingExScopeAndTrack;
         private IDwgCommandHelper _dwgCommandHelperOfTestDwg;
 
         private IDwgCommandHelper _dwgHelperActive;
 
         // protected Action<Database> EmptyDbAction;
         private TestException _exInitInBase;
+        private StringBuilder _exScopeStackTrace;
         private Mock<IMessageProvider> _msgProviderMockInitInSetup;
         private Mock<IMessageProvider> _msgProviderMockToRecordEx;
-        private DwgCommandHelper _dwgCommandHelperOfRecordingExScopeAndTrack;
-        private StringBuilder _exScopeStackTrace;
 
         protected IDwgCommandHelper DwgCommandHelperOfTestDwg =>
             _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
@@ -50,18 +50,23 @@ namespace ACADTests.UnitTests.AcConsoleTests
                                                                             new Mock<DwgCommandHelper>("",
                                                                                 GetMsgProviderMockObj()));
 
-        protected StringBuilder ExScopeStackTrace =>_exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
-        protected DwgCommandHelper DwgCommandHelperOfRecordingExScopeAndTrack=>_dwgCommandHelperOfRecordingExScopeAndTrack ?? (_dwgCommandHelperOfRecordingExScopeAndTrack = new DwgCommandHelper("", MsgProviderMockToRecordEx.Object));
+        protected StringBuilder ExScopeStackTrace => _exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
+
+        protected DwgCommandHelper DwgCommandHelperOfRecordingExScopeAndTrack =>
+            _dwgCommandHelperOfRecordingExScopeAndTrack ?? (_dwgCommandHelperOfRecordingExScopeAndTrack =
+                new DwgCommandHelper("", MsgProviderMockToRecordEx.Object));
 
         protected Mock<IMessageProvider> MsgProviderMockToRecordEx
         {
-            get {
+            get
+            {
                 if (_msgProviderMockToRecordEx == null)
                 {
                     _msgProviderMockToRecordEx = new Mock<IMessageProvider>();
                     _msgProviderMockToRecordEx.Setup(m => m.Error(It.IsAny<Exception>()))
                         .Callback<Exception>(e => ExScopeStackTrace.AppendLine($"[{e.Message}]:{e.StackTrace}"));
                 }
+
                 return _msgProviderMockToRecordEx;
             }
         }

@@ -2,9 +2,7 @@
 using System.Text;
 using System.Threading;
 using ACADBase;
-using Autodesk.AutoCAD.DatabaseServices;
 using Moq;
-using Moq.Protected;
 using NLog;
 using NUnit.Framework;
 
@@ -37,17 +35,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
                 @"D:\NonExisting.dwg"));
         }
 
-
-        // [Test]
-        // public void TestWritingExMsgNotThrowingInRunCommandActions()
-        // {
-        //     DwgCommandBaseMockProtected.Protected().Setup("RunCommandActions").Throws(ExInitInBase);
-        //     DwgCommandBaseMockProtected.Object.ExecuteDataBaseActions(EmptyDbAction);
-        //     ExampleShowsVerifyCheckingExactlySameObject();
-        //     MsgProviderShowExInitInBaseOnce();
-        //     ExampleOfVerifyOnlyWorkOnce();
-        // }
-
         private void ExampleOfVerifyOnlyWorkOnce()
         {
             Assert.Throws<MockException>(MsgProviderShowExInitInBaseOnce);
@@ -65,11 +52,10 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             DwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
         }
-        
+
         [Test]
         public void TestExceptionScopeAndTrack()
         {
-            
             DwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInBase);
             LogManager.GetCurrentClassLogger().Info(ExScopeStackTrace.ToString());
             TestVerifyExceptionReflectingLastMethod(ExScopeStackTrace);
