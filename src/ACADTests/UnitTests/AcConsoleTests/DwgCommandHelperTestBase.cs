@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Text;
 using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
 using Moq;
@@ -22,6 +23,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
         // protected Action<Database> EmptyDbAction;
         private TestException _exInitInBase;
         private Mock<IMessageProvider> _msgProviderMockInitInSetup;
+        private Mock<IMessageProvider> _msgProviderMockToRecordEx;
+        private DwgCommandHelper _dwgCommandHelperOfRecordingExScopeAndTrack;
+        private StringBuilder _exScopeStackTrace;
 
         protected IDwgCommandHelper DwgCommandHelperOfTestDwg =>
             _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
@@ -45,6 +49,24 @@ namespace ACADTests.UnitTests.AcConsoleTests
                                                                         (_dwgCommandBaseMockProtected =
                                                                             new Mock<DwgCommandHelper>("",
                                                                                 GetMsgProviderMockObj()));
+
+        protected StringBuilder ExScopeStackTrace =>_exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
+        protected DwgCommandHelper DwgCommandHelperOfRecordingExScopeAndTrack=>_dwgCommandHelperOfRecordingExScopeAndTrack ?? (_dwgCommandHelperOfRecordingExScopeAndTrack = new DwgCommandHelper("", MsgProviderMockToRecordEx.Object));
+
+        protected Mock<IMessageProvider> MsgProviderMockToRecordEx
+        {
+            get {
+                if (_msgProviderMockToRecordEx == null)
+                {
+                    _msgProviderMockToRecordEx = new Mock<IMessageProvider>();
+                    _msgProviderMockToRecordEx.Setup(m => m.Error(It.IsAny<Exception>()))
+                        .Callback<Exception>(e => ExScopeStackTrace.AppendLine($"[{e.Message}]:{e.StackTrace}"));
+                }
+                return _msgProviderMockToRecordEx;
+            }
+        }
+
+        protected long LineIdAsLong { get; private set; }
 
         [SetUp]
         public virtual void SetUp()
@@ -92,6 +114,22 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             MsgProviderMockInitInBase.Verify(checkExceptAction, Times.Once);
             MsgProviderInvokeClear();
+        }
+
+        protected void AddLine(Database db)
+        {
+            LineIdAsLong = 0;
+            var objectId = db.CreateInModelSpace<Line>();
+
+            LineIdAsLong = objectId.Handle.Value;
+        }
+
+        protected void CheckLine(Database db)
+        {
+            //Check in another transaction if the line was created
+
+            if (!db.TryGetObjectId(new Handle(LineIdAsLong), out _)) Assert.Fail("Line didn't created");
+            LineIdAsLong = 0;
         }
     }
 }
