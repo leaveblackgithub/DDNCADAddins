@@ -67,8 +67,9 @@ namespace ACADBase
             ExceptionInfo = null;
             acedDisableDefaultARXExceptionHandler(1);
             // Lock the document and execute the test actions.
+
+            var oldDb = GetActiveDatabaseBeforeCommand();//WorkingDatabase can not be disposed.
             using (DwgDocument.LockDocument())
-            using (var oldDb = GetActiveDatabaseBeforeCommand())
             using (var db = GetDwgDatabase())
             {
                 try

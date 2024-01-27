@@ -44,7 +44,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             //Example shows parameter verify should be exactly the same object.
             Assert.Throws<MockException>(() =>
-                MsgProviderMockInitInBase.Verify(m => m.Error(new Exception()), Times.Once));
+                MsgProviderVerifyExOnce(m=>m.Error(new Exception())));
         }
 
         [Test]
