@@ -3,7 +3,7 @@ using System;
 
 namespace ACADBase
 {
-    public class ArgumentExceptionOfInvalidHandle : Exception
+    public class ArgumentExceptionOfInvalidHandle : ArgumentException
     {
         public ArgumentExceptionOfInvalidHandle(string message) : base(message)
         {

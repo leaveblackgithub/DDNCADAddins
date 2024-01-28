@@ -35,6 +35,10 @@ namespace ACADBase
                 dwgDatabase = DwgDocument.Database;
             else
                 dwgDatabase.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
+            if (dwgDatabase == null)
+            {
+                throw  NullReferenceExceptionOfDatabase._(DrawingFile);
+            }
             return new DatabaseHelper(dwgDatabase);
         }
 

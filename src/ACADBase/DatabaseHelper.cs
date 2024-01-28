@@ -8,8 +8,6 @@ namespace ACADBase
     {
         public DatabaseHelper(Database cadDatabase)
         {
-
-            if (cadDatabase == null) throw (new ArgumentExceptionOfNull(nameof(cadDatabase)));
             CadDatabase = cadDatabase;
         }
 

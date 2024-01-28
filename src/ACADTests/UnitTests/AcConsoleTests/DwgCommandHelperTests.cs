@@ -31,7 +31,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWrongDwgName()
         {
-            Assert.Throws<ArgumentException>(() => new DwgCommandHelperOfAcConsole(
+            Assert.Throws<DwgFileNotFoundException>(() => new DwgCommandHelperOfAcConsole(
                 @"D:\NonExisting.dwg"));
         }
 

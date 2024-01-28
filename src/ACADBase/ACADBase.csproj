@@ -81,7 +81,8 @@
     <Compile Include="ArgumentExceptionOfIdReferToWrongType.cs" />
     <Compile Include="ArgumentExceptionOfInvalidHandle.cs" />
     <Compile Include="ArgumentExceptionOfInvalidId.cs" />
-    <Compile Include="ArgumentExceptionOfNull.cs" />
+    <Compile Include="DwgFileNotFoundException.cs" />
+    <Compile Include="NullReferenceExceptionOfDatabase.cs" />
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DwgCommandHelperBase.cs" />
     <Compile Include="DwgCommandHelperOfAcConsole.cs" />

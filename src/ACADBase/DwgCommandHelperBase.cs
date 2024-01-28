@@ -35,10 +35,7 @@ namespace ACADBase
                 _drawingFile = value;
                 if (string.IsNullOrEmpty(_drawingFile)) return;
                 DefaultDrawing = false;
-                if (File.Exists(_drawingFile)) return;
-                var argumentException = new ArgumentException($"Drawing file {_drawingFile} does not exist.");
-                _logger.Error(argumentException);
-                throw argumentException;
+                if (!File.Exists(_drawingFile)) throw DwgFileNotFoundException._(_drawingFile);
             }
         }
 
