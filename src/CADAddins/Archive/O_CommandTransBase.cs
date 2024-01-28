@@ -5,6 +5,7 @@ using Autodesk.AutoCAD.Geometry;
 using CADAddins.Cropper;
 using CADAddins.Environments;
 using CommonUtils;
+using CommonUtils.Misc;
 
 namespace CADAddins.Archive
 {

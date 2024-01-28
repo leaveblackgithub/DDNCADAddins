@@ -4,6 +4,8 @@ using System.Text;
 using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
+using CommonUtils.CustomExceptions;
+using CommonUtils.Misc;
 using Moq;
 using NLog;
 using NUnit.Framework;

@@ -2,7 +2,7 @@
 using System.Reflection;
 using NLog;
 
-namespace CommonUtils
+namespace CommonUtils.Misc
 {
     public static class ReflectionExtension
     {

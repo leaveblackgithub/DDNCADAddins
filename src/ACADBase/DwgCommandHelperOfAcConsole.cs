@@ -8,6 +8,7 @@ using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
 using CommonUtils.CustomExceptions;
+using CommonUtils.Misc;
 using NLog;
 
 namespace ACADBase

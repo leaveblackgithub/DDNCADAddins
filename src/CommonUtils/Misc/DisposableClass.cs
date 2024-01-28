@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonUtils
+namespace CommonUtils.Misc
 {
     public abstract class DisposableClass : IDisposable
     {

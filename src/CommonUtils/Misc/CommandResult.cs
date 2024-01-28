@@ -2,7 +2,7 @@
 using System.Runtime.ExceptionServices;
 using NLog;
 
-namespace CommonUtils
+namespace CommonUtils.Misc
 {
     public class CommandResult
     {

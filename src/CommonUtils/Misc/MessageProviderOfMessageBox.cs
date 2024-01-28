@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using NLog;
 
-namespace CommonUtils
+namespace CommonUtils.Misc
 {
     public class MessageProviderOfMessageBox : IMessageProvider
     {

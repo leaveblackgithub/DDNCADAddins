@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ACADTests
+namespace CommonUtils.CustomExceptions
 {
     public class TestException : Exception
     {

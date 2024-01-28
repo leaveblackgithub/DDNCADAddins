@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Reflection;
+using CommonUtils.Misc;
 using NUnit.Framework;
 
-namespace CommonUtils.Tests
+namespace CommonUtils.Tests.Misc
 {
     [TestFixture]
     public class ReflectionExtensionTest

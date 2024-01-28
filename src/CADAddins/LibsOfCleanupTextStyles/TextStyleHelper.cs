@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
 using CommonUtils;
+using CommonUtils.Misc;
 
 namespace CADAddins.LibsOfCleanupTextStyles
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonUtils
+namespace CommonUtils.Misc
 {
     public static class DateTimeUtils
     {

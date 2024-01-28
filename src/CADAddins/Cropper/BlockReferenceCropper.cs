@@ -4,6 +4,7 @@ using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Geometry;
 using CADAddins.Archive;
 using CommonUtils;
+using CommonUtils.Misc;
 
 namespace CADAddins.Cropper
 {

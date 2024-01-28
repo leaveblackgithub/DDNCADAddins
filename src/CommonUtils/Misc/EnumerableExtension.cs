@@ -2,16 +2,10 @@
 using System.Collections;
 using NLog;
 
-namespace CommonUtils
+namespace CommonUtils.Misc
 {
     public static class EnumerableExtension
     {
-        public static void Cycle<T>(this IEnumerable enumerable, Action<T> action)
-        {
-            var enumerator = enumerable.GetEnumerator();
-            while (enumerator.MoveNext()) action((T)enumerator.Current);
-        }
-
         public static bool IsNullOrEmpty(this IEnumerable enumerable)
         {
             return enumerable == null || !enumerable.GetEnumerator().MoveNext();
