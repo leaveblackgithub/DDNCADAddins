@@ -79,16 +79,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentExceptionOfIdReferToWrongType.cs" />
+    <Compile Include="ArgumentExceptionOfInvalidHandle.cs" />
     <Compile Include="ArgumentExceptionOfInvalidId.cs" />
-    <Compile Include="DatabaseExtension.cs" />
-    <Compile Include="DwgCommandHelper.cs" />
+    <Compile Include="ArgumentExceptionOfNull.cs" />
+    <Compile Include="DatabaseHelper.cs" />
+    <Compile Include="DwgCommandHelperBase.cs" />
+    <Compile Include="DwgCommandHelperOfAcConsole.cs" />
+    <Compile Include="HandleValue.cs" />
     <Compile Include="IDwgCommandHelper.cs" />
     <Compile Include="IMessageProvider.cs" />
     <Compile Include="MessageProviderOfMessageBox.cs" />
-    <Compile Include="TransactionExtension.cs" />
+    <Compile Include="TransactionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+      <Project>{486D3F43-EF27-4F68-8EDE-3DF2E6C546D6}</Project>
+      <Name>CommonUtils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

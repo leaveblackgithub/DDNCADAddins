@@ -38,7 +38,7 @@ namespace CADAddins
         [CommandMethod("Cleanup")]
         public override void RunCommand()
         {
-            ActiveDwgCommandHelper.ExecuteDataBaseActions(CleanupDatabase);
+            // ActiveDwgCommandHelper.ExecuteDatabaseFuncs(CleanupDatabase);
             //O_CurEditorHelper.WriteMessage($"\n开始清理文件[{O_CurDocHelper.Name}]...");
             // O_CurDocHelper.StopHatchAssoc();
             // CurLTypeHelper.Cleanup();
@@ -54,7 +54,7 @@ namespace CADAddins
 
         private void CleanupDatabase(Database db)
         {
-            ActiveDwgCommandHelper.WriteMessage($"\n开始清理文件[{db.GetDwgName()}]...");
+            // ActiveDwgCommandHelper.WriteMessage($"\n开始清理文件[{db.GetDwgName()}]...");
         }
     }
 }

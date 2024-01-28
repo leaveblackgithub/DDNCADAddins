@@ -18,20 +18,20 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestAddLineInTestDwg()
         {
             // Run the tests
-            DwgCommandHelperOfTestDwg.ExecuteDataBaseActions(AddLine, CheckLine);
+            DwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
         }
 
         [Test]
         public void TestAddLineInActiveDwg()
         {
             // Run the tests
-            DwgCommandHelperActive.ExecuteDataBaseActions(AddLine, CheckLine);
+            DwgCommandHelperActive.ExecuteDatabaseFuncs(AddLine, CheckLine);
         }
 
         [Test]
         public void TestWrongDwgName()
         {
-            Assert.Throws<ArgumentException>(() => new DwgCommandHelper(
+            Assert.Throws<ArgumentException>(() => new DwgCommandHelperOfAcConsole(
                 @"D:\NonExisting.dwg"));
         }
 
@@ -56,7 +56,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestExceptionScopeAndTrack()
         {
-            DwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDataBaseActions(db => throw ExInitInBase);
+            DwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDatabaseFuncs(db => throw ExInitInBase);
             LogManager.GetCurrentClassLogger().Info(ExScopeStackTrace.ToString());
             TestVerifyExceptionReflectingLastMethod(ExScopeStackTrace);
         }
@@ -69,7 +69,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgNotThrowingInExecuteDataBase()
         {
-            DwgCommandHelperActive.ExecuteDataBaseActions(db => throw ExInitInBase);
+            DwgCommandHelperActive.ExecuteDatabaseFuncs(db => throw ExInitInBase);
             ExampleShowsVerifyCheckingExactlySameObject();
             MsgProviderShowExInitInBaseOnce();
             ExampleOfVerifyOnlyWorkOnce();

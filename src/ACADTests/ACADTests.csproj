@@ -111,12 +111,10 @@
     <Compile Include="TestException.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="UnitTests\ACADAppTests\CleanupTests.cs" />
-    <Compile Include="UnitTests\AcConsoleTests\DatabaseExtensionTest.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperTests.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperTestBase.cs" />
     <Compile Include="UnitTests\AcConsoleTests\ExampleTestsToFail.cs" />
     <Compile Include="UnitTests\AcConsoleTests\ExampleTestsToPass.cs" />
-    <Compile Include="UnitTests\AcConsoleTests\TransactionExtensionTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

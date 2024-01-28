@@ -1,19 +1,18 @@
-﻿using System;
-using System.IO;
+﻿using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
+using NLog;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
-using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.DatabaseServices;
-using NLog;
+using System;
+using System.IO;
+using System.Windows.Forms;
+using CommonUtils;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADBase
 {
-    /// <summary>
-    ///     Base class for CadCommand.
-    /// </summary>
-    public class DwgCommandHelper : IDwgCommandHelper
+    public class DwgCommandHelperBase : IDwgCommandHelper
     {
         private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private string _drawingFile;
@@ -21,7 +20,7 @@ namespace ACADBase
         protected Document DwgDocument;
         protected ExceptionDispatchInfo ExceptionInfo;
 
-        public DwgCommandHelper(string drawingFile = "", IMessageProvider messageProvider = null)
+        public DwgCommandHelperBase(string drawingFile = "", IMessageProvider messageProvider = null)
         {
             DrawingFile = drawingFile;
             ActiveMsgProvider = messageProvider;
@@ -61,53 +60,42 @@ namespace ACADBase
             ActiveMsgProvider.Error(exception);
         }
 
-        public void ExecuteDataBaseActions(params Action<Database>[] databaseActions)
+        public CommandResult ExecuteDatabaseFuncs(params Func<DatabaseHelper, CommandResult>[] databaseFuncs)
         {
-            if (databaseActions == null || databaseActions.Length == 0) return;
-            ExceptionInfo = null;
-            acedDisableDefaultARXExceptionHandler(1);
+            CommandResult result = new CommandResult();
+            if (databaseFuncs.IsNullOrEmpty())
+            {
+                return result;
+            }
+
+            acedDisableDefaultARXExceptionHandler(0);
             // Lock the document and execute the test actions.
 
             var oldDb = GetActiveDatabaseBeforeCommand();//WorkingDatabase can not be disposed.
             using (DwgDocument.LockDocument())
-            using (var db = GetDwgDatabase())
+            using (var db = GetDwgDatabaseHelper())
             {
                 try
                 {
-                    databaseActions.ToList().ForEach(action => action(db));
+                    result=databaseFuncs.RunForEach(db);
                 }
 
                 catch (Exception e)
                 {
-                    _logger.Error(e);
-                    ExceptionInfo = ExceptionDispatchInfo.Capture(e);
+                    result.Cancel(e);
                 }
 
                 if (!IsNewDrawingOrExisting()) HostApplicationServices.WorkingDatabase = oldDb;
             }
 
             //TODO Throw exception here will cause fatal error and can not be catch by Nunit.
-            if (ExceptionInfo != null) ActiveMsgProvider.Error(ExceptionInfo.SourceException);
+            ExceptionDispatchInfo resultExceptionInfo = result.ExceptionInfo;
+            if (resultExceptionInfo != null) ActiveMsgProvider.Error(resultExceptionInfo.SourceException);
+            return result;
         }
 
-        protected Database GetActiveDatabaseBeforeCommand()
-        {
-            return IsNewDrawingOrExisting() ? null : HostApplicationServices.WorkingDatabase;
-        }
 
-        protected Database GetDwgDatabase()
-        {
-            Database dwgDatabase;
-            dwgDatabase = new Database(DefaultDrawing, false);
-
-            if (IsNewDrawingOrExisting())
-                dwgDatabase = DwgDocument.Database;
-            else
-                dwgDatabase.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
-            return dwgDatabase;
-        }
-
-        private bool IsNewDrawingOrExisting()
+        protected bool IsNewDrawingOrExisting()
         {
             return string.IsNullOrEmpty(DrawingFile);
         }
@@ -117,5 +105,16 @@ namespace ACADBase
         // EntryPoint may vary across autocad versions
         [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
         public static extern void acedDisableDefaultARXExceptionHandler(int value);
+        
+
+        protected virtual Database GetActiveDatabaseBeforeCommand()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected virtual DatabaseHelper GetDwgDatabaseHelper()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -63,6 +63,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandResult.cs" />
     <Compile Include="LibsOfString\BoundPrefixUtils.cs" />
     <Compile Include="EnumerableExtension.cs" />
     <Compile Include="DateTimeUtils.cs" />

@@ -11,7 +11,7 @@ namespace CADAddins.Environments
 
         public CommandBase()
         {
-            ActiveDwgCommandHelper = new DwgCommandHelper("",
+            ActiveDwgCommandHelper = new DwgCommandHelperOfAcConsole("",
                 new MessageProviderOfEditor(Application.DocumentManager.CurrentDocument.Editor));
         }
 

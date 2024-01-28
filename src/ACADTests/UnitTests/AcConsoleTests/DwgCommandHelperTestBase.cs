@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Text;
 using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
+using CommonUtils;
 using Moq;
 using NLog;
 using NUnit.Framework;
@@ -14,9 +15,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected const string TestDrawingPath =
             @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg";
 
-        private Mock<DwgCommandHelper> _dwgCommandBaseMockProtected;
-        private DwgCommandHelper _dwgCommandHelperOfMsgBox;
-        private DwgCommandHelper _dwgCommandHelperOfRecordingExScopeAndTrack;
+        private Mock<DwgCommandHelperOfAcConsole> _dwgCommandBaseMockProtected;
+        private DwgCommandHelperOfAcConsole _dwgCommandHelperOfMsgBox;
+        private DwgCommandHelperOfAcConsole _dwgCommandHelperOfRecordingExScopeAndTrack;
         private IDwgCommandHelper _dwgCommandHelperOfTestDwg;
 
         private IDwgCommandHelper _dwgHelperActive;
@@ -29,11 +30,11 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         protected IDwgCommandHelper DwgCommandHelperOfTestDwg =>
             _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
-                new DwgCommandHelper(TestDrawingPath, GetMsgProviderMockObj()));
+                new DwgCommandHelperOfAcConsole(TestDrawingPath, GetMsgProviderMockObj()));
 
         protected IDwgCommandHelper DwgCommandHelperActive => _dwgHelperActive ??
                                                               (_dwgHelperActive =
-                                                                  new DwgCommandHelper("", GetMsgProviderMockObj()));
+                                                                  new DwgCommandHelperOfAcConsole("", GetMsgProviderMockObj()));
 
         protected Mock<IMessageProvider> MsgProviderMockInitInBase => _msgProviderMockInitInSetup ??
                                                                       (_msgProviderMockInitInSetup =
@@ -42,19 +43,19 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected TestException ExInitInBase =>
             _exInitInBase ?? (_exInitInBase = new TestException(nameof(ExInitInBase)));
 
-        protected DwgCommandHelper DwgCommandHelperOfMsgBox =>
-            _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelper());
+        protected DwgCommandHelperOfAcConsole DwgCommandHelperOfMsgBox =>
+            _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelperOfAcConsole());
 
-        protected Mock<DwgCommandHelper> DwgCommandBaseMockProtected => _dwgCommandBaseMockProtected ??
+        protected Mock<DwgCommandHelperOfAcConsole> DwgCommandBaseMockProtected => _dwgCommandBaseMockProtected ??
                                                                         (_dwgCommandBaseMockProtected =
-                                                                            new Mock<DwgCommandHelper>("",
+                                                                            new Mock<DwgCommandHelperOfAcConsole>("",
                                                                                 GetMsgProviderMockObj()));
 
         protected StringBuilder ExScopeStackTrace => _exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
 
-        protected DwgCommandHelper DwgCommandHelperOfRecordingExScopeAndTrack =>
+        protected DwgCommandHelperOfAcConsole DwgCommandHelperOfRecordingExScopeAndTrack =>
             _dwgCommandHelperOfRecordingExScopeAndTrack ?? (_dwgCommandHelperOfRecordingExScopeAndTrack =
-                new DwgCommandHelper("", MsgProviderMockToRecordEx.Object));
+                new DwgCommandHelperOfAcConsole("", MsgProviderMockToRecordEx.Object));
 
         protected Mock<IMessageProvider> MsgProviderMockToRecordEx
         {
@@ -71,7 +72,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             }
         }
 
-        protected long LineIdAsLong { get; private set; }
+        protected HandleValue LineHandleValue { get; private set; }
 
         [SetUp]
         public virtual void SetUp()
@@ -121,20 +122,22 @@ namespace ACADTests.UnitTests.AcConsoleTests
             MsgProviderInvokeClear();
         }
 
-        protected void AddLine(Database db)
+        protected CommandResult AddLine(DatabaseHelper db)
         {
-            LineIdAsLong = 0;
-            var objectId = db.CreateInModelSpace<Line>();
+            LineHandleValue = null;
+            CommandResult result=db.CreateInModelSpace<Line>(out var resultHandleValue);
 
-            LineIdAsLong = objectId.Handle.Value;
+            LineHandleValue = resultHandleValue;
+            return result;
         }
 
-        protected void CheckLine(Database db)
+        protected CommandResult CheckLine(DatabaseHelper db)
         {
             //Check in another transaction if the line was created
 
-            if (!db.TryGetObjectId(new Handle(LineIdAsLong), out _)) Assert.Fail("Line didn't created");
-            LineIdAsLong = 0;
+            if (!db.TryGetObjectId(LineHandleValue, out _)) Assert.Fail("Line didn't created");
+            LineHandleValue = null;
+            return new CommandResult();
         }
     }
 }
