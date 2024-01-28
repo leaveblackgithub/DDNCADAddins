@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ACADBase
+namespace CommonUtils.CustomExceptions
 {
     public class NullReferenceExceptionOfDatabase: NullReferenceException
     {

@@ -2,9 +2,9 @@
 using System.Windows.Forms;
 using NLog;
 
-namespace ACADBase
+namespace CommonUtils
 {
-    internal class MessageProviderOfMessageBox : IMessageProvider
+    public class MessageProviderOfMessageBox : IMessageProvider
     {
         public void Show(string message)
         {

@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 using CommonUtils;
+using CommonUtils.CustomExceptions;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADBase

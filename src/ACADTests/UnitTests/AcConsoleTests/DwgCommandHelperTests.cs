@@ -2,6 +2,8 @@
 using System.Text;
 using System.Threading;
 using ACADBase;
+using CommonUtils;
+using CommonUtils.CustomExceptions;
 using Moq;
 using NLog;
 using NUnit.Framework;

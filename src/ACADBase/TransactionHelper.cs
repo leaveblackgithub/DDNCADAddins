@@ -1,6 +1,7 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
+using CommonUtils.CustomExceptions;
 using NLog;
 
 namespace ACADBase
@@ -17,7 +18,7 @@ namespace ACADBase
         public T GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject
         {
-            if (!objectId.IsValid) throw ArgumentExceptionOfInvalidId._(objectId);
+            if (!objectId.IsValid) throw ArgumentExceptionOfInvalidId._(objectId.ToString());
             try
             {
                 var t = (T)ActiveTransaction.GetObject(objectId, mode);
@@ -26,7 +27,7 @@ namespace ACADBase
             catch (InvalidCastException e)
             {
                 LogManager.GetCurrentClassLogger().Error(e);
-                throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId);
+                throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId.ToString());
             }
         }
 

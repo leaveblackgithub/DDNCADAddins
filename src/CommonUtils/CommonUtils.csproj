@@ -55,6 +55,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -63,12 +64,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CustomExceptions\ArgumentExceptionOfIdReferToWrongType.cs" />
+    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
+    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
     <Compile Include="CommandResult.cs" />
+    <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />
+    <Compile Include="IMessageProvider.cs" />
     <Compile Include="LibsOfString\BoundPrefixUtils.cs" />
     <Compile Include="EnumerableExtension.cs" />
     <Compile Include="DateTimeUtils.cs" />
     <Compile Include="DisposableClass.cs" />
     <Compile Include="LibsOfString\LayerNameUtils.cs" />
+    <Compile Include="MessageProviderOfMessageBox.cs" />
+    <Compile Include="CustomExceptions\NullReferenceExceptionOfDatabase.cs" />
     <Compile Include="ReflectionExtension.cs" />
     <Compile Include="Tests\LibsOfString\BoundPrefixUtilsTest.cs" />
     <Compile Include="LibsOfString\StringUtils.cs" />

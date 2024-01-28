@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ACADBase
+namespace CommonUtils
 {
     public interface IMessageProvider
     {

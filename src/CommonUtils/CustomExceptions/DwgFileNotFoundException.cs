@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace ACADBase
+namespace CommonUtils.CustomExceptions
 {
     public class DwgFileNotFoundException:FileNotFoundException
     {

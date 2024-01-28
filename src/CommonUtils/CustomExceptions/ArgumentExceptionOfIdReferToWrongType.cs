@@ -1,8 +1,7 @@
-﻿#nullable enable
+﻿
 using System;
-using Autodesk.AutoCAD.DatabaseServices;
 
-namespace ACADBase
+namespace CommonUtils.CustomExceptions
 {
     public class ArgumentExceptionOfIdReferToWrongType : ArgumentException
     {
@@ -10,10 +9,10 @@ namespace ACADBase
         {
         }
 
-        public static ArgumentExceptionOfIdReferToWrongType _<T>(ObjectId id)
+        public static ArgumentExceptionOfIdReferToWrongType _<T>(string idString)
         {
             return new ArgumentExceptionOfIdReferToWrongType(
-                $"{id} is not referring to a DbObject of Type {typeof(T).Name}.");
+                $"{idString} is not referring to a DbObject of Type {typeof(T).Name}.");
         }
     }
 }

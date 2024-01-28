@@ -1,4 +1,6 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
+using CommonUtils;
+using CommonUtils.CustomExceptions;
 using NLog;
 
 namespace ACADBase

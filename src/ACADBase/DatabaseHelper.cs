@@ -1,6 +1,7 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils;
+using CommonUtils.CustomExceptions;
 
 namespace ACADBase
 {
@@ -30,7 +31,7 @@ namespace ACADBase
             {
                 if (!TryGetObjectId(handleValue, out var objectId))
                 {
-                    return result.Cancel(ArgumentExceptionOfInvalidHandle._(handleValue));
+                    return result.Cancel(ArgumentExceptionOfInvalidHandle._(handleValue.HandleAsLong));
                 }
                 result = tr.RunFuncsOnObject<T>(objectId, funcs);
                 tr.Commit();

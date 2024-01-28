@@ -78,18 +78,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArgumentExceptionOfIdReferToWrongType.cs" />
-    <Compile Include="ArgumentExceptionOfInvalidHandle.cs" />
-    <Compile Include="ArgumentExceptionOfInvalidId.cs" />
-    <Compile Include="DwgFileNotFoundException.cs" />
-    <Compile Include="NullReferenceExceptionOfDatabase.cs" />
     <Compile Include="DatabaseHelper.cs" />
     <Compile Include="DwgCommandHelperBase.cs" />
     <Compile Include="DwgCommandHelperOfAcConsole.cs" />
     <Compile Include="HandleValue.cs" />
     <Compile Include="IDwgCommandHelper.cs" />
-    <Compile Include="IMessageProvider.cs" />
-    <Compile Include="MessageProviderOfMessageBox.cs" />
     <Compile Include="TransactionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
