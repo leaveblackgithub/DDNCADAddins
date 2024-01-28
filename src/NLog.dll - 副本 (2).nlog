@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.nlog-project.org/schemas/NLog.xsd NLog.xsd"
+      autoReload="true"
+      throwExceptions="true"
+      internalLogLevel="Info" internalLogFile="c:\temp\nlog-internal.log">
+   <!--这里对生成的模版中的样例进行了修改-->
+   <targets>  
+       <target name="file" xsi:type="AsyncWrapper">
+	   <target xsi:type="File" fileName="D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/ProjectLogs/${shortdate}.log" layout="${longdate} ${level:uppercase=true} ${event-properties:item=Action} ${message} ${exception:stacktrace}" />         
+       </target>
+   </targets>
+   <rules>
+       <logger name="*" minlevel="Debug" writeTo="file" />
+   </rules>
+</nlog>

@@ -17,7 +17,7 @@ namespace TestRunnerACAD
                 File.Delete(fileInputXml);
             var nunitArgs = new List<string>
             {
-                "--trace=verbose",
+                //"--trace=verbose",
                 "--result=" + fileInputXml
             };
             if (!string.IsNullOrEmpty(prefilter)) nunitArgs.Add($"--prefilter={prefilter}");

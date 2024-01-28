@@ -30,7 +30,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         protected IDwgCommandHelper DwgCommandHelperOfTestDwg =>
             _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
-                new DwgCommandHelperOfAcConsole(TestDrawingPath, GetMsgProviderMockObj()));
+                new DwgCommandHelperOfAcConsole(TestDrawingPath));//, GetMsgProviderMockObj()));
 
         protected IDwgCommandHelper DwgCommandHelperActive => _dwgHelperActive ??
                                                               (_dwgHelperActive =

@@ -31,16 +31,16 @@ namespace ACADBase
             }
         }
 
-        public HandleValue CreateInModelSpace<T>(ObjectId databaseBlockTableId)
+        public HandleValue CreateInModelSpace<T>(ObjectId modelSpaceId)
             where T : Entity, new()
         {
             using var obj = new T();
-            obj.SetDatabaseDefaults();
-            using var blockTable = GetObject<BlockTable>(databaseBlockTableId, OpenMode.ForRead);
             using var modelSpace =
-                GetObject<BlockTableRecord>(blockTable[BlockTableRecord.ModelSpace], OpenMode.ForWrite);
+                GetObject<BlockTableRecord>(modelSpaceId, OpenMode.ForWrite);
             modelSpace.AppendEntity(obj);
             AddNewlyCreatedDBObject(obj, true);
+
+            obj.SetDatabaseDefaults();
             return HandleValue.FromObject(obj);
         }
 
@@ -60,12 +60,12 @@ namespace ACADBase
 
         protected override void DisposeUnManaged()
         {
+            ActiveTransaction?.Dispose();
+            ActiveTransaction = null;
         }
 
         protected override void DisposeManaged()
         {
-            Commit();
-            ActiveTransaction?.Dispose();
         }
 
         public void AddNewlyCreatedDBObject(DBObject obj, bool add)

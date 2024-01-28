@@ -16,11 +16,11 @@ namespace ACADBase
 
         protected override void DisposeUnManaged()
         {
+            CadDatabase?.Dispose();
         }
 
         protected override void DisposeManaged()
         {
-            CadDatabase?.Dispose();
         }
         public CommandResult RunFuncInTransaction<T>(HandleValue handleValue,
             params Func<T, CommandResult>[] funcs) where T : DBObject
@@ -46,7 +46,7 @@ namespace ACADBase
             handleValue = null;
             using (var tr = NewTransactionHelper())
             {
-                handleValue = tr.CreateInModelSpace<T>(GetBlockTableId<T>());
+                handleValue = tr.CreateInModelSpace<T>(CadDatabase.CurrentSpaceId);
                 tr.Commit();
             }
             return RunFuncInTransaction(handleValue, funcs);
