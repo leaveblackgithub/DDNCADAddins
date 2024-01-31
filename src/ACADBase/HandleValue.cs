@@ -1,7 +1,6 @@
-﻿using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils;
+﻿using System;
+using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
-using NLog;
 
 namespace ACADBase
 {
@@ -13,22 +12,37 @@ namespace ACADBase
         }
 
         public long HandleAsLong { get; set; }
+
         public Handle ToHandle()
         {
             try
             {
                 return new Handle(HandleAsLong);
             }
-            catch (System.FormatException)
+            catch (FormatException)
             {
-                throw  ArgumentExceptionOfInvalidHandle._(HandleAsLong);
+                throw ArgumentExceptionOfInvalidHandle._(HandleAsLong);
             }
         }
 
-        public static Handle ToHandle(long handleAsLong) => new HandleValue(handleAsLong).ToHandle();
-        public static HandleValue FromHandle(Handle handle) => new HandleValue(handle.Value);
+        public static Handle ToHandle(long handleAsLong)
+        {
+            return new HandleValue(handleAsLong).ToHandle();
+        }
 
-        public static HandleValue FromObjectId(ObjectId objectId) => FromHandle(objectId.Handle);
-        public static HandleValue FromObject(DBObject dbObject) => FromObjectId(dbObject.Id);
+        public static HandleValue FromHandle(Handle handle)
+        {
+            return new HandleValue(handle.Value);
+        }
+
+        public static HandleValue FromObjectId(ObjectId objectId)
+        {
+            return FromHandle(objectId.Handle);
+        }
+
+        public static HandleValue FromObject(DBObject dbObject)
+        {
+            return FromObjectId(dbObject.Id);
+        }
     }
 }

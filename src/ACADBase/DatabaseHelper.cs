@@ -1,12 +1,11 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public class DatabaseHelper:DisposableClass
+    public class DatabaseHelper : DisposableClass
     {
         public DatabaseHelper(Database cadDatabase)
         {
@@ -23,6 +22,7 @@ namespace ACADBase
         protected override void DisposeManaged()
         {
         }
+
         public CommandResult RunFuncInTransaction<T>(HandleValue handleValue,
             params Func<T, CommandResult>[] funcs) where T : DBObject
         {
@@ -31,10 +31,8 @@ namespace ACADBase
             using (var tr = NewTransactionHelper())
             {
                 if (!TryGetObjectId(handleValue, out var objectId))
-                {
                     return result.Cancel(ArgumentExceptionOfInvalidHandle._(handleValue.HandleAsLong));
-                }
-                result = tr.RunFuncsOnObject<T>(objectId, funcs);
+                result = tr.RunFuncsOnObject(objectId, funcs);
                 tr.Commit();
                 return result;
             }
@@ -50,6 +48,7 @@ namespace ACADBase
                 handleValue = tr.CreateInModelSpace<T>(CadDatabase.CurrentSpaceId);
                 tr.Commit();
             }
+
             return RunFuncInTransaction(handleValue, funcs);
         }
 
@@ -58,7 +57,7 @@ namespace ACADBase
             return CadDatabase.BlockTableId;
         }
 
-        public  TransactionHelper NewTransactionHelper()
+        public TransactionHelper NewTransactionHelper()
 
         {
             return new TransactionHelper(CadDatabase.TransactionManager.StartTransaction());
@@ -66,7 +65,7 @@ namespace ACADBase
 
         public bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
         {
-            return CadDatabase.TryGetObjectId(handleValue.ToHandle(),out objectId);
+            return CadDatabase.TryGetObjectId(handleValue.ToHandle(), out objectId);
         }
     }
 }

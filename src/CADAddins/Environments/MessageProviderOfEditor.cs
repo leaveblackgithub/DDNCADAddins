@@ -1,7 +1,5 @@
 ﻿using System;
-using ACADBase;
 using Autodesk.AutoCAD.EditorInput;
-using CommonUtils;
 using CommonUtils.Misc;
 
 namespace CADAddins.Environments

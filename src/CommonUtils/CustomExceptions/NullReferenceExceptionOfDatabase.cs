@@ -2,7 +2,7 @@
 
 namespace CommonUtils.CustomExceptions
 {
-    public class NullReferenceExceptionOfDatabase: NullReferenceException
+    public class NullReferenceExceptionOfDatabase : NullReferenceException
     {
         //default constructor
         public NullReferenceExceptionOfDatabase(string message) : base(message)

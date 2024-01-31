@@ -1,12 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.ApplicationServices.Core;
-using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils;
+﻿using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using NLog;
@@ -24,6 +16,7 @@ namespace ACADBase
             base(drawingFile, messageProvider)
         {
         }
+
         protected override Database GetActiveDatabaseBeforeCommand()
         {
             return IsNewDrawingOrExisting() ? null : HostApplicationServices.WorkingDatabase;
@@ -38,13 +31,8 @@ namespace ACADBase
                 dwgDatabase = DwgDocument.Database;
             else
                 dwgDatabase.ReadDwgFile(DrawingFile, FileOpenMode.OpenForReadAndWriteNoShare, true, null);
-            if (dwgDatabase == null)
-            {
-                throw  NullReferenceExceptionOfDatabase._(DrawingFile);
-            }
+            if (dwgDatabase == null) throw NullReferenceExceptionOfDatabase._(DrawingFile);
             return new DatabaseHelper(dwgDatabase);
         }
-
     }
-
 }

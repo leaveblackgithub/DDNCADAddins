@@ -2,7 +2,7 @@
 
 namespace CommonUtils.CustomExceptions
 {
-    public class DwgFileNotFoundException:FileNotFoundException
+    public class DwgFileNotFoundException : FileNotFoundException
     {
         public DwgFileNotFoundException(string message) : base(message)
         {
@@ -12,6 +12,5 @@ namespace CommonUtils.CustomExceptions
         {
             return new DwgFileNotFoundException($"Drawing file [{dwgPath}] not found.");
         }
-        
     }
 }

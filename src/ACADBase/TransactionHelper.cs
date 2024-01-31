@@ -1,6 +1,5 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using NLog;
@@ -53,7 +52,7 @@ namespace ACADBase
             result = funcs.RunForEach(obj);
             return result;
         }
-        
+
         public void Commit()
         {
             ActiveTransaction?.Commit();
@@ -73,6 +72,5 @@ namespace ACADBase
         {
             ActiveTransaction.AddNewlyCreatedDBObject(obj, add);
         }
-        
     }
 }

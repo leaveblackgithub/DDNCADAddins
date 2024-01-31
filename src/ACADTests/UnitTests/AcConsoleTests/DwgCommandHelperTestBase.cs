@@ -3,7 +3,6 @@ using System.Linq.Expressions;
 using System.Text;
 using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using Moq;
@@ -32,11 +31,12 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         protected IDwgCommandHelper DwgCommandHelperOfTestDwg =>
             _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
-                new DwgCommandHelperOfAcConsole(TestDrawingPath));//, GetMsgProviderMockObj()));
+                new DwgCommandHelperOfAcConsole(TestDrawingPath)); //, GetMsgProviderMockObj()));
 
         protected IDwgCommandHelper DwgCommandHelperActive => _dwgHelperActive ??
                                                               (_dwgHelperActive =
-                                                                  new DwgCommandHelperOfAcConsole("", GetMsgProviderMockObj()));
+                                                                  new DwgCommandHelperOfAcConsole("",
+                                                                      GetMsgProviderMockObj()));
 
         protected Mock<IMessageProvider> MsgProviderMockInitInBase => _msgProviderMockInitInSetup ??
                                                                       (_msgProviderMockInitInSetup =
@@ -49,9 +49,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
             _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelperOfAcConsole());
 
         protected Mock<DwgCommandHelperOfAcConsole> DwgCommandBaseMockProtected => _dwgCommandBaseMockProtected ??
-                                                                        (_dwgCommandBaseMockProtected =
-                                                                            new Mock<DwgCommandHelperOfAcConsole>("",
-                                                                                GetMsgProviderMockObj()));
+            (_dwgCommandBaseMockProtected =
+                new Mock<DwgCommandHelperOfAcConsole>("",
+                    GetMsgProviderMockObj()));
 
         protected StringBuilder ExScopeStackTrace => _exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
 
@@ -127,7 +127,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected CommandResult AddLine(DatabaseHelper db)
         {
             LineHandleValue = null;
-            CommandResult result=db.CreateInModelSpace<Line>(out var resultHandleValue);
+            var result = db.CreateInModelSpace<Line>(out var resultHandleValue);
 
             LineHandleValue = resultHandleValue;
             return result;

@@ -1,5 +1,4 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils;
 using CommonUtils.Misc;
 
 namespace CADAddins.Archive

@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading;
 using ACADBase;
-using CommonUtils;
 using CommonUtils.CustomExceptions;
 using Moq;
 using NLog;
@@ -46,7 +45,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             //Example shows parameter verify should be exactly the same object.
             Assert.Throws<MockException>(() =>
-                MsgProviderVerifyExOnce(m=>m.Error(new Exception())));
+                MsgProviderVerifyExOnce(m => m.Error(new Exception())));
         }
 
         [Test]

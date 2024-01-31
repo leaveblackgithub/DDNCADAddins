@@ -3,7 +3,6 @@ using System.Reflection;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
-using CommonUtils;
 using CommonUtils.Misc;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 

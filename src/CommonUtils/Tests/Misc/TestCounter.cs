@@ -1,7 +1,4 @@
-﻿using CommonUtils.CustomExceptions;
-using CommonUtils.Misc;
-
-namespace CommonUtils.Tests.Misc
+﻿namespace CommonUtils.Tests.Misc
 {
     public class TestCounter
     {

@@ -1,26 +1,19 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
-using NLog;
-using System.Linq;
-using System.Runtime.ExceptionServices;
-using System.Runtime.InteropServices;
-using System;
-using System.IO;
-using System.Windows.Forms;
-using CommonUtils;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
-using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
+using System;
+using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ACADBase
 {
     public class DwgCommandHelperBase : IDwgCommandHelper
     {
-        private readonly ILogger _logger = LogManager.GetCurrentClassLogger();
         private string _drawingFile;
         private IMessageProvider _messageProvider;
         protected Document DwgDocument;
-        protected ExceptionDispatchInfo ExceptionInfo;
 
         public DwgCommandHelperBase(string drawingFile = "", IMessageProvider messageProvider = null)
         {
@@ -61,22 +54,19 @@ namespace ACADBase
 
         public CommandResult ExecuteDatabaseFuncs(params Func<DatabaseHelper, CommandResult>[] databaseFuncs)
         {
-            CommandResult result = new CommandResult();
-            if (databaseFuncs.IsNullOrEmpty())
-            {
-                return result;
-            }
+            var result = new CommandResult();
+            if (databaseFuncs.IsNullOrEmpty()) return result;
 
             acedDisableDefaultARXExceptionHandler(0);
             // Lock the document and execute the test actions.
 
-            var oldDb = GetActiveDatabaseBeforeCommand();//WorkingDatabase can not be disposed.
+            var oldDb = GetActiveDatabaseBeforeCommand(); //WorkingDatabase can not be disposed.
             using (DwgDocument.LockDocument())
             using (var db = GetDwgDatabaseHelper())
             {
                 try
                 {
-                    result=databaseFuncs.RunForEach(db);
+                    result = databaseFuncs.RunForEach(db);
                 }
 
                 catch (Exception e)
@@ -88,7 +78,7 @@ namespace ACADBase
             }
 
             //TODO Throw exception here will cause fatal error and can not be catch by Nunit.
-            ExceptionDispatchInfo resultExceptionInfo = result.ExceptionInfo;
+            var resultExceptionInfo = result.ExceptionInfo;
             if (resultExceptionInfo != null) ActiveMsgProvider.Error(resultExceptionInfo.SourceException);
             return result;
         }
@@ -104,7 +94,7 @@ namespace ACADBase
         // EntryPoint may vary across autocad versions
         [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
         public static extern void acedDisableDefaultARXExceptionHandler(int value);
-        
+
 
         protected virtual Database GetActiveDatabaseBeforeCommand()
         {

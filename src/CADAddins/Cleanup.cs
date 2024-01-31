@@ -1,5 +1,4 @@
-﻿using ACADBase;
-using Autodesk.AutoCAD.DatabaseServices;
+﻿using Autodesk.AutoCAD.DatabaseServices;
 using Autodesk.AutoCAD.Runtime;
 using CADAddins;
 using CADAddins.Environments;
