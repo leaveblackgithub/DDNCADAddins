@@ -6,7 +6,7 @@ using NLog;
 
 namespace ACADBase
 {
-    public class TransactionHelper : DisposableClass
+    public class TransactionHelper : DisposableClass, ITransactionHelper
     {
         public TransactionHelper(Transaction transaction)
         {

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using NLog;
 
 namespace CommonUtils.Misc
@@ -26,10 +28,34 @@ namespace CommonUtils.Misc
             catch (Exception e)
             {
                 result.Cancel(e);
-                LogManager.GetCurrentClassLogger().Error(e);
             }
 
             return result;
+        }
+
+        public static IDictionary<string, CommandResult> TestForEach<T>(this Func<T, CommandResult>[] funcs, T t)
+        {
+            var results = new Dictionary<string, CommandResult>();
+            if (!funcs.IsNullOrEmpty())
+                foreach (var func in funcs)
+                {
+                    var result = new CommandResult(func.GetMethodInfo().Name);
+                    try
+                    {
+                        func(t);
+                    }
+                    catch (Exception e)
+                    {
+                        result.Cancel(e);
+                    }
+                    finally
+                    {
+                        results.Add(result.StampString, result);
+                    }
+                }
+
+
+            return results;
         }
     }
 }

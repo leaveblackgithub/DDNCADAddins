@@ -12,7 +12,20 @@ namespace CommonUtils.Misc
             Cancel
         }
 
-        public CommandResult(CommandResultType resultType = CommandResultType.Success, Exception exception = null)
+        public CommandResult(string funcName="",CommandResultType resultType = CommandResultType.Success, Exception exception = null)
+        {
+            StampString = GetStampString(funcName);
+            Init(resultType, exception);
+        }
+
+        private string GetStampString(string funcName="")
+        {
+            return DateTimeUtils.AddTimeStampSuffix(funcName);
+        }
+
+        public string StampString { get; set; }
+
+        private void Init(CommandResultType resultType, Exception exception)
         {
             if (exception != null && resultType != CommandResultType.Success)
                 throw new ArgumentException("Command can not success with exception");

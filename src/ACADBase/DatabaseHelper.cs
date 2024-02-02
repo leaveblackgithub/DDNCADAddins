@@ -57,7 +57,7 @@ namespace ACADBase
             return CadDatabase.BlockTableId;
         }
 
-        public TransactionHelper NewTransactionHelper()
+        public ITransactionHelper NewTransactionHelper()
 
         {
             return new TransactionHelper(CadDatabase.TransactionManager.StartTransaction());

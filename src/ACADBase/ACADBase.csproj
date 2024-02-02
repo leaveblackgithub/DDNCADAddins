@@ -84,6 +84,7 @@
     <Compile Include="HandleValue.cs" />
     <Compile Include="IDatabaseHelper.cs" />
     <Compile Include="IDwgCommandHelper.cs" />
+    <Compile Include="ITransactionHelper.cs" />
     <Compile Include="TransactionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
