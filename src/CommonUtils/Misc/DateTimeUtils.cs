@@ -25,5 +25,9 @@ namespace CommonUtils.Misc
         {
             return content + DateTimeToLongTimeStamp(DateTime.Now);
         }
+        public static string AddTimeStampPrefix(string content)
+        {
+            return $"{DateTimeToLongTimeStamp(DateTime.Now)}{content}";
+        }
     }
 }

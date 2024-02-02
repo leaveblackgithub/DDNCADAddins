@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
-using NLog;
 
 namespace CommonUtils.Misc
 {
@@ -15,44 +13,28 @@ namespace CommonUtils.Misc
 
         public static CommandResult RunForEach<T>(this Func<T, CommandResult>[] funcs, T t)
         {
+            //CommandResult has catch and record exception. No need to catch again.
             var result = new CommandResult();
-            try
+            if (funcs.IsNullOrEmpty()) return result;
+            foreach (var func in funcs)
             {
-                if (!funcs.IsNullOrEmpty())
-                    foreach (var func in funcs)
-                    {
-                        result = func(t);
-                        if (result.IsCancel) break;
-                    }
-            }
-            catch (Exception e)
-            {
-                result.Cancel(e);
+                result = func(t);
+                if (result.IsCancel) break;
             }
 
             return result;
         }
 
-        public static IDictionary<string, CommandResult> TestForEach<T>(this Func<T, CommandResult>[] funcs, T t)
+        public static SortedDictionary<string, CommandResult> TestForEach<T>(this Func<T, CommandResult>[] funcs, T t)
         {
-            var results = new Dictionary<string, CommandResult>();
-            if (!funcs.IsNullOrEmpty())
-                foreach (var func in funcs)
-                {
-                    var result = new CommandResult(func.GetMethodInfo().Name);
-                    try
-                    {
-                        func(t);
-                    }
-                    catch (Exception e)
-                    {
-                        result.Cancel(e);
-                    }
-                    finally
-                    {
-                        results.Add(result.StampString, result);
-                    }
-                }
+            //CommandResult has catch and record exception. No need to catch again.
+            var results = new SortedDictionary<string, CommandResult>();
+            if (funcs.IsNullOrEmpty()) return results;
+            foreach (var func in funcs)
+            {
+                var result = func(t);
+                results.Add(result.StampString, result);
+            }
 
 
             return results;

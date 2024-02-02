@@ -20,7 +20,7 @@ namespace CommonUtils.Misc
 
         private string GetStampString(string funcName="")
         {
-            return DateTimeUtils.AddTimeStampSuffix(funcName);
+            return DateTimeUtils.AddTimeStampPrefix(funcName);
         }
 
         public string StampString { get; set; }
