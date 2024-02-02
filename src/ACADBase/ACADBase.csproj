@@ -82,6 +82,7 @@
     <Compile Include="DwgCommandHelperBase.cs" />
     <Compile Include="DwgCommandHelperOfAcConsole.cs" />
     <Compile Include="HandleValue.cs" />
+    <Compile Include="IDatabaseHelper.cs" />
     <Compile Include="IDwgCommandHelper.cs" />
     <Compile Include="TransactionHelper.cs" />
   </ItemGroup>

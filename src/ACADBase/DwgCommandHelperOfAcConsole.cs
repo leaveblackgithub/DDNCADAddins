@@ -22,7 +22,7 @@ namespace ACADBase
             return IsNewDrawingOrExisting() ? null : HostApplicationServices.WorkingDatabase;
         }
 
-        protected override DatabaseHelper GetDwgDatabaseHelper()
+        protected override IDatabaseHelper GetDwgDatabaseHelper()
         {
             Database dwgDatabase;
             dwgDatabase = new Database(DefaultDrawing, false);

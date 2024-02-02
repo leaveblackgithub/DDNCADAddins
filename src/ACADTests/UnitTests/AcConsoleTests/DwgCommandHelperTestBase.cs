@@ -5,6 +5,7 @@ using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
+using CommonUtils.UtilsForTest;
 using Moq;
 using NLog;
 using NUnit.Framework;
@@ -124,7 +125,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             MsgProviderInvokeClear();
         }
 
-        protected CommandResult AddLine(DatabaseHelper db)
+        protected CommandResult AddLine(IDatabaseHelper db)
         {
             LineHandleValue = null;
             var result = db.CreateInModelSpace<Line>(out var resultHandleValue);
@@ -133,7 +134,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             return result;
         }
 
-        protected CommandResult CheckLine(DatabaseHelper db)
+        protected CommandResult CheckLine(IDatabaseHelper db)
         {
             //Check in another transaction if the line was created
 

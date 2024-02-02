@@ -1,6 +1,7 @@
 ﻿using System;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
+using CommonUtils.UtilsForTest;
 using NUnit.Framework;
 
 namespace CommonUtils.Tests.Misc

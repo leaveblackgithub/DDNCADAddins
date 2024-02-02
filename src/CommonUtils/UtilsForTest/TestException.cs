@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonUtils.CustomExceptions
+namespace CommonUtils.UtilsForTest
 {
     public class TestException : Exception
     {

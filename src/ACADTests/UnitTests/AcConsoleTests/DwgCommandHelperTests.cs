@@ -19,14 +19,14 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestAddLineInTestDwg()
         {
             // Run the tests
-            DwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
+            DwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(db => AddLine(db), db => CheckLine(db));
         }
 
         [Test]
         public void TestAddLineInActiveDwg()
         {
             // Run the tests
-            DwgCommandHelperActive.ExecuteDatabaseFuncs(AddLine, CheckLine);
+            DwgCommandHelperActive.ExecuteDatabaseFuncs(db => AddLine(db), db => CheckLine(db));
         }
 
         [Test]

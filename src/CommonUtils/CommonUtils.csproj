@@ -79,7 +79,7 @@
     <Compile Include="CustomExceptions\ArgumentExceptionOfIdReferToWrongType.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
-    <Compile Include="CustomExceptions\TestException.cs" />
+    <Compile Include="UtilsForTest\TestException.cs" />
     <Compile Include="Misc\CommandResult.cs" />
     <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />
     <Compile Include="Misc\IMessageProvider.cs" />
@@ -97,7 +97,7 @@
     <Compile Include="Tests\LibsOfString\StringUtilsTests.cs" />
     <Compile Include="Tests\Misc\EnumberableExtensionTest.cs" />
     <Compile Include="Tests\Misc\ReflectionExtensionTests.cs" />
-    <Compile Include="Tests\Misc\TestCounter.cs" />
+    <Compile Include="UtilsForTest\TestCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

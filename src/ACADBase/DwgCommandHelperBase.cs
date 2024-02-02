@@ -52,7 +52,7 @@ namespace ACADBase
             ActiveMsgProvider.Error(exception);
         }
 
-        public CommandResult ExecuteDatabaseFuncs(params Func<DatabaseHelper, CommandResult>[] databaseFuncs)
+        public CommandResult ExecuteDatabaseFuncs(params Func<IDatabaseHelper, CommandResult>[] databaseFuncs)
         {
             var result = new CommandResult();
             if (databaseFuncs.IsNullOrEmpty()) return result;
@@ -101,7 +101,7 @@ namespace ACADBase
             throw new NotImplementedException();
         }
 
-        protected virtual DatabaseHelper GetDwgDatabaseHelper()
+        protected virtual IDatabaseHelper GetDwgDatabaseHelper()
         {
             throw new NotImplementedException();
         }

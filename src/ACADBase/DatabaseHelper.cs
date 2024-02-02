@@ -5,7 +5,7 @@ using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public class DatabaseHelper : DisposableClass
+    public class DatabaseHelper : DisposableClass, IDatabaseHelper
     {
         public DatabaseHelper(Database cadDatabase)
         {
@@ -63,7 +63,7 @@ namespace ACADBase
             return new TransactionHelper(CadDatabase.TransactionManager.StartTransaction());
         }
 
-        public bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
+        public virtual bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
         {
             return CadDatabase.TryGetObjectId(handleValue.ToHandle(), out objectId);
         }

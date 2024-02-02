@@ -7,6 +7,6 @@ namespace ACADBase
     {
         void WriteMessage(string message);
         void ShowError(Exception exception);
-        CommandResult ExecuteDatabaseFuncs(params Func<DatabaseHelper, CommandResult>[] databaseFuncs);
+        CommandResult ExecuteDatabaseFuncs(params Func<IDatabaseHelper, CommandResult>[] databaseFuncs);
     }
 }

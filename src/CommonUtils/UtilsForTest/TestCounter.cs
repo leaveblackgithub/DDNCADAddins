@@ -1,4 +1,4 @@
-﻿namespace CommonUtils.Tests.Misc
+﻿namespace CommonUtils.UtilsForTest
 {
     public class TestCounter
     {
