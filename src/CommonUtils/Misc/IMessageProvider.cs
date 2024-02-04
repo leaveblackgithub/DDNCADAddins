@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 
 namespace CommonUtils.Misc
 {
@@ -6,5 +7,6 @@ namespace CommonUtils.Misc
     {
         void Show(string message);
         void Error(Exception exception);
+        void Error(ExceptionDispatchInfo exceptionInfo);
     }
 }

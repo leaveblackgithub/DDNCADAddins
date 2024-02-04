@@ -17,7 +17,7 @@ namespace CommonUtils.Misc
         /// <returns>13位时间戳（单位：毫秒）</returns>
         public static long DateTimeToLongTimeStamp(DateTime dateTime)
         {
-            return (long)(dateTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
+            return (long)(dateTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0,0, DateTimeKind.Utc))
                 .TotalMilliseconds;
         }
 
@@ -28,6 +28,11 @@ namespace CommonUtils.Misc
         public static string AddTimeStampPrefix(string content)
         {
             return $"{DateTimeToLongTimeStamp(DateTime.Now)}{content}";
+        }
+
+        public static long DateTimeToLongTimeStampOfNow()
+        {
+            return DateTimeUtils.DateTimeToLongTimeStamp(DateTime.Now);
         }
     }
 }

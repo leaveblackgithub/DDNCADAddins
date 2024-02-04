@@ -4,18 +4,11 @@ using NLog;
 
 namespace CommonUtils.Misc
 {
-    public class MessageProviderOfMessageBox : IMessageProvider
+    public class MessageProviderOfMessageBox : MessageProviderBase
     {
-        public void Show(string message)
+        public override void Show(string message)
         {
             MessageBox.Show(message);
-        }
-
-        public void Error(Exception exception)
-        {
-            var exString = exception.ToString();
-            LogManager.GetCurrentClassLogger().Error(exString);
-            Show(exString);
         }
     }
 }

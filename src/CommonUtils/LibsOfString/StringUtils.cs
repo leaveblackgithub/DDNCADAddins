@@ -21,5 +21,15 @@ namespace CommonUtils.LibsOfString
         {
             return str.Split(new[] { separator }, StringSplitOptions.None);
         }
+
+        public static string SubStringLeft(this string str, int length)
+        {
+            return str.Substring(0, length);
+        }
+
+        public static string SubStringRight(this string str, int length)
+        {
+            return str.Substring(str.Length - length);
+        }       
     }
 }

@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Runtime.ExceptionServices;
 using Autodesk.AutoCAD.EditorInput;
 using CommonUtils.Misc;
 
 namespace CADAddins.Environments
 {
-    public class MessageProviderOfEditor : IMessageProvider
+    public class MessageProviderOfEditor : MessageProviderBase
     {
         private readonly Editor _editor;
 
@@ -14,14 +15,10 @@ namespace CADAddins.Environments
             _editor = editor;
         }
 
-        public void Show(string message)
+        public override void Show(string message)
         {
             _editor.WriteMessage(message);
         }
-
-        public void Error(Exception exception)
-        {
-            _editor.WriteMessage(exception.ToString());
-        }
+        
     }
 }

@@ -34,6 +34,7 @@ namespace CommonUtils.Misc
             {
                 var result = func(t);
                 results.Add(result.StampString, result);
+                System.Threading.Thread.Sleep(1);
             }
 
 

@@ -79,6 +79,8 @@
     <Compile Include="CustomExceptions\ArgumentExceptionOfIdReferToWrongType.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
+    <Compile Include="Misc\MessageProviderBase.cs" />
+    <Compile Include="Tests\Misc\DateTimeUtilsTest.cs" />
     <Compile Include="UtilsForTest\TestException.cs" />
     <Compile Include="Misc\CommandResult.cs" />
     <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />
