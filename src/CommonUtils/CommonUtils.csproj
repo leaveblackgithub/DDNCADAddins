@@ -81,6 +81,9 @@
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
     <Compile Include="Misc\MessageProviderBase.cs" />
     <Compile Include="Tests\Misc\DateTimeUtilsTest.cs" />
+    <Compile Include="Tests\Misc\MessageProviderTest.cs" />
+    <Compile Include="UtilsForTest\TestFuncs.cs" />
+    <Compile Include="UtilsForTest\MessageProviderMock.cs" />
     <Compile Include="UtilsForTest\TestException.cs" />
     <Compile Include="Misc\CommandResult.cs" />
     <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />

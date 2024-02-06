@@ -25,7 +25,7 @@ namespace CommonUtils.Misc
             return result;
         }
 
-        public static SortedDictionary<string, CommandResult> TestForEach<T>(this Func<T, CommandResult>[] funcs, T t)
+        public static SortedDictionary<string, CommandResult> TestForEach<T>(this Func<T, CommandResult>[] funcs, T t,IMessageProvider messageProvider=null)
         {
             //CommandResult has catch and record exception. No need to catch again.
             var results = new SortedDictionary<string, CommandResult>();
@@ -33,6 +33,8 @@ namespace CommonUtils.Misc
             foreach (var func in funcs)
             {
                 var result = func(t);
+                if(result.IsCancel && messageProvider!=null)
+                    messageProvider.Error(result.ExceptionInfo);
                 results.Add(result.StampString, result);
             }
 

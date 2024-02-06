@@ -24,11 +24,11 @@ namespace CommonUtils.Misc
 
         private static long GetValidTimeStamp()
         {
-            long stamp = DateTimeToLongTimeStamp(DateTime.Now);
+            long stamp = DateTimeToLongTimeStampOfNow();
             if (stamp == _laststamp)
             {
                 System.Threading.Thread.Sleep(1);
-                stamp = DateTimeToLongTimeStamp(DateTime.Now);
+                stamp = DateTimeToLongTimeStampOfNow();
             }
             _laststamp = stamp;
             return stamp;
