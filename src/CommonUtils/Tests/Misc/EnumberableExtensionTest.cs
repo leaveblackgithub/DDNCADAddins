@@ -29,7 +29,7 @@ namespace CommonUtils.Tests.Misc
             var result = _testFuncs._.RunForEach(counter);
             Assert.AreEqual(2, counter.Count);
             Assert.True(result.IsCancel);
-            Assert.AreEqual(_testFuncs.TestExceptionForCancel, result.ExceptionInfo.SourceException);
+            Assert.AreEqual(TestFuncs.TestExceptionForCancel, result.ExceptionInfo.SourceException);
         }
         //Test for TestForEach
         [Test]
@@ -39,7 +39,11 @@ namespace CommonUtils.Tests.Misc
             var results = _testFuncs._.TestForEach(counter);
             Assert.AreEqual(4, counter.Count);
             Assert.AreEqual(4, results.Count);
-            Assert.AreEqual(_testFuncs.TestExceptionForCancel, results.ElementAt(3).Value.ExceptionInfo.SourceException);
+            Assert.AreEqual(TestFuncs.TestExceptionForCancel, results.ElementAt(3).Value.ExceptionInfo.SourceException);
         }
+
+        //TODO: Test for RunForOnce
+        
+
     }
 }

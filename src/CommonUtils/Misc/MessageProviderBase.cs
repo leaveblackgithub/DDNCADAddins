@@ -8,24 +8,13 @@ namespace CommonUtils.Misc
 {
     public abstract class MessageProviderBase:IMessageProvider
     {
-        protected MessageProviderBase()
-        {
-            ErrorMessages = new SortedDictionary<string, string>();
-        }
 
         public abstract void Show(string message);
-        public SortedDictionary<string,string> ErrorMessages { get; }
 
+        //NO NEED TO LOG, LOG IN COMMANDRESULT
         public void Error(Exception exception)
         {
             var exString = exception.ToString();
-            ErrorMessages.Add(DateTimeUtils.AddTimeStampPrefix(exception.GetType().Name),exception.StackTrace);
-            LogAndShowError(exString);
-        }
-
-        private void LogAndShowError(string exString)
-        {
-            LogManager.GetCurrentClassLogger().Error(exString);
             Show(exString);
         }
 

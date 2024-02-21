@@ -64,22 +64,10 @@ namespace ACADBase
             using (DwgDocument.LockDocument())
             using (var db = GetDwgDatabaseHelper())
             {
-                try
-                {
-                    result = databaseFuncs.RunForEach(db);
-                }
-
-                catch (Exception e)
-                {
-                    result.Cancel(e);
-                }
-
+                //exception and message has been handled in RunForEach
+                result = databaseFuncs.RunForEach(db,ActiveMsgProvider);
                 if (!IsNewDrawingOrExisting()) HostApplicationServices.WorkingDatabase = oldDb;
             }
-
-            //TODO Throw exception here will cause fatal error and can not be catch by Nunit.
-            var resultExceptionInfo = result.ExceptionInfo;
-            if (resultExceptionInfo != null) ActiveMsgProvider.Error(resultExceptionInfo.SourceException);
             return result;
         }
 

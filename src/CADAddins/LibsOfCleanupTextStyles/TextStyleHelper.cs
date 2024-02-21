@@ -110,7 +110,7 @@ namespace CADAddins.LibsOfCleanupTextStyles
                     foreach (dynamic objId in blk)
                     {
                         DBObject obj = trans.GetObject(objId, OpenMode.ForWrite);
-                        if (obj.TryGetProperty<object>(NameOfTextStyleId, out _))
+                        if (obj.TryGetPropertyOfSpecificType<object>(NameOfTextStyleId, out _))
                             //                            ||
                             //                            entClassName == "AcDbAttributeDefinition")
                         {

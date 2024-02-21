@@ -4,12 +4,15 @@ using Moq;
 
 namespace CommonUtils.UtilsForTest
 {
+    //TODO: Single instance
     public class MessageProviderMock : MessageProviderBase
     {
-        public MessageProviderMock()
+        private MessageProviderMock()
         {
             ThisMock = new Mock<IMessageProvider>();
         }
+
+        public static MessageProviderMock _ { get; } = new MessageProviderMock();
 
         public Mock<IMessageProvider> ThisMock { get; set; }
 
