@@ -12,6 +12,7 @@ using NUnit.Framework;
 
 namespace ACADTests.UnitTests.AcConsoleTests
 {
+    //TODO CREATE SUB CLASS FOR TEST OF DWGCOMMANDHELPER
     public class DwgCommandHelperTestBase
     {
         protected const string TestDrawingPath =

@@ -7,6 +7,8 @@ using Moq;
 using NLog;
 using NUnit.Framework;
 
+
+
 namespace ACADTests.UnitTests.AcConsoleTests
 {
     [TestFixture]
@@ -53,7 +55,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             DwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
         }
-
+        //TODO: FIX THIS TEST
         [Test]
         public void TestExceptionScopeAndTrack()
         {
@@ -61,7 +63,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             LogManager.GetCurrentClassLogger().Info(ExScopeStackTrace.ToString());
             TestVerifyExceptionReflectingLastMethod(ExScopeStackTrace);
         }
-
+        //TODO: FIX THIS TEST
         private static void TestVerifyExceptionReflectingLastMethod(StringBuilder exScopeStackTrace)
         {
             Assert.True(exScopeStackTrace.ToString().Contains(nameof(TestExceptionScopeAndTrack)));
