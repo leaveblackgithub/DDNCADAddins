@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace CommonUtils.Misc
 {
@@ -42,16 +43,10 @@ namespace CommonUtils.Misc
         public static CommandResult RunForOnce<T>(Func<T, CommandResult> func, T t,
             IMessageProvider messageProvider = null)
         {
-            var result = new CommandResult();
-            try
-            {
-                result = func(t);
-            }
-            catch (Exception e)
-            {
-                result.Cancel(e);
-                messageProvider?.Error(result.ExceptionInfo);
-            }
+            //CommandResult has catch and record exception, no need to catch again.
+            var result  = func(t);
+            if (result.IsSuccess) messageProvider?.Show(func.GetMethodInfo().Name);
+            else messageProvider?.Error(result.ExceptionInfo);
             return result;
         }
     }

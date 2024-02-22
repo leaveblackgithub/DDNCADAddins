@@ -82,8 +82,9 @@
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidProperty.cs" />
     <Compile Include="Misc\MessageProviderBase.cs" />
     <Compile Include="Tests\Misc\DateTimeUtilsTest.cs" />
+    <Compile Include="UtilsForTest\MessageProviderMockUtils.cs" />
     <Compile Include="UtilsForTest\TestFuncs.cs" />
-    <Compile Include="UtilsForTest\MessageProviderMock.cs" />
+    <Compile Include="Misc\LazySingleton.cs" />
     <Compile Include="UtilsForTest\TestException.cs" />
     <Compile Include="Misc\CommandResult.cs" />
     <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />

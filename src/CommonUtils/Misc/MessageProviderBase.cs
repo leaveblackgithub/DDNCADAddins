@@ -12,13 +12,13 @@ namespace CommonUtils.Misc
         public abstract void Show(string message);
 
         //NO NEED TO LOG, LOG IN COMMANDRESULT
-        public void Error(Exception exception)
+        public virtual void Error(Exception exception)
         {
             var exString = exception.ToString();
             Show(exString);
         }
 
-        public void Error(ExceptionDispatchInfo exceptionInfo)
+        public virtual void Error(ExceptionDispatchInfo exceptionInfo)
         {
             Exception exception = exceptionInfo.SourceException;
             Error(exception);

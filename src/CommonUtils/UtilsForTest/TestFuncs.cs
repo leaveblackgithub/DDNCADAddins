@@ -23,14 +23,27 @@ namespace CommonUtils.UtilsForTest
 
         public  static CommandResult SucessMethod(TestCounter counter)
         {
-            counter.Increment();
-            return new CommandResult();
+            return TypicalMethod(counter, false);
         }
 
         public static  CommandResult CancelMethod(TestCounter counter)
         {
-            counter.Increment();
-            return new CommandResult().Cancel(TestExceptionForCancel);
+            return TypicalMethod(counter, true);
         }
+        public static CommandResult TypicalMethod(TestCounter counter,bool throwException=false)
+        {
+            var result = new CommandResult();
+            try
+            {
+                counter.Increment();
+                if (throwException) throw TestExceptionForCancel;
+            }
+            catch (Exception e)
+            {
+                result.Cancel(e);
+            }
+            return result;
+        }
+
     }
 }
