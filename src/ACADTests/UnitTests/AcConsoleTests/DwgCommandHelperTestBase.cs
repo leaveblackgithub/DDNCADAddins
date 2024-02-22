@@ -39,7 +39,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
                                                               (_dwgHelperActive =
                                                                   new DwgCommandHelperOfAcConsole("",
                                                                       GetMsgProviderMockObj()));
-
+        //TODO: REPLACE this with MessageProviderMockUtils
         protected Mock<IMessageProvider> MsgProviderMockInitInBase => _msgProviderMockInitInSetup ??
                                                                       (_msgProviderMockInitInSetup =
                                                                           new Mock<IMessageProvider>());

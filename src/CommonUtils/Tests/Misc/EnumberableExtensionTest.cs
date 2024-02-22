@@ -43,10 +43,9 @@ namespace CommonUtils.Tests.Misc
             Assert.AreEqual(4, results.Count);
             Assert.AreEqual(TestFuncs.TestExceptionForCancel, results.ElementAt(3).Value.ExceptionInfo.SourceException);
         }
-
-        //TODO: Test for RunForOnce
+        
         [Test]
-        public void RunForOnceTest()
+        public void RunForOnceAndMessageProviderMockUtilsTest()
         {
             var counter = new TestCounter();
             var result = EnumerableExtension.RunForOnce(TestFuncs.SucessMethod,counter,MessageProviderMockUtils.NewMessageProviderInstance());
