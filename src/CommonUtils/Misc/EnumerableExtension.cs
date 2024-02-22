@@ -41,13 +41,28 @@ namespace CommonUtils.Misc
         }
 
         public static CommandResult RunForOnce<T>(Func<T, CommandResult> func, T t,
-            IMessageProvider messageProvider = null)
+            IMessageProvider messageProvider = null, ShowSuccessFuncName showSuccessFuncName =ShowSuccessFuncName.Hide)
         {
-            //CommandResult has catch and record exception, no need to catch again.
-            var result  = func(t);
-            if (result.IsSuccess) messageProvider?.Show(func.GetMethodInfo().Name);
-            else messageProvider?.Error(result.ExceptionInfo);
+            var result = new CommandResult();
+            //try/catch again for safety
+            try
+            {
+                result = func(t);
+                if(result.IsSuccess&&showSuccessFuncName==ShowSuccessFuncName.Show) messageProvider?.Show(func.GetMethodInfo().Name);
+                if(result.IsCancel) messageProvider?.Error(result.ExceptionInfo);
+            }
+            catch (Exception e)
+            {
+                result.Cancel(e);
+                messageProvider?.Error(e);
+            }
             return result;
+        }
+
+        public enum ShowSuccessFuncName
+        {
+            Show=1,
+            Hide=0
         }
     }
 }

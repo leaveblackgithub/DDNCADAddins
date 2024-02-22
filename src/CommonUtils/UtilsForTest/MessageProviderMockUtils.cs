@@ -12,9 +12,10 @@ namespace CommonUtils.UtilsForTest
         {
             _.Setup(m => m.Show(It.IsAny<string>()))
                 .Callback<string>(s => LastMessage = s);
-            _.Setup(m => m.Error(It.IsAny<Exception>())).Callback<Exception>(s => LastMessage = s.ToString());
+            _.Setup(m => m.Error(It.IsAny<Exception>())).Callback<Exception>(s => LastMessage = s?.Message ?? "");
             _.Setup(m => m.Error(It.IsAny<ExceptionDispatchInfo>()))
-                .Callback<ExceptionDispatchInfo>(s => LastMessage = s.SourceException.ToString());
+                .Callback<ExceptionDispatchInfo>(s => LastMessage =
+                    s?.SourceException?.Message ?? "");
         }
 
         private static readonly Lazy<Mock<IMessageProvider>> LazyInit = new Lazy<Mock<IMessageProvider>>();
@@ -30,7 +31,7 @@ namespace CommonUtils.UtilsForTest
             return MessageProviderInstance;
         }
 
-        private static void MsgProviderInvokeClear()
+        public static void MsgProviderInvokeClear()
         {
             MockInvocationList.Clear();
         }

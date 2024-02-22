@@ -40,9 +40,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
                                                                   new DwgCommandHelperOfAcConsole("",
                                                                       GetMsgProviderMockObj()));
         //TODO: REPLACE this with MessageProviderMockUtils
-        protected Mock<IMessageProvider> MsgProviderMockInitInBase => _msgProviderMockInitInSetup ??
-                                                                      (_msgProviderMockInitInSetup =
-                                                                          new Mock<IMessageProvider>());
+        protected Mock<IMessageProvider> MsgProviderMockInitInBase => MessageProviderMockUtils._;
 
         protected TestException ExInitInBase =>
             _exInitInBase ?? (_exInitInBase = new TestException(nameof(ExInitInBase)));
@@ -96,13 +94,15 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         protected IMessageProvider GetMsgProviderMockObj()
         {
-            MsgProviderInvokeClear();
-            return MsgProviderMockInitInBase.Object;
+            return MessageProviderMockUtils.NewMessageProviderInstance();
+            // MsgProviderInvokeClear();
+            // return MsgProviderMockInitInBase.Object;
         }
 
         private void MsgProviderInvokeClear()
         {
-            MsgProviderMockInitInBase.Invocations.Clear();
+            MessageProviderMockUtils.MsgProviderInvokeClear();
+            // MsgProviderMockInitInBase.Invocations.Clear();
         }
 
         protected void EmptyDbAction(Database db)
@@ -122,8 +122,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         protected void MsgProviderVerifyExOnce(Expression<Action<IMessageProvider>> checkExceptAction)
         {
-            MsgProviderMockInitInBase.Verify(checkExceptAction, Times.Once);
-            MsgProviderInvokeClear();
+            MessageProviderMockUtils.MsgProviderVerifyExOnce(checkExceptAction);
+            // MsgProviderMockInitInBase.Verify(checkExceptAction, Times.Once);
+            // MsgProviderInvokeClear();
         }
 
         protected CommandResult AddLine(IDatabaseHelper db)

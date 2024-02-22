@@ -3,6 +3,7 @@ using System.Text;
 using System.Threading;
 using ACADBase;
 using CommonUtils.CustomExceptions;
+using CommonUtils.UtilsForTest;
 using Moq;
 using NLog;
 using NUnit.Framework;
@@ -53,7 +54,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgWMsgBox()
         {
-            DwgCommandHelperOfMsgBox.WriteMessage("Testing MsgboxAsProvider");
+            DwgCommandHelperOfMsgBox.WriteMessage("Testing Msgbox AsProvider");
         }
         //TODO: FIX THIS TEST
         [Test]
@@ -70,9 +71,10 @@ namespace ACADTests.UnitTests.AcConsoleTests
         }
 
         [Test]
-        public void TestWritingExMsgNotThrowingInExecuteDataBase()
+        public void TestExceptionShouldNotBeThrownInDatabaseFunction()
         {
-            DwgCommandHelperActive.ExecuteDatabaseFuncs(db => throw ExInitInBase);
+            //Assert.Throws<TestException>(()=>
+            DwgCommandHelperActive.ExecuteDatabaseFuncs(db => throw ExInitInBase);//);
             ExampleShowsVerifyCheckingExactlySameObject();
             MsgProviderShowExInitInBaseOnce();
             ExampleOfVerifyOnlyWorkOnce();

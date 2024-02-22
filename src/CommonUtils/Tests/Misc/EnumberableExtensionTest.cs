@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.ExceptionServices;
-using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using CommonUtils.UtilsForTest;
 using Moq;
@@ -33,6 +33,7 @@ namespace CommonUtils.Tests.Misc
             Assert.True(result.IsCancel);
             Assert.AreEqual(TestFuncs.TestExceptionForCancel, result.ExceptionInfo.SourceException);
         }
+
         //Test for TestForEach
         [Test]
         public void TestForEachTest()
@@ -43,22 +44,28 @@ namespace CommonUtils.Tests.Misc
             Assert.AreEqual(4, results.Count);
             Assert.AreEqual(TestFuncs.TestExceptionForCancel, results.ElementAt(3).Value.ExceptionInfo.SourceException);
         }
-        
+
         [Test]
         public void RunForOnceAndMessageProviderMockUtilsTest()
         {
             var counter = new TestCounter();
-            var result = EnumerableExtension.RunForOnce(TestFuncs.SucessMethod,counter,MessageProviderMockUtils.NewMessageProviderInstance());
-            Assert.AreEqual(1, counter.Count);
-            Assert.True(result.IsSuccess);
-            MessageProviderMockUtils.MsgProviderVerifyExOnce(m => m.Show(It.IsAny<string>()));
-            Assert.AreEqual(nameof(TestFuncs.SucessMethod), MessageProviderMockUtils.LastMessage);
-            result = EnumerableExtension.RunForOnce(TestFuncs.CancelMethod, counter, MessageProviderMockUtils.NewMessageProviderInstance());
-            Assert.AreEqual(2, counter.Count);
-            Assert.True(result.IsCancel);
-            MessageProviderMockUtils.MsgProviderVerifyExOnce(m => m.Error(It.IsAny<ExceptionDispatchInfo>()));
-            Assert.AreEqual(TestFuncs.TestExceptionForCancel.ToString(),MessageProviderMockUtils.LastMessage);
+            RunForOnceAndMessageProviderMockUtilsTestMethod(TestFuncs.SucessMethod, counter, 1, false,
+                nameof(TestFuncs.SucessMethod));
+            var exceptionMessage = TestFuncs.TestExceptionForCancel.Message;
+            RunForOnceAndMessageProviderMockUtilsTestMethod(TestFuncs.CancelMethod, counter, 2, true,
+                exceptionMessage,m=>m.Error(It.IsAny<ExceptionDispatchInfo>()));
+            RunForOnceAndMessageProviderMockUtilsTestMethod(c=>throw TestFuncs.TestExceptionForCancel, counter, 2, true,
+                exceptionMessage, m => m.Error(It.IsAny<TestException>()));
         }
 
+        private void RunForOnceAndMessageProviderMockUtilsTestMethod(Func<TestCounter, CommandResult> func,
+            TestCounter counter, int expectedCount, bool isCancel,string message, Expression<Action<IMessageProvider>> checkExceptAction=null)
+        {
+            var result = EnumerableExtension.RunForOnce(func, counter, MessageProviderMockUtils.NewMessageProviderInstance(),EnumerableExtension.ShowSuccessFuncName.Show);
+            Assert.AreEqual(expectedCount, counter.Count);
+            Assert.AreEqual(isCancel, result.IsCancel);
+            if(isCancel&&checkExceptAction!=null) MessageProviderMockUtils.MsgProviderVerifyExOnce(checkExceptAction);
+            Assert.AreEqual(message, MessageProviderMockUtils.LastMessage);
+        }
     }
 }

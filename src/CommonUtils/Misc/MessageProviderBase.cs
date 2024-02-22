@@ -20,6 +20,7 @@ namespace CommonUtils.Misc
 
         public virtual void Error(ExceptionDispatchInfo exceptionInfo)
         {
+            if (exceptionInfo==null||exceptionInfo.SourceException==null) return;
             Exception exception = exceptionInfo.SourceException;
             Error(exception);
         }
