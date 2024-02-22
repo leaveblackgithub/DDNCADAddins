@@ -8,8 +8,6 @@ namespace CommonUtils.UtilsForTest
 {
     public class MessageProviderMockUtils
     {
-        private static Mock<IMessageProvider> _mockInstance;
-
         static MessageProviderMockUtils()
         {
             _.Setup(m => m.Show(It.IsAny<string>()))
@@ -19,15 +17,12 @@ namespace CommonUtils.UtilsForTest
                 .Callback<ExceptionDispatchInfo>(s => LastMessage = s.SourceException.ToString());
         }
 
-        public static Mock<IMessageProvider> _ => _mockInstance ??
-                                                  (_mockInstance =
-                                                      new Mock<IMessageProvider>());
+        private static readonly Lazy<Mock<IMessageProvider>> LazyInit = new Lazy<Mock<IMessageProvider>>();
+        public static Mock<IMessageProvider> _ => LazyInit.Value;
 
         private static IInvocationList MockInvocationList => _.Invocations;
         public static string LastMessage { get; private set; }
         public static IMessageProvider MessageProviderInstance => _.Object;
-
-        public static int InvocationCount => MockInvocationList.Count;
 
         public static IMessageProvider NewMessageProviderInstance()
         {
