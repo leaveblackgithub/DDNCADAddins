@@ -113,6 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomExceptions\ArgumentExceptionOfIdReferToWrongType.cs" />
+    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidDwgFile.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidProperty.cs" />

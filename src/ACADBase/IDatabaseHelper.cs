@@ -14,5 +14,6 @@ namespace ACADBase
             where T : Entity, new();
 
         bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId);
+        CommandResult ExecuteCommand();
     }
 }

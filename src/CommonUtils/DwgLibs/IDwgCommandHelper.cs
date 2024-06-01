@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonUtils.Misc;
 
 namespace CommonUtils.DwgLibs
 {
@@ -6,5 +7,6 @@ namespace CommonUtils.DwgLibs
     {
         void WriteMessage(string message);
         void ShowError(Exception exception);
+        CommandResult ExecuteCommandInDbHelper();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -16,8 +17,8 @@ namespace ACADBase
             CadDatabase = cadDatabase;
             ActiveMsgProvider = messageProvider;
         }
-
         public Database CadDatabase { get; }
+
 
         public IMessageProvider ActiveMsgProvider
         {
@@ -32,7 +33,15 @@ namespace ACADBase
 #endif
             }
         }
+        public void WriteMessage(string message)
+        {
+            ActiveMsgProvider.Show(message);
+        }
 
+        public void ShowError(Exception exception)
+        {
+            ActiveMsgProvider.Error(exception);
+        }
         protected override void DisposeUnManaged()
         {
             CadDatabase?.Dispose();
@@ -85,6 +94,11 @@ namespace ACADBase
         public virtual bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
         {
             return CadDatabase.TryGetObjectId(handleValue.ToHandle(), out objectId);
+        }
+
+        public CommandResult ExecuteCommand()
+        {
+            throw new NotImplementedException();
         }
     }
 }

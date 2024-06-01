@@ -5,7 +5,7 @@ using CommonUtils.Misc;
 
 namespace CommonUtils.DwgLibs
 {
-    public class DwgCommandHelperBase : IDwgCommandHelper
+    public abstract class DwgCommandHelperBase : IDwgCommandHelper
     {
         private string _drawingFile;
         private IMessageProvider _messageProvider;
@@ -44,9 +44,6 @@ namespace CommonUtils.DwgLibs
             ActiveMsgProvider.Error(exception);
         }
 
-        protected bool IsNewDrawingOrExisting()
-        {
-            return string.IsNullOrEmpty(DrawingFile);
-        }
+        public abstract CommandResult ExecuteCommandInDbHelper();
     }
 }
