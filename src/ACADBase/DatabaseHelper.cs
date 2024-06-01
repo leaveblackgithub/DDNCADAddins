@@ -1,18 +1,37 @@
 ﻿using System;
+using System.IO;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public class DatabaseHelper : DisposableClass, IDatabaseHelper
+    public  class DatabaseHelper : DisposableClass, IDatabaseHelper
     {
-        public DatabaseHelper(Database cadDatabase)
+        private IMessageProvider _messageProvider;
+        public DatabaseHelper(Database cadDatabase, IMessageProvider messageProvider = null)
         {
             CadDatabase = cadDatabase;
+            ActiveMsgProvider = messageProvider;
         }
 
         public Database CadDatabase { get; }
+
+        public IMessageProvider ActiveMsgProvider
+        {
+            get => _messageProvider;
+            private set
+            {
+#if AcConcole
+                _messageProvider = value ?? new MessageProviderOfMessageBox();
+#else
+                _messageProvider =
+                    value ?? new MessageProviderOfEditor(Application.DocumentManager.CurrentDocument.Editor);
+#endif
+            }
+        }
 
         protected override void DisposeUnManaged()
         {

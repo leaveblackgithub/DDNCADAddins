@@ -18,9 +18,9 @@ namespace ACADTests
             // DwgCommandHelperTest.Execute(ExceptionMethod);
             var assembly = Assembly.GetExecutingAssembly();
 #if AcConsole
-            TestRunnerBase.RunTestsBase(assembly, "ACADTests.UnitTests.AcConsoleTests");
+            TestRunnerBase.RunTestsBaseIncludes(assembly, "ACADTests.UnitTests.AcConsoleTests");
 #else
-            TestRunnerBase.RunTestsBase(assembly, "ACADTests.UnitTests.ACADAppTests");
+            TestRunnerBase.RunTestsBaseIncludes(assembly);
 #endif
         }
 

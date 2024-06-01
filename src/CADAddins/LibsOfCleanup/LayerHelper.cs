@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Autodesk.AutoCAD.Colors;
 using Autodesk.AutoCAD.DatabaseServices;
 using CADAddins.Archive;
-using CommonUtils.LibsOfString;
+using CommonUtils.StringLibs;
 
 namespace CADAddins.LibsOfCleanup
 {

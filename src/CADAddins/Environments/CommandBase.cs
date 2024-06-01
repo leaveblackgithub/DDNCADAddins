@@ -7,11 +7,11 @@ namespace CADAddins.Environments
 {
     public class CommandBase : O_CommandBase
     {
-        public IDwgCommandHelper ActiveDwgCommandHelper;
+        public IDwgCommandHelperInAcadBase ActiveDwgCommandHelper;
 
         public CommandBase()
         {
-            ActiveDwgCommandHelper = new DwgCommandHelperOfAcConsole("",
+            ActiveDwgCommandHelper = new DwgCommandHelperBaseInAcadBase("",
                 new MessageProviderOfEditor(Application.DocumentManager.CurrentDocument.Editor));
         }
 

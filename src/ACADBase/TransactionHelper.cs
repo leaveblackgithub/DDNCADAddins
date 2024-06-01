@@ -48,7 +48,7 @@ namespace ACADBase
         {
             var result = new CommandResult();
             if (funcs.IsNullOrEmpty()) return result;
-            var obj = GetObject<T>(objectId, OpenMode.ForWrite);
+            using var obj = GetObject<T>(objectId, OpenMode.ForWrite);
             result = funcs.RunForEach(obj);
             return result;
         }

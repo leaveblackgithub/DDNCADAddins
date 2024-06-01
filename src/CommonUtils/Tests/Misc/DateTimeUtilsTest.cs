@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-using CommonUtils.LibsOfString;
 using NUnit.Framework;
 using CommonUtils.Misc;
+using CommonUtils.StringLibs;
 
 namespace CommonUtils.Tests.Misc
 {

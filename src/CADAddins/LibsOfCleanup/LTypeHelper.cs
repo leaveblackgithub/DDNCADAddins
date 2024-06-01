@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using CADAddins.Archive;
-using CommonUtils.LibsOfString;
 using CommonUtils.Misc;
+using CommonUtils.StringLibs;
 
 namespace CADAddins.LibsOfCleanup
 {

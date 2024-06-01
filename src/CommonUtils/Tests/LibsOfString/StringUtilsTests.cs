@@ -1,4 +1,4 @@
-﻿using CommonUtils.LibsOfString;
+﻿using CommonUtils.StringLibs;
 using NUnit.Framework;
 
 namespace CommonUtils.Tests.LibsOfString

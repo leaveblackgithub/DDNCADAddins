@@ -2,7 +2,6 @@
 
 namespace CommonUtils.Misc
 {
-    //TODO: Single instance
     /// <summary>
     /// 静态内部类单例模式，线程安全
     /// </summary>

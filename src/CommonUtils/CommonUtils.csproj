@@ -44,6 +44,42 @@
     <LangVersion>7.3</LangVersion>
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ApplicationTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ApplicationTest|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\ApplicationTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AcConsoleTest|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\bin\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;AcConsole</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AcConsoleTest|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\AcConsoleTest\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Core.5.1.1\lib\net462\Castle.Core.dll</HintPath>
@@ -80,6 +116,10 @@
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
     <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidProperty.cs" />
+    <Compile Include="DwgLibs\DwgCommandHelperBase.cs" />
+    <Compile Include="DwgLibs\DwgExecutorBase.cs" />
+    <Compile Include="DwgLibs\IDwgCommandHelper.cs" />
+    <Compile Include="DwgLibs\IDwgExecutor.cs" />
     <Compile Include="Misc\MessageProviderBase.cs" />
     <Compile Include="Tests\Misc\DateTimeUtilsTest.cs" />
     <Compile Include="UtilsForTest\MessageProviderMockUtils.cs" />
@@ -89,16 +129,16 @@
     <Compile Include="Misc\CommandResult.cs" />
     <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />
     <Compile Include="Misc\IMessageProvider.cs" />
-    <Compile Include="LibsOfString\BoundPrefixUtils.cs" />
+    <Compile Include="StringLibs\BoundPrefixUtils.cs" />
     <Compile Include="Misc\EnumerableExtension.cs" />
     <Compile Include="Misc\DateTimeUtils.cs" />
     <Compile Include="Misc\DisposableClass.cs" />
-    <Compile Include="LibsOfString\LayerNameUtils.cs" />
+    <Compile Include="StringLibs\LayerNameUtils.cs" />
     <Compile Include="Misc\MessageProviderOfMessageBox.cs" />
     <Compile Include="CustomExceptions\NullReferenceExceptionOfDatabase.cs" />
     <Compile Include="Misc\ReflectionExtension.cs" />
     <Compile Include="Tests\LibsOfString\BoundPrefixUtilsTest.cs" />
-    <Compile Include="LibsOfString\StringUtils.cs" />
+    <Compile Include="StringLibs\StringUtils.cs" />
     <Compile Include="Tests\LibsOfString\LayerNameUtilsTests.cs" />
     <Compile Include="Tests\LibsOfString\StringUtilsTests.cs" />
     <Compile Include="Tests\Misc\EnumberableExtensionTest.cs" />

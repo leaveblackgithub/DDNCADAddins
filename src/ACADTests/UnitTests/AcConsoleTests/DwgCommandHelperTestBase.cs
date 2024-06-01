@@ -18,46 +18,38 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected const string TestDrawingPath =
             @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg";
 
-        private Mock<DwgCommandHelperOfAcConsole> _dwgCommandBaseMockProtected;
-        private DwgCommandHelperOfAcConsole _dwgCommandHelperOfMsgBox;
-        private DwgCommandHelperOfAcConsole _dwgCommandHelperOfRecordingExScopeAndTrack;
-        private IDwgCommandHelper _dwgCommandHelperOfTestDwg;
+        private Mock<DwgCommandHelperBaseInAcadBase> _dwgCommandBaseMockProtected;
+        private DwgCommandHelperBaseInAcadBase _dwgCommandHelperOfMsgBox;
+        private DwgCommandHelperBaseInAcadBase _dwgCommandHelperOfRecordingExScopeAndTrack;
+        private IDwgCommandHelperInAcadBase _dwgCommandHelperOfTestDwg;
 
-        private IDwgCommandHelper _dwgHelperActive;
+        private IDwgCommandHelperInAcadBase _dwgHelperActive;
 
         // protected Action<Database> EmptyDbAction;
         private TestException _exInitInBase;
         private StringBuilder _exScopeStackTrace;
-        private Mock<IMessageProvider> _msgProviderMockInitInSetup;
         private Mock<IMessageProvider> _msgProviderMockToRecordEx;
 
-        protected IDwgCommandHelper DwgCommandHelperOfTestDwg =>
+        protected IDwgCommandHelperInAcadBase DwgCommandHelperOfTestDwg =>
             _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
-                new DwgCommandHelperOfAcConsole(TestDrawingPath)); //, GetMsgProviderMockObj()));
+                new DwgCommandHelperBaseInAcadBase(TestDrawingPath)); //, GetMsgProviderMockObj()));
 
-        protected IDwgCommandHelper DwgCommandHelperActive => _dwgHelperActive ??
+        protected IDwgCommandHelperInAcadBase DwgCommandHelperActive => _dwgHelperActive ??
                                                               (_dwgHelperActive =
-                                                                  new DwgCommandHelperOfAcConsole("",
+                                                                  new DwgCommandHelperBaseInAcadBase("",
                                                                       GetMsgProviderMockObj()));
-        //TODO: REPLACE this with MessageProviderMockUtils
-        protected Mock<IMessageProvider> MsgProviderMockInitInBase => MessageProviderMockUtils._;
 
         protected TestException ExInitInBase =>
             _exInitInBase ?? (_exInitInBase = new TestException(nameof(ExInitInBase)));
 
-        protected DwgCommandHelperOfAcConsole DwgCommandHelperOfMsgBox =>
-            _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelperOfAcConsole());
-
-        protected Mock<DwgCommandHelperOfAcConsole> DwgCommandBaseMockProtected => _dwgCommandBaseMockProtected ??
-            (_dwgCommandBaseMockProtected =
-                new Mock<DwgCommandHelperOfAcConsole>("",
-                    GetMsgProviderMockObj()));
+        protected DwgCommandHelperBaseInAcadBase DwgCommandHelperOfMsgBox =>
+            _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelperBaseInAcadBase());
 
         protected StringBuilder ExScopeStackTrace => _exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
 
-        protected DwgCommandHelperOfAcConsole DwgCommandHelperOfRecordingExScopeAndTrack =>
+        protected DwgCommandHelperBaseInAcadBase DwgCommandHelperOfRecordingExScopeAndTrack =>
             _dwgCommandHelperOfRecordingExScopeAndTrack ?? (_dwgCommandHelperOfRecordingExScopeAndTrack =
-                new DwgCommandHelperOfAcConsole("", MsgProviderMockToRecordEx.Object));
+                new DwgCommandHelperBaseInAcadBase("", MsgProviderMockToRecordEx.Object));
 
         protected Mock<IMessageProvider> MsgProviderMockToRecordEx
         {

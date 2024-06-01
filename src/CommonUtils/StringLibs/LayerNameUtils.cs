@@ -1,4 +1,4 @@
-﻿namespace CommonUtils.LibsOfString
+﻿namespace CommonUtils.StringLibs
 {
     public class LayerNameUtils
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CommonUtils.LibsOfString
+namespace CommonUtils.StringLibs
 {
     public static class StringUtils
     {

@@ -2,6 +2,7 @@
 using System.Text;
 using System.Threading;
 using ACADBase;
+using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
 using CommonUtils.UtilsForTest;
 using Moq;
@@ -22,20 +23,20 @@ namespace ACADTests.UnitTests.AcConsoleTests
         public void TestAddLineInTestDwg()
         {
             // Run the tests
-            DwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(db => AddLine(db), db => CheckLine(db));
+            DwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
         }
 
         [Test]
         public void TestAddLineInActiveDwg()
         {
             // Run the tests
-            DwgCommandHelperActive.ExecuteDatabaseFuncs(db => AddLine(db), db => CheckLine(db));
+            DwgCommandHelperActive.ExecuteDatabaseFuncs(AddLine, CheckLine);
         }
 
         [Test]
         public void TestWrongDwgName()
         {
-            Assert.Throws<DwgFileNotFoundException>(() => new DwgCommandHelperOfAcConsole(
+            Assert.Throws<DwgFileNotFoundException>(() => new DwgCommandHelperBaseInAcadBase(
                 @"D:\NonExisting.dwg"));
         }
 
@@ -54,7 +55,9 @@ namespace ACADTests.UnitTests.AcConsoleTests
         [Test]
         public void TestWritingExMsgWMsgBox()
         {
+            //THIS DO NOT WORK:Console.WriteLine("\nConsole WriteLine");
             DwgCommandHelperOfMsgBox.WriteMessage("Testing Msgbox AsProvider");
+            //DwgCommandHelperOfMsgBox.WriteMessage($"WorkingDatabase:{HostApplicationServices.WorkingDatabase.Filename}");
         }
         //TODO: FIX THIS TEST
         [Test]
