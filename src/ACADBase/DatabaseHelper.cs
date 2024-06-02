@@ -9,30 +9,21 @@ using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public  class DatabaseHelper : DisposableClass, IDatabaseHelper
+    public  abstract class DatabaseHelper : DisposableClass, IDatabaseHelper
     {
-        private IMessageProvider _messageProvider;
-        public DatabaseHelper(Database cadDatabase, IMessageProvider messageProvider = null)
+        protected IMessageProvider FldMsgProvider;
+        public DatabaseHelper( IMessageProvider messageProvider = null)
         {
-            CadDatabase = cadDatabase;
+            CadDatabase = GetCurrentDatabase();
             ActiveMsgProvider = messageProvider;
         }
-        public Database CadDatabase { get; }
 
-
-        public IMessageProvider ActiveMsgProvider
+        private Database GetCurrentDatabase()
         {
-            get => _messageProvider;
-            private set
-            {
-#if AcConcole
-                _messageProvider = value ?? new MessageProviderOfMessageBox();
-#else
-                _messageProvider =
-                    value ?? new MessageProviderOfEditor(Application.DocumentManager.CurrentDocument.Editor);
-#endif
-            }
+            return HostApplicationServices.WorkingDatabase;
         }
+        public Database CadDatabase { get; protected set; }
+        public abstract IMessageProvider ActiveMsgProvider { get; set; }
         public void WriteMessage(string message)
         {
             ActiveMsgProvider.Show(message);

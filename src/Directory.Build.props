@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'AcConsoleTest|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE;AcConsoleTest</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ApplicationTest|AnyCPU'">
+		<DefineConstants>DEBUG;TRACE;ApplicationTest</DefineConstants>
+	</PropertyGroup>
 	<PropertyGroup>
 		<RootNamespace>$(MSBuildProjectName)</RootNamespace>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
