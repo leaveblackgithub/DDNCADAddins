@@ -1,46 +1,25 @@
-﻿using Autodesk.AutoCAD.ApplicationServices;
-using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils.Misc;
-using System;
+﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
-using CommonUtils.DwgLibs;
+using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
-using System.Reflection;
+using CommonUtils.DwgLibs;
+using CommonUtils.Misc;
+using CommonUtils.StringLibs;
 
 namespace ACADBase
 {
-    public class DwgCommandHelperBase : DisposableClass,IDwgCommandHelperInAcadBase, IDwgCommandHelper
+    public class DwgCommandHelperBase : DisposableClass, IDwgCommandHelper
 
     {
-        private Database _oldDb;
         private bool _activeDbSwitched;
         private DocumentLock _documentLock;
+        private string _drawingFile;
+        private IMessageProvider _messageProvider;
+        private Database _oldDb;
 
-        public static CommandResult ExecuteDwgCommandHelper<T>(string drawingFile = "", IMessageProvider messageProvider = null) 
-            where T:DwgCommandHelperBase,new()
-        {
-            CommandResult result = new CommandResult();
-            // T dwgCommandHelper = null;
-            try
-            {
-                ConstructorInfo constructorInfo =
-                    ReflectionExtension.GetConstructorInfo<T>(new Type[] { typeof(string), typeof(IMessageProvider) });
-                using T dwgCommandHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
-                result = dwgCommandHelper.Execute();
-            }
-            catch (Exception e)
-            {
-                result.Cancel(e);
-            }
-            // finally
-            // {
-            //     dwgCommandHelper?.Dispose();
-            //     dwgCommandHelper = null;
-            //
-            // }
-            return result;
-        }
+        public IDatabaseHelper FldCmdDatabaseHelper;
 
         public DwgCommandHelperBase()
         {
@@ -53,21 +32,85 @@ namespace ACADBase
             DrawingFile = drawingFile;
             ActiveMsgProvider = messageProvider;
         }
+
+        protected virtual IDatabaseHelper CommandDataBaseHelper
+        {
+            get
+            {
+                if (FldCmdDatabaseHelper == null) InitiateCmdDataBaseHelper();
+                return FldCmdDatabaseHelper;
+            }
+            set => FldCmdDatabaseHelper = value;
+        }
+
+        protected string DrawingFile
+        {
+            get => _drawingFile;
+            set
+            {
+                _drawingFile = value;
+                if (string.IsNullOrEmpty(_drawingFile)) return;
+            }
+        }
+
+        public IMessageProvider ActiveMsgProvider
+        {
+            get => _messageProvider;
+            protected set => _messageProvider = value ?? new MessageProviderOfMessageBox();
+        }
+
         
 
-        //databasehelper是和dwgcommmandhelper一一对应的指针，而这些funcs应该是databasehelper的方法。为啥搞这么复杂
-        public CommandResult ExecuteDatabaseFuncs(params Func<IDatabaseHelper, CommandResult>[] databaseFuncs)
+        public void WriteMessage(string message)
+        {
+            ActiveMsgProvider.Show(message);
+        }
+
+        public void ShowError(Exception exception)
+        {
+            ActiveMsgProvider.Error(exception);
+        }
+
+        public virtual CommandResult CustomExecute()
+        {
+            throw new NotImplementedException();
+        }
+
+        public static CommandResult ExecuteCustomCommands<T>(string drawingFile = "",
+            IMessageProvider messageProvider = null)
+            where T : DwgCommandHelperBase, new()
         {
             var result = new CommandResult();
-            if (databaseFuncs.IsNullOrEmpty()) return result;
+            if (drawingFile != "" && (drawingFile.SubStringRight(4) != ".dwg" || !File.Exists(drawingFile)))
+                return result.Cancel(DwgFileNotFoundException.CustomeMessage(drawingFile));
+#if ApplicationTest
+            //TODO 无法解决Application里将新开图纸激活的问题，所以Application Command需要在当前图纸解决；
+            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile))
+                return result.Cancel(ArgumentExceptionOfInvalidDwgFile.CustomeMessage(drawingFile));
 
-            // using (_documentLock=AppActiveDocument.LockDocument())
-            using (var db = CommandDataBaseHelper)
+#endif
+            // T dwgCommandHelper = null;
+            try
             {
-                //exception and message has been handled in RunForEach
-                result = databaseFuncs.RunForEach(db, ActiveMsgProvider);
-                RestoreWorkingDatabase();
+                result = ReflectionExtension.GetConstructorInfo<T>
+                    (new[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
+                if (result.IsCancel) return result;
+                using var dwgCommandHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
+                result= dwgCommandHelper.InitiateCmdDataBaseHelper();
+                if (result.IsCancel) return result;
+                result = dwgCommandHelper.CustomExecute();
             }
+            catch (Exception e)
+            {
+                result.Cancel(e);
+            }
+
+            // finally
+            // {
+            //     dwgCommandHelper?.Dispose();
+            //     dwgCommandHelper = null;
+            //
+            // }
             return result;
         }
 
@@ -82,72 +125,45 @@ namespace ACADBase
             {
                 HostApplicationServiceWrapper.SetWorkingDatabase(_oldDb);
                 _oldDb = null;
-                _activeDbSwitched=false;
+                _activeDbSwitched = false;
             }
         }
+
         //TODO Can't verify if acedDisableDefaultARXExceptionHandler is working
-            // EntryPoint may vary across autocad versions
-            [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
+        // EntryPoint may vary across autocad versions
+        [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
         public static extern void acedDisableDefaultARXExceptionHandler(bool disable);
 
-        protected IDatabaseHelper FldCmdDatabaseHelper;
-        private string _drawingFile;
-        private IMessageProvider _messageProvider;
-
-        protected virtual IDatabaseHelper CommandDataBaseHelper
+        private CommandResult InitiateCmdDataBaseHelper()
         {
-            get
+            var result = new CommandResult();
+#if AcConsoleTest
+            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile))
             {
-                if (FldCmdDatabaseHelper == null)
-                {
-#if ApplicationTest
-                    //TODO 无法解决Application里将新开图纸激活的问题，所以Application Command需要在当前图纸解决；
-                    if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile))
-                        throw ArgumentExceptionOfInvalidDwgFile._(DrawingFile);
-                    FldCmdDatabaseHelper = new DatabaseHelperOfApplication();
+                SaveWorkingDatabase();
+                _activeDbSwitched = true;
+                // return result;
+            }
+
+            result =
+                DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile, null,
+                    out var commandDataHelper);
 #else
-                    if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile))
-                    {
-                        SaveWorkingDatabase();
-                        _activeDbSwitched = true;
-                    }
-                    FldCmdDatabaseHelper = new DatabaseHelperOfAcConsole(DrawingFile);
+            result = DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfApplication>(DrawingFile, null,
+                out var commandDataHelper);
 
 #endif
-                }
-
-                return FldCmdDatabaseHelper;
-            }
-            set
-            {
-                FldCmdDatabaseHelper = value;
-            }
+            FldCmdDatabaseHelper = result.IsCancel ? null : commandDataHelper;
+            return result;
         }
 
-        protected string DrawingFile
+        protected void InitiateEnvironment()
         {
-            get => _drawingFile;
-            set
-            {
-                _drawingFile = value;
-                if (string.IsNullOrEmpty(_drawingFile)) return;
-                if (!File.Exists(_drawingFile)) throw DwgFileNotFoundException._(_drawingFile);
-            }
-        }
-
-        public IMessageProvider ActiveMsgProvider
-        {
-            get => _messageProvider;
-            protected set => _messageProvider = value ?? new MessageProviderOfMessageBox();
-        }
-
-        protected  void InitiateEnvironment()
-        {
-            _documentLock = DocumentManagerExtension.LockActiveDocument();
+            _documentLock = DocumentManagerWrapper.LockActiveDocument();
             _oldDb = null;
             _activeDbSwitched = false;
             //如果改为TRUE，未处理exception会导致cad崩溃???
-            acedDisableDefaultARXExceptionHandler(true);
+            acedDisableDefaultARXExceptionHandler(false);
         }
 
         protected override void DisposeUnManaged()
@@ -162,21 +178,6 @@ namespace ACADBase
 
         protected override void DisposeManaged()
         {
-        }
-
-        public void WriteMessage(string message)
-        {
-            ActiveMsgProvider.Show(message);
-        }
-
-        public void ShowError(Exception exception)
-        {
-            ActiveMsgProvider.Error(exception);
-        }
-
-        public virtual CommandResult Execute()
-        {
-            throw new NotImplementedException();
         }
     }
 }

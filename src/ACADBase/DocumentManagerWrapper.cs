@@ -4,7 +4,7 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADBase
 {
-    public static class DocumentManagerExtension
+    public static class DocumentManagerWrapper
     {
         public static Document GetActiveDocument()
         {

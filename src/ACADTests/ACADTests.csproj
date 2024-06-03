@@ -98,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="FakeDrawing.dwg" />
     <None Include="packages.config" />
     <None Include="TestDrawing.dwg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -129,6 +130,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="executionbackup.txt" />
+    <Content Include="TestTxt.txt" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

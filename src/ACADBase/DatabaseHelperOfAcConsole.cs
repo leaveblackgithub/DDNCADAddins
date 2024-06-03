@@ -8,11 +8,16 @@ namespace ACADBase
     public class DatabaseHelperOfAcConsole : DatabaseHelper
     {
 
-        public DatabaseHelperOfAcConsole(string drawingFile = "", IMessageProvider messageProvider = null) : base(drawingFile,
+        public DatabaseHelperOfAcConsole(string drawingFile , IMessageProvider messageProvider ) : base(drawingFile,
             messageProvider)
         {
 
         }
+
+        public DatabaseHelperOfAcConsole():base()
+        {
+        }
+
         public override IMessageProvider ActiveMsgProvider
         {
             get => FldMsgProvider;

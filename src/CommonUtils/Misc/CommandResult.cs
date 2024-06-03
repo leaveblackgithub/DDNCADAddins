@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Runtime.ExceptionServices;
+using System.Windows.Forms;
 using NLog;
+using NLog.Fluent;
 
 namespace CommonUtils.Misc
 {
@@ -14,6 +16,7 @@ namespace CommonUtils.Misc
 
         public CommandResult(string funcName="",CommandResultType resultType = CommandResultType.Success, Exception exception = null)
         {
+            CancelMessage = "";
             StampString = GetStampString(funcName);
             Init(resultType, exception);
         }
@@ -35,6 +38,7 @@ namespace CommonUtils.Misc
 
         private CommandResultType ResultType { get; set; }
         public ExceptionDispatchInfo ExceptionInfo { get; set; }
+        public string CancelMessage { get; set; }
 
         public bool IsSuccess => ResultType == CommandResultType.Success;
         public bool IsCancel => ResultType == CommandResultType.Cancel;
@@ -58,6 +62,14 @@ namespace CommonUtils.Misc
         {
             ResultType = CommandResultType.Cancel;
             ExceptionInfo = GetExceptionInfo(exception);
+            CancelMessage = exception?.Message;
+            return this;
+        }
+        public CommandResult Cancel(string message)
+        {
+            ResultType = CommandResultType.Cancel;
+            CancelMessage=message;
+            LogManager.GetCurrentClassLogger().Warn(message);
             return this;
         }
     }

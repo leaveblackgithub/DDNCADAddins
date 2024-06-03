@@ -14,10 +14,10 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
         }
 
-        public override CommandResult Execute()
+        public override CommandResult CustomExecute()
         {
             CommandResult result=CommandDataBaseHelper.CreateInCurrentSpace<Line>(out var handleValue);
-            if (!CommandDataBaseHelper.TryGetObjectId(handleValue, out _)) result.Cancel();
+            if (!CommandDataBaseHelper.TryGetObjectId(handleValue, out _)) result.Cancel("Fail to get newly-crated line");
             return result;
         }
     }

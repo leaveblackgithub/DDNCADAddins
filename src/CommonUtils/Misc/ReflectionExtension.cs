@@ -6,15 +6,16 @@ namespace CommonUtils.Misc
 {
     public static class ReflectionExtension
     {
-        public static ConstructorInfo GetConstructorInfo<T>(Type[] parameterTypes)
+        public static CommandResult GetConstructorInfo<T>(Type[] parameterTypes,out ConstructorInfo constructorInfo)
         {
-            ConstructorInfo constructorInfo =
-                typeof(T).GetConstructor(parameterTypes);
+            CommandResult result=new CommandResult();
+            constructorInfo= typeof(T).GetConstructor(parameterTypes);
             if (constructorInfo == null)
             {
-                throw NullReferenceExceptionOfConstructor._<T>();
+                return result.Cancel(NullReferenceExceptionOfConstructor.CustomMessage<T>());
             }
-            return constructorInfo;
+
+            return result;
         }
         public static bool TryGetPropertyOfSpecificType<T>(this object obj, string propertyName, out PropertyInfo property)
         {

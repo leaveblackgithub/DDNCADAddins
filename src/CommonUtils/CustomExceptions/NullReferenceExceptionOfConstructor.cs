@@ -11,7 +11,12 @@ namespace CommonUtils.CustomExceptions
 
         public static NullReferenceExceptionOfConstructor _<T>()
         {
-            return new NullReferenceExceptionOfConstructor($"Class [{typeof(T)}] doesn't have ");
+            return new NullReferenceExceptionOfConstructor(CustomMessage<T>());
+        }
+
+        public static string CustomMessage<T>()
+        {
+            return $"Class [{typeof(T)}] doesn't have ";
         }
     }
 }

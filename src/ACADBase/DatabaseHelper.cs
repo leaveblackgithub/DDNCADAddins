@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
@@ -15,11 +16,32 @@ namespace ACADBase
         protected IMessageProvider FldMsgProvider;
         private Database _cadDatabase;
 
+        public static CommandResult NewDatabaseHelper<T>(string drawingFile,
+            IMessageProvider messageProvider,out T newDataBaseHelper) where T : DatabaseHelper, new()
+        {
+            newDataBaseHelper = null;
+            CommandResult result = new CommandResult();
+            result = ReflectionExtension.GetConstructorInfo<T>
+                (new Type[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
+            if (result.IsCancel) return result;
+            newDataBaseHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
+            if(newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return result.Cancel(NullReferenceExceptionOfDatabase.CustomeMessage(drawingFile));
+            return result;
+        }
+
+        public DatabaseHelper()
+        {
+
+        }
         public DatabaseHelper(string drawingFile="", IMessageProvider messageProvider = null)
         {
             CadDatabase = GetDatabase(drawingFile);
+            IsInvalid = (CadDatabase == null);
+            if (IsInvalid) return;
             ActiveMsgProvider = messageProvider;
         }
+
+        public bool IsInvalid { get; set; }
 
         protected Database GetCurrentDatabase()
         {
@@ -36,9 +58,7 @@ namespace ACADBase
             else
             {
                 database = DatabaseExtension.GetDwgDatabase(drawingFile);
-                if (database == null) throw NullReferenceExceptionOfDatabase._(drawingFile);
             }
-
             return database;
 
         }

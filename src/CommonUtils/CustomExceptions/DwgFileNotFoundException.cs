@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace CommonUtils.CustomExceptions
 {
@@ -10,7 +11,12 @@ namespace CommonUtils.CustomExceptions
 
         public static DwgFileNotFoundException _(string dwgPath)
         {
-            return new DwgFileNotFoundException($"Drawing file [{dwgPath}] not found.");
+            return new DwgFileNotFoundException(CustomeMessage(dwgPath));
+        }
+
+        public static string CustomeMessage(string dwgPath)
+        {
+            return $"Drawing file [{dwgPath}] not found.";
         }
     }
 }

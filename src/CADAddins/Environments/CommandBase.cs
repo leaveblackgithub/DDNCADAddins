@@ -2,12 +2,13 @@
 using ACADBase;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using CADAddins.Archive;
+using CommonUtils.DwgLibs;
 
 namespace CADAddins.Environments
 {
     public class CommandBase : O_CommandBase
     {
-        public IDwgCommandHelperInAcadBase ActiveDwgCommandHelper;
+        public IDwgCommandHelper ActiveDwgCommandHelper;
 
         public CommandBase()
         {

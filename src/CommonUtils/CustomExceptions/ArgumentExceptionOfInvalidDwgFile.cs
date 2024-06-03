@@ -10,7 +10,12 @@ namespace CommonUtils.CustomExceptions
 
         public static ArgumentExceptionOfInvalidDwgFile _(string dwgPath)
         {
-            return new ArgumentExceptionOfInvalidDwgFile($"Commands need to be executed in Active Document. Drawing file [{dwgPath}] is not active document.");
+            return new ArgumentExceptionOfInvalidDwgFile(CustomeMessage(dwgPath));
+        }
+
+        public static string CustomeMessage(string dwgPath)
+        {
+            return $"Commands need to be executed in Active Document. Drawing file [{dwgPath}] is not active document.";
         }
     }
 }

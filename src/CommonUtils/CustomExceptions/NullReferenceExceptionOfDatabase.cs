@@ -11,7 +11,11 @@ namespace CommonUtils.CustomExceptions
 
         public static NullReferenceExceptionOfDatabase _(string dwgPath)
         {
-            return new NullReferenceExceptionOfDatabase($"dwgDatabase read from [{dwgPath}] is null.");
+            return new NullReferenceExceptionOfDatabase(CustomeMessage(dwgPath));
+        }
+        public static string CustomeMessage(string dwgPath)
+        {
+            return $"DwgDatabase read from [{dwgPath}] is null.";
         }
     }
 }
