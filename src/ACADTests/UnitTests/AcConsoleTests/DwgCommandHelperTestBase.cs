@@ -18,38 +18,31 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected const string TestDrawingPath =
             @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\TestDrawing.dwg";
 
-        private Mock<DwgCommandHelperBaseInAcadBase> _dwgCommandBaseMockProtected;
-        private DwgCommandHelperBaseInAcadBase _dwgCommandHelperOfMsgBox;
-        private DwgCommandHelperBaseInAcadBase _dwgCommandHelperOfRecordingExScopeAndTrack;
-        private IDwgCommandHelperInAcadBase _dwgCommandHelperOfTestDwg;
-
-        private IDwgCommandHelperInAcadBase _dwgHelperActive;
+        private Mock<DwgCommandHelperBase> _dwgCommandBaseMockProtected;
+        private DwgCommandHelperBase _dwgCommandHelperOfMsgBox;
+        private DwgCommandHelperBase _dwgCommandHelperOfRecordingExScopeAndTrack;
 
         // protected Action<Database> EmptyDbAction;
         private TestException _exInitInBase;
         private StringBuilder _exScopeStackTrace;
         private Mock<IMessageProvider> _msgProviderMockToRecordEx;
+        
 
-        protected IDwgCommandHelperInAcadBase DwgCommandHelperOfTestDwg =>
-            _dwgCommandHelperOfTestDwg ?? (_dwgCommandHelperOfTestDwg =
-                new DwgCommandHelperBaseInAcadBase(TestDrawingPath)); //, GetMsgProviderMockObj()));
+        protected DwgCommandHelperOfTestAddingLines PropDwgCommandHelperOfTestAddingLinesDwg { get; set; }
 
-        protected IDwgCommandHelperInAcadBase DwgCommandHelperActive => _dwgHelperActive ??
-                                                              (_dwgHelperActive =
-                                                                  new DwgCommandHelperBaseInAcadBase("",
-                                                                      GetMsgProviderMockObj()));
+        protected DwgCommandHelperOfTestAddingLines PropDwgCommandHelperActive { get; set; }
 
         protected TestException ExInitInBase =>
             _exInitInBase ?? (_exInitInBase = new TestException(nameof(ExInitInBase)));
 
-        protected DwgCommandHelperBaseInAcadBase DwgCommandHelperOfMsgBox =>
-            _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelperBaseInAcadBase());
+        protected DwgCommandHelperBase DwgCommandHelperOfMsgBox =>
+            _dwgCommandHelperOfMsgBox ?? (_dwgCommandHelperOfMsgBox = new DwgCommandHelperBase());
 
         protected StringBuilder ExScopeStackTrace => _exScopeStackTrace ?? (_exScopeStackTrace = new StringBuilder());
 
-        protected DwgCommandHelperBaseInAcadBase DwgCommandHelperOfRecordingExScopeAndTrack =>
+        protected DwgCommandHelperBase DwgCommandHelperOfRecordingExScopeAndTrack =>
             _dwgCommandHelperOfRecordingExScopeAndTrack ?? (_dwgCommandHelperOfRecordingExScopeAndTrack =
-                new DwgCommandHelperBaseInAcadBase("", MsgProviderMockToRecordEx.Object));
+                new DwgCommandHelperBase("", MsgProviderMockToRecordEx.Object));
 
         protected Mock<IMessageProvider> MsgProviderMockToRecordEx
         {
@@ -67,7 +60,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         }
 
         protected HandleValue LineHandleValue { get; private set; }
-
+        
         [SetUp]
         public virtual void SetUp()
         {
@@ -122,7 +115,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected CommandResult AddLine(IDatabaseHelper db)
         {
             LineHandleValue = null;
-            var result = db.CreateInModelSpace<Line>(out var resultHandleValue);
+            var result = db.CreateInCurrentSpace<Line>(out var resultHandleValue);
 
             LineHandleValue = resultHandleValue;
             return result;

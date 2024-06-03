@@ -10,14 +10,14 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <DirectoryBuildPropsPath>..\Directory.Build.props</DirectoryBuildPropsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>8</LangVersion>
@@ -25,7 +25,6 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <LangVersion>8</LangVersion>
@@ -82,9 +81,10 @@
   <ItemGroup>
     <Compile Include="DatabaseExtension.cs" />
     <Compile Include="DatabaseHelper.cs" />
-    <Compile Include="DatabaseHelperOfAcConcole.cs" />
+    <Compile Include="DatabaseHelperOfAcConsole.cs" />
     <Compile Include="DatabaseHelperOfApplication.cs" />
-    <Compile Include="DwgCommandHelperBaseInAcadBase.cs" />
+    <Compile Include="DocumentManagerExtension.cs" />
+    <Compile Include="DwgCommandHelperBase.cs" />
     <Compile Include="HandleValue.cs" />
     <Compile Include="HostApplicationServiceWrapper.cs" />
     <Compile Include="IDatabaseHelper.cs" />

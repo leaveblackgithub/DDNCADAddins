@@ -9,11 +9,10 @@ namespace ACADBase
         CommandResult RunFuncInTransaction<T>(HandleValue handleValue,
             params Func<T, CommandResult>[] funcs) where T : DBObject;
 
-        CommandResult CreateInModelSpace<T>(out HandleValue handleValue,
+        CommandResult CreateInCurrentSpace<T>(out HandleValue handleValue,
             params Func<T, CommandResult>[] funcs)
             where T : Entity, new();
 
         bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId);
-        CommandResult ExecuteCommand();
     }
 }

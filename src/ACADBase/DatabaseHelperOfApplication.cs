@@ -7,6 +7,12 @@ namespace ACADBase
 {
     public class DatabaseHelperOfApplication : DatabaseHelper
     {
+
+        public DatabaseHelperOfApplication(string drawingFile = "", IMessageProvider messageProvider = null) : base(drawingFile,
+            messageProvider)
+        {
+
+        }
         protected Document CadDocument => Application.DocumentManager.CurrentDocument;
         
 

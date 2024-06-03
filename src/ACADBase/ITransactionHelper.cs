@@ -9,7 +9,7 @@ namespace ACADBase
         T GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject;
 
-        HandleValue CreateInModelSpace<T>(ObjectId modelSpaceId)
+        HandleValue CreateObject<T>(ObjectId modelSpaceId)
             where T : Entity, new();
 
         CommandResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, CommandResult>[] funcs) where T : DBObject;

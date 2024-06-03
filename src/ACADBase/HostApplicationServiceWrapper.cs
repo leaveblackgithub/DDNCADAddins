@@ -11,11 +11,12 @@ namespace ACADBase
 
         public static void SetWorkingDatabase(Database database)
         {
-            HostApplicationServices.WorkingDatabase= database;
+            if(database!=null) HostApplicationServices.WorkingDatabase= database;
         }
         public static bool IsTargetDrawingActive(string drawingFile)
         {
-            return string.IsNullOrEmpty(drawingFile) || GetWorkingDatabase().Filename == drawingFile;
+            return GetWorkingDatabase() != null &&
+                   (string.IsNullOrEmpty(drawingFile) || GetWorkingDatabase().Filename == drawingFile);
         }
     }
 }

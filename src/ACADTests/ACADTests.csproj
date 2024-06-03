@@ -10,27 +10,25 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <DirectoryBuildPropsPath>..\Directory.Build.props</DirectoryBuildPropsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AcConsoleTest|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <DefineConstants>TRACE;DEBUG;AcConsole</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'ApplicationTest|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>7.3</LangVersion>
@@ -92,6 +90,7 @@
     <Compile Include="IntegrateTests\CleanupCheck.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="UnitTests\ACADAppTests\CleanupTests.cs" />
+    <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperOfTestAddingLines.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperTests.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperTestBase.cs" />
     <Compile Include="UnitTests\AcConsoleTests\ExampleTestsToFail.cs" />

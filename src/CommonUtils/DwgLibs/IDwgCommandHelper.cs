@@ -7,6 +7,6 @@ namespace CommonUtils.DwgLibs
     {
         void WriteMessage(string message);
         void ShowError(Exception exception);
-        CommandResult ExecuteCommandInDbHelper();
+        CommandResult Execute();
     }
 }

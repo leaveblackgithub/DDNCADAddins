@@ -31,7 +31,7 @@ namespace ACADBase
             }
         }
 
-        public HandleValue CreateInModelSpace<T>(ObjectId modelSpaceId)
+        public HandleValue CreateObject<T>(ObjectId modelSpaceId)
             where T : Entity, new()
         {
             using var obj = new T();
@@ -58,6 +58,11 @@ namespace ACADBase
             ActiveTransaction?.Commit();
         }
 
+        public void AddNewlyCreatedDBObject(DBObject obj, bool add)
+        {
+            ActiveTransaction.AddNewlyCreatedDBObject(obj, add);
+        }
+
         protected override void DisposeUnManaged()
         {
             ActiveTransaction?.Dispose();
@@ -66,11 +71,6 @@ namespace ACADBase
 
         protected override void DisposeManaged()
         {
-        }
-
-        public void AddNewlyCreatedDBObject(DBObject obj, bool add)
-        {
-            ActiveTransaction.AddNewlyCreatedDBObject(obj, add);
         }
     }
 }

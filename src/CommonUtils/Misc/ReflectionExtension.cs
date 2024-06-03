@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Reflection;
 using CommonUtils.CustomExceptions;
-using NLog;
 
 namespace CommonUtils.Misc
 {
     public static class ReflectionExtension
     {
+        public static ConstructorInfo GetConstructorInfo<T>(Type[] parameterTypes)
+        {
+            ConstructorInfo constructorInfo =
+                typeof(T).GetConstructor(parameterTypes);
+            if (constructorInfo == null)
+            {
+                throw NullReferenceExceptionOfConstructor._<T>();
+            }
+            return constructorInfo;
+        }
         public static bool TryGetPropertyOfSpecificType<T>(this object obj, string propertyName, out PropertyInfo property)
         {
             property = null;
