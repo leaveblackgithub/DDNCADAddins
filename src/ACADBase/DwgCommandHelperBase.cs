@@ -1,16 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils.CustomExceptions;
 using CommonUtils.DwgLibs;
 using CommonUtils.Misc;
 using CommonUtils.StringLibs;
 
 namespace ACADBase
 {
-    public class DwgCommandHelperBase : DisposableClass, IDwgCommandHelper
+    public abstract class DwgCommandHelperBase : DisposableClass, IDwgCommandHelper
 
     {
         private bool _activeDbSwitched;
@@ -23,12 +24,10 @@ namespace ACADBase
 
         public DwgCommandHelperBase()
         {
-            InitiateEnvironment();
         }
 
         public DwgCommandHelperBase(string drawingFile = "", IMessageProvider messageProvider = null)
         {
-            InitiateEnvironment();
             DrawingFile = drawingFile;
             ActiveMsgProvider = messageProvider;
         }
@@ -71,18 +70,21 @@ namespace ACADBase
             ActiveMsgProvider.Error(exception);
         }
 
-        public virtual CommandResult CustomExecute()
+        public abstract FuncResult ExecuteMain();
+
+        public FuncResult ExecuteFunc(params Func<FuncResult>[] funcs)
         {
-            throw new NotImplementedException();
+            return funcs.RunForEach();
         }
 
-        public static CommandResult ExecuteCustomCommands<T>(string drawingFile = "",
+        public static FuncResult _<T>(string drawingFile = "",
             IMessageProvider messageProvider = null)
             where T : DwgCommandHelperBase, new()
         {
-            var result = new CommandResult();
+            var result = new FuncResult();
+            
             if (drawingFile != "" && (drawingFile.SubStringRight(4) != ".dwg" || !File.Exists(drawingFile)))
-                return result.Cancel(DwgFileNotFoundException.CustomeMessage(drawingFile));
+                return result.Cancel(ExceptionMessage.DwgFileNotFound(drawingFile));
 #if ApplicationTest
             //TODO 无法解决Application里将新开图纸激活的问题，所以Application Command需要在当前图纸解决；
             if (!HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile))
@@ -92,13 +94,16 @@ namespace ACADBase
             // T dwgCommandHelper = null;
             try
             {
-                result = ReflectionExtension.GetConstructorInfo<T>
-                    (new[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
+                T dwgCommandHelper = null;
+                IList<Func<FuncResult>> funcs = new List<Func<FuncResult>>()
+                {
+                    () => ReflectionExtension.CreateInstance<T>(new object[]{drawingFile,messageProvider},out dwgCommandHelper),
+                    dwgCommandHelper.InitiateEnvironment,
+                    dwgCommandHelper.InitiateCmdDataBaseHelper,
+                    dwgCommandHelper.ExecuteMain
+                };
                 if (result.IsCancel) return result;
-                using var dwgCommandHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
-                result= dwgCommandHelper.InitiateCmdDataBaseHelper();
-                if (result.IsCancel) return result;
-                result = dwgCommandHelper.CustomExecute();
+                result = dwgCommandHelper.ExecuteMain();
             }
             catch (Exception e)
             {
@@ -134,9 +139,9 @@ namespace ACADBase
         [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
         public static extern void acedDisableDefaultARXExceptionHandler(bool disable);
 
-        private CommandResult InitiateCmdDataBaseHelper()
+        private FuncResult InitiateCmdDataBaseHelper()
         {
-            var result = new CommandResult();
+            var result = new FuncResult();
 #if AcConsoleTest
             if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile))
             {
@@ -157,13 +162,15 @@ namespace ACADBase
             return result;
         }
 
-        protected void InitiateEnvironment()
+        protected FuncResult InitiateEnvironment()
         {
-            _documentLock = DocumentManagerWrapper.LockActiveDocument();
+            var result = DocumentManagerWrapper.LockActiveDocument(out _documentLock);
+            if(result.IsCancel)return result;
             _oldDb = null;
             _activeDbSwitched = false;
             //如果改为TRUE，未处理exception会导致cad崩溃???
             acedDisableDefaultARXExceptionHandler(false);
+            return new FuncResult();
         }
 
         protected override void DisposeUnManaged()

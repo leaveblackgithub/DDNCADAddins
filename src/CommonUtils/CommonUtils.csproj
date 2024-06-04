@@ -72,25 +72,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomExceptions\ArgumentExceptionOfIdReferToWrongType.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidDwgFile.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidProperty.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfWrongDbObjectType.cs" />
-    <Compile Include="CustomExceptions\NullReferenceExceptionOfConstructor.cs" />
-    <Compile Include="CustomExceptions\NullReferenceExceptionOfActiveDocument.cs" />
     <Compile Include="DwgLibs\DwgExecutorBase.cs" />
     <Compile Include="DwgLibs\IDwgCommandHelper.cs" />
     <Compile Include="DwgLibs\IDwgExecutor.cs" />
+    <Compile Include="Misc\ExceptionMessage.cs" />
     <Compile Include="Misc\MessageProviderBase.cs" />
     <Compile Include="Tests\Misc\DateTimeUtilsTest.cs" />
     <Compile Include="UtilsForTest\MessageProviderMockUtils.cs" />
     <Compile Include="UtilsForTest\TestFuncs.cs" />
     <Compile Include="Misc\LazySingleton.cs" />
     <Compile Include="UtilsForTest\TestException.cs" />
-    <Compile Include="Misc\CommandResult.cs" />
-    <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />
+    <Compile Include="Misc\FuncResult.cs" />
     <Compile Include="Misc\IMessageProvider.cs" />
     <Compile Include="StringLibs\BoundPrefixUtils.cs" />
     <Compile Include="Misc\EnumerableExtension.cs" />
@@ -98,7 +90,6 @@
     <Compile Include="Misc\DisposableClass.cs" />
     <Compile Include="StringLibs\LayerNameUtils.cs" />
     <Compile Include="Misc\MessageProviderOfMessageBox.cs" />
-    <Compile Include="CustomExceptions\NullReferenceExceptionOfDatabase.cs" />
     <Compile Include="Misc\ReflectionExtension.cs" />
     <Compile Include="Tests\LibsOfString\BoundPrefixUtilsTest.cs" />
     <Compile Include="StringLibs\StringUtils.cs" />

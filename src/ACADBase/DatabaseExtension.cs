@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 
 namespace ACADBase

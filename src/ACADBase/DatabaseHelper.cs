@@ -5,7 +5,6 @@ using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -16,16 +15,16 @@ namespace ACADBase
         protected IMessageProvider FldMsgProvider;
         private Database _cadDatabase;
 
-        public static CommandResult NewDatabaseHelper<T>(string drawingFile,
+        public static FuncResult NewDatabaseHelper<T>(string drawingFile,
             IMessageProvider messageProvider,out T newDataBaseHelper) where T : DatabaseHelper, new()
         {
             newDataBaseHelper = null;
-            CommandResult result = new CommandResult();
+            FuncResult result = new FuncResult();
             result = ReflectionExtension.GetConstructorInfo<T>
                 (new Type[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
             if (result.IsCancel) return result;
             newDataBaseHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
-            if(newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return result.Cancel(NullReferenceExceptionOfDatabase.CustomeMessage(drawingFile));
+            if(newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return result.Cancel(ExceptionMessage.NullDatabase(drawingFile));
             return result;
         }
 
@@ -92,30 +91,28 @@ namespace ACADBase
         {
         }
 
-        public CommandResult RunFuncInTransaction<T>(HandleValue handleValue,
-            params Func<T, CommandResult>[] funcs) where T : DBObject
+        public FuncResult RunFuncInTransaction<T>(HandleValue handleValue,
+            params Func<T, FuncResult>[] funcs) where T : DBObject
         {
-            var result = new CommandResult();
+            var result = new FuncResult();
             if (funcs.IsNullOrEmpty()) return result;
             using var tr = NewTransactionHelper();
-            
-            if (!TryGetObjectId(handleValue, out var objectId))
-                return result.Cancel(ArgumentExceptionOfInvalidHandle._(handleValue.HandleAsLong));
+
+            result = TryGetObjectId(handleValue, out var objectId);
+            if (result.IsCancel) return result;
             result = tr.RunFuncsOnObject(objectId, funcs);
             tr.Commit();
             return result;
             
         }
 
-        public CommandResult CreateInCurrentSpace<T>(out HandleValue handleValue,
-            params Func<T, CommandResult>[] funcs)
+        public FuncResult CreateInCurrentSpace<T>(out HandleValue handleValue)
             where T : Entity, new()
         {
             handleValue = null;
             using var tr = NewTransactionHelper();
-            handleValue = tr.CreateObject<T>(CadDatabase.CurrentSpaceId);
+            FuncResult result = tr.CreateObjectInModelSpace<T>(CadDatabase.CurrentSpaceId,out handleValue);
             tr.Commit();
-            CommandResult result = RunFuncInTransaction(handleValue, funcs);
             return result;
         }
 
@@ -130,9 +127,13 @@ namespace ACADBase
             return new TransactionHelper(CadDatabase.TransactionManager.StartTransaction());
         }
 
-        public virtual bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
+        public virtual FuncResult TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
         {
-            return CadDatabase.TryGetObjectId(handleValue.ToHandle(), out objectId);
+            objectId = default(ObjectId);
+            FuncResult result = handleValue.ToHandle(out var handle);
+            if(result.IsCancel)return result;
+            if (CadDatabase.TryGetObjectId(handle, out objectId)) return result;
+            else return result.Cancel(ExceptionMessage.InvalidHandle(handleValue.HandleAsLong));
         }
 
     }

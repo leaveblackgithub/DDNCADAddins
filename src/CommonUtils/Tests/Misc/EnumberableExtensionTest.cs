@@ -58,7 +58,7 @@ namespace CommonUtils.Tests.Misc
                 exceptionMessage, m => m.Error(It.IsAny<TestException>()));
         }
 
-        private void RunForOnceAndMessageProviderMockUtilsTestMethod(Func<TestCounter, CommandResult> func,
+        private void RunForOnceAndMessageProviderMockUtilsTestMethod(Func<TestCounter, FuncResult> func,
             TestCounter counter, int expectedCount, bool isCancel,string message, Expression<Action<IMessageProvider>> checkExceptAction=null)
         {
             var result = EnumerableExtension.RunForOnce(func, counter, MessageProviderMockUtils.NewMessageProviderInstance(),EnumerableExtension.ShowSuccessFuncName.Show);

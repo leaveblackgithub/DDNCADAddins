@@ -6,7 +6,7 @@ using NLog.Fluent;
 
 namespace CommonUtils.Misc
 {
-    public class CommandResult
+    public class FuncResult
     {
         public enum CommandResultType
         {
@@ -14,7 +14,7 @@ namespace CommonUtils.Misc
             Cancel
         }
 
-        public CommandResult(string funcName="",CommandResultType resultType = CommandResultType.Success, Exception exception = null)
+        public FuncResult(string funcName="",CommandResultType resultType = CommandResultType.Success, Exception exception = null)
         {
             CancelMessage = "";
             StampString = GetStampString(funcName);
@@ -50,7 +50,7 @@ namespace CommonUtils.Misc
             return ExceptionDispatchInfo.Capture(exception);
         }
 
-        public CommandResult Success()
+        public FuncResult Success()
         {
             ResultType = CommandResultType.Success;
             ExceptionInfo = null;
@@ -58,14 +58,14 @@ namespace CommonUtils.Misc
         }
 
 
-        public CommandResult Cancel(Exception exception = null)
+        public FuncResult Cancel(Exception exception = null)
         {
             ResultType = CommandResultType.Cancel;
             ExceptionInfo = GetExceptionInfo(exception);
             CancelMessage = exception?.Message;
             return this;
         }
-        public CommandResult Cancel(string message)
+        public FuncResult Cancel(string message)
         {
             ResultType = CommandResultType.Cancel;
             CancelMessage=message;

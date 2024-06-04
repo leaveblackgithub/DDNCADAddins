@@ -6,13 +6,12 @@ namespace ACADBase
 {
     public interface IDatabaseHelper:IDisposable
     {
-        CommandResult RunFuncInTransaction<T>(HandleValue handleValue,
-            params Func<T, CommandResult>[] funcs) where T : DBObject;
+        FuncResult RunFuncInTransaction<T>(HandleValue handleValue,
+            params Func<T, FuncResult>[] funcs) where T : DBObject;
 
-        CommandResult CreateInCurrentSpace<T>(out HandleValue handleValue,
-            params Func<T, CommandResult>[] funcs)
+        FuncResult CreateInCurrentSpace<T>(out HandleValue handleValue)
             where T : Entity, new();
 
-        bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId);
+        FuncResult TryGetObjectId(HandleValue handleValue, out ObjectId objectId);
     }
 }
