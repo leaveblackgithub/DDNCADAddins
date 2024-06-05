@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Threading;
 using ACADBase;
-using CommonUtils.Misc;
+using CommonUtils.CustomExceptions;
 using Moq;
 using NUnit.Framework;
 
@@ -19,7 +19,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             // Run the tests
             // PropDwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
             // Assert.True(PropDwgCommandHelperOfTestAddingLinesDwg.TestAddingLine());
-            var result = DwgCommandHelperBase._<DwgCommandHelperOfTestAddingLines>(TestDrawingPath);
+            var result = DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(TestDrawingPath);
 #if ApplicationTest
             if (!HostApplicationServiceWrapper.IsTargetDrawingActive(TestDrawingPath))
             {
@@ -37,7 +37,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             // Run the tests
             // PropDwgCommandHelperActive.ExecuteDatabaseFuncs(AddLine, CheckLine);
-            Assert.True(DwgCommandHelperBase._<DwgCommandHelperOfTestAddingLines>().IsSuccess);
+            Assert.True(DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>().IsSuccess);
         }
 
         [Test]
@@ -45,20 +45,20 @@ namespace ACADTests.UnitTests.AcConsoleTests
         {
             var invaildPath = @"D:\NonExisting.dwg";
             Assert.False(File.Exists(invaildPath));
-            Assert.AreEqual(ExceptionMessage.DwgFileNotFound(invaildPath),
-                DwgCommandHelperBase._<DwgCommandHelperOfTestAddingLines>(invaildPath)
+            Assert.AreEqual(DwgFileNotFoundException.CustomeMessage(invaildPath),
+                DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(invaildPath)
                     .CancelMessage);
             Assert.True(File.Exists(TestTxtPath));
-            Assert.AreEqual(ExceptionMessage.DwgFileNotFound(TestTxtPath),
-                DwgCommandHelperBase._<DwgCommandHelperOfTestAddingLines>(TestTxtPath)
+            Assert.AreEqual(DwgFileNotFoundException.CustomeMessage(TestTxtPath),
+                DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(TestTxtPath)
                     .CancelMessage);
         }
         [Test]
         public void TestInvalidDwg()
         {
             Assert.True(File.Exists(FakeDrawingPath));
-            Assert.AreEqual(ExceptionMessage.NullDatabase(FakeDrawingPath),
-                DwgCommandHelperBase._<DwgCommandHelperOfTestAddingLines>(FakeDrawingPath)
+            Assert.AreEqual(NullReferenceExceptionOfDatabase.CustomeMessage(FakeDrawingPath),
+                DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(FakeDrawingPath)
                     .CancelMessage);
         }
         

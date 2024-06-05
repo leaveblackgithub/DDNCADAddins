@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using NUnit.Framework;
 
@@ -33,14 +34,23 @@ namespace CommonUtils.Tests.Misc
         [Test]
         public void MustGetPropertyTest()
         {
-            Assert.True(_testClass.MustGetProperty<bool>(_realproperty,out _).IsSuccess);
-            _testClass.GetObjectPropertyValue<bool>(_realproperty,out var value);
-            Assert.False(value);
-            FuncResult result;
-            result = _testClass.MustGetProperty<string>(_realproperty,out _);
-            Assert.AreEqual(result.CancelMessage, ExceptionMessage.InvalidProperty<string>(_testClass, _realproperty));
-            result = _testClass.MustGetProperty<bool>(_fakeproperty, out _);
-            Assert.AreEqual(result.CancelMessage, ExceptionMessage.InvalidProperty<bool>(_testClass, _fakeproperty));
+            Assert.NotNull(_testClass.MustGetProperty<bool>(_realproperty));
+            Assert.False(_testClass.GetObjectPropertyValue<bool>(_realproperty));
+            Exception ex;
+            ex = Assert.Throws<ArgumentExceptionOfInvalidProperty>(MustGetRealPropertyInString);
+            Assert.That(ex.Message, Is.EqualTo("Type TestClass doesn't contain property RealProperty of type String"));
+            ex = Assert.Throws<ArgumentExceptionOfInvalidProperty>(MustGetFakeProperty);
+            Assert.That(ex.Message, Is.EqualTo("Type TestClass doesn't contain property FakeProperty of type Boolean"));
+        }
+
+        private void MustGetRealPropertyInString()
+        {
+            _testClass.MustGetProperty<string>(_realproperty);
+        }
+
+        private void MustGetFakeProperty()
+        {
+            _testClass.MustGetProperty<bool>(_fakeproperty);
         }
     }
 

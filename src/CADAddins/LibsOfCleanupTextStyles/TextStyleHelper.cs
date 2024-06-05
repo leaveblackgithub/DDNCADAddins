@@ -114,9 +114,10 @@ namespace CADAddins.LibsOfCleanupTextStyles
                             //                            ||
                             //                            entClassName == "AcDbAttributeDefinition")
                         {
-                            //                            trans.GetObject(objId, OpenMode.ForWrite);
+//                            trans.GetObject(objId, OpenMode.ForWrite);
                             //                            _curEditorHelper.WriteMessage($"\n{entClassName}:{ent.TextStyleId.Name}");
-                            obj.GetObjectPropertyValue<ObjectId>(NameOfTextStyleId,out var textStyleId);
+
+                            dynamic textStyleId = obj.GetObjectPropertyValue<ObjectId>(NameOfTextStyleId);
                             if (textStyleId == null) continue;
                             string idString = textStyleId.ToString();
                             if (!DirtyDict.TryGetValue(idString, out var newTextStyle)) continue;

@@ -1,5 +1,6 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
+using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 using NLog;
 
@@ -14,53 +15,41 @@ namespace ACADBase
 
         public Transaction ActiveTransaction { get; set; }
 
-        public FuncResult GetObject<T>(ObjectId objectId, OpenMode mode,out T t)
+        public T GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject
         {
-            t = default(T);
-            string idString = objectId.ToString();
-            var result=new FuncResult();
-            if (!objectId.IsValid)
-            {
-                return result.Cancel(ExceptionMessage.InvalidId(idString));
-            }
-
+            if (!objectId.IsValid) throw ArgumentExceptionOfInvalidId._(objectId.ToString());
             try
             {
-                t = (T)ActiveTransaction.GetObject(objectId, mode);
-                return result;
+                var t = (T)ActiveTransaction.GetObject(objectId, mode);
+                return t;
             }
             catch (InvalidCastException e)
             {
                 LogManager.GetCurrentClassLogger().Error(e);
-                return result.Cancel(ExceptionMessage.IdReferToWrongType<T>(idString));
+                throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId.ToString());
             }
         }
 
-        public FuncResult CreateObjectInModelSpace<T>(ObjectId modelSpaceId,out HandleValue handleValue)
+        public HandleValue CreateObject<T>(ObjectId modelSpaceId)
             where T : Entity, new()
         {
-            handleValue = default(HandleValue);
-            var result = new FuncResult();
             using var obj = new T();
-            result=GetObject<BlockTableRecord>(modelSpaceId, OpenMode.ForWrite,out var modelSpace);
-            if (result.IsCancel) return result;
+            using var modelSpace =
+                GetObject<BlockTableRecord>(modelSpaceId, OpenMode.ForWrite);
             modelSpace.AppendEntity(obj);
             AddNewlyCreatedDBObject(obj, true);
 
             obj.SetDatabaseDefaults();
-            handleValue = HandleValue.FromObject(obj);
-            return result;
+            return HandleValue.FromObject(obj);
         }
 
-        public FuncResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, FuncResult>[] funcs) where T : DBObject
+        public CommandResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, CommandResult>[] funcs) where T : DBObject
         {
-            var result = new FuncResult();
+            var result = new CommandResult();
             if (funcs.IsNullOrEmpty()) return result;
-            result = GetObject<T>(objectId, OpenMode.ForWrite,out var obj);
-            if (result.IsCancel) return result;
+            using var obj = GetObject<T>(objectId, OpenMode.ForWrite);
             result = funcs.RunForEach(obj);
-            obj.Dispose();
             return result;
         }
 

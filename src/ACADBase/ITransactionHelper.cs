@@ -6,13 +6,13 @@ namespace ACADBase
 {
     public interface ITransactionHelper:IDisposable
     {
-        FuncResult GetObject<T>(ObjectId objectId, OpenMode mode,out T t)
+        T GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject;
 
-        FuncResult CreateObjectInModelSpace<T>(ObjectId modelSpaceId,out HandleValue handleValue)
+        HandleValue CreateObject<T>(ObjectId modelSpaceId)
             where T : Entity, new();
 
-        FuncResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, FuncResult>[] funcs) where T : DBObject;
+        CommandResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, CommandResult>[] funcs) where T : DBObject;
         void Commit();
         void AddNewlyCreatedDBObject(DBObject obj, bool add);
     }

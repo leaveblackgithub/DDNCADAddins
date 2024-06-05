@@ -1,5 +1,6 @@
 ﻿#if AcConsoleTest
 using Autodesk.AutoCAD.DatabaseServices;
+using CommonUtils.CustomExceptions;
 using CommonUtils.Misc;
 
 namespace ACADBase

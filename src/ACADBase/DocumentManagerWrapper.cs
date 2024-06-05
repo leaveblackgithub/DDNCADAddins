@@ -1,24 +1,21 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
-using CommonUtils.Misc;
+using CommonUtils.CustomExceptions;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADBase
 {
     public static class DocumentManagerWrapper
     {
-        public static FuncResult GetActiveDocument(out Document document)
+        public static Document GetActiveDocument()
         {
-            FuncResult result=new FuncResult();
-            document = Application.DocumentManager.MdiActiveDocument;
-            if (document == null) return result.Cancel(ExceptionMessage.NullActiveDocument());
-            return result;
+            Document document = Application.DocumentManager.MdiActiveDocument;
+            if (document == null) throw NullReferenceExceptionOfActiveDocument._();
+            return document;
         }
 
-        public static FuncResult LockActiveDocument(out DocumentLock documentLock)
+        public static DocumentLock LockActiveDocument()
         {
-            FuncResult result = GetActiveDocument(out var document);
-            documentLock = document.LockDocument();
-            return result;
+            return GetActiveDocument().LockDocument();
         }
     }
 }
