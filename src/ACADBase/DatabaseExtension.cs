@@ -17,7 +17,7 @@ namespace ACADBase
         {
             return database!=null&&database.Filename.EndsWith("dwg");
         }
-
+        //TODO处理文件已开启情况
         public static Database GetDwgDatabase(string drawingFile)
         {
             Database database = NewDrawingDatabase();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using CommonUtils.CustomExceptions;
 
@@ -15,6 +16,25 @@ namespace CommonUtils.Misc
                 return result.Cancel(NullReferenceExceptionOfConstructor.CustomMessage<T>());
             }
 
+            return result;
+        }
+
+        public static CommandResult CreateInstance<T>(object[] parameterValues, out T t)
+        {
+            t= default(T);
+            var result = GetConstructorInfo<T>(parameterValues.Select(obj => obj.GetType()).ToArray(),
+                out var constructorInfo);
+            if (result.IsCancel) return result;
+            try
+            {
+                t = (T)constructorInfo.Invoke(parameterValues);
+
+            }
+            catch (Exception e)
+            {
+                result.Cancel(e.Message);
+
+            }
             return result;
         }
         public static bool TryGetPropertyOfSpecificType<T>(this object obj, string propertyName, out PropertyInfo property)

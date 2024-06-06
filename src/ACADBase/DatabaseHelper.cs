@@ -19,13 +19,9 @@ namespace ACADBase
         public static CommandResult NewDatabaseHelper<T>(string drawingFile,
             IMessageProvider messageProvider,out T newDataBaseHelper) where T : DatabaseHelper, new()
         {
-            newDataBaseHelper = null;
-            CommandResult result = new CommandResult();
-            result = ReflectionExtension.GetConstructorInfo<T>
-                (new Type[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
-            if (result.IsCancel) return result;
-            newDataBaseHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
-            if(newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return result.Cancel(NullReferenceExceptionOfDatabase.CustomeMessage(drawingFile));
+            newDataBaseHelper = default(T);
+            var result=ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider },out newDataBaseHelper);
+            if (newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return result.Cancel(NullReferenceExceptionOfDatabase.CustomeMessage(drawingFile));
             return result;
         }
 

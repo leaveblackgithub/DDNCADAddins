@@ -76,8 +76,8 @@ namespace ACADBase
             throw new NotImplementedException();
         }
 
-        public static CommandResult ExecuteCustomCommands<T>(string drawingFile = "",
-            IMessageProvider messageProvider = null)
+        public static CommandResult ExecuteCustomCommands<T>(string drawingFile ,
+            IMessageProvider messageProvider)
             where T : DwgCommandHelperBase, new()
         {
             var result = new CommandResult();
@@ -92,11 +92,13 @@ namespace ACADBase
             // T dwgCommandHelper = null;
             try
             {
-                result = ReflectionExtension.GetConstructorInfo<T>
-                    (new[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
-                if (result.IsCancel) return result;
-                using var dwgCommandHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
-                result= dwgCommandHelper.InitiateCmdDataBaseHelper();
+                // result = ReflectionExtension.GetConstructorInfo<T>
+                //     (new[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
+                // if (result.IsCancel) return result;
+                // using var dwgCommandHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
+                ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider }, out var newDwgCommandHelper);
+                using var dwgCommandHelper = newDwgCommandHelper;
+                result = dwgCommandHelper.InitiateCmdDataBaseHelper();
                 if (result.IsCancel) return result;
                 result = dwgCommandHelper.CustomExecute();
             }
@@ -146,7 +148,7 @@ namespace ACADBase
             }
 
             result =
-                DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile, null,
+                DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile, ActiveMsgProvider,
                     out var commandDataHelper);
 #else
             result = DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfApplication>(DrawingFile, null,
