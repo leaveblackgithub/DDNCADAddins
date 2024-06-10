@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.Misc;
 
@@ -77,7 +78,6 @@ namespace ACADBase
                 if (!resultDwgCmdHelper.IsSuccess)
                 {
                     errMessage = resultDwgCmdHelper.ErrorMessage;
-                    MessageProvider._.Show(errMessage);
                     return OperationResult<VoidValue>.Failure(errMessage);
                 }
 
@@ -86,14 +86,11 @@ namespace ACADBase
                     resultDwgCmdHelper.Then(() => dwgCommandHelper.InitiateCmdDataBaseHelper());
                 if (funcs.IsNullOrEmpty()) return resultVoid;
                 foreach (var func in funcs) resultVoid = resultVoid.Then(() => func(dwgCommandHelper));
-                if (!resultVoid.IsSuccess)
-                    MessageProvider._.Show(resultVoid.ErrorMessage);
                 return resultVoid;
             }
             catch (Exception e)
             {
                 errMessage = e.Message;
-                MessageProvider._.Show(errMessage);
                 return OperationResult<VoidValue>.Failure(errMessage);
             }
         }

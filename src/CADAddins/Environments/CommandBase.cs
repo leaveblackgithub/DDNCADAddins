@@ -1,8 +1,6 @@
 ﻿using System;
 using ACADBase;
-using Autodesk.AutoCAD.ApplicationServices.Core;
 using CADAddins.Archive;
-using CommonUtils.DwgLibs;
 
 namespace CADAddins.Environments
 {

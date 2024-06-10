@@ -10,7 +10,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <TargetFrameworkProfile />
     <DirectoryBuildPropsPath>..\Directory.Build.props</DirectoryBuildPropsPath>
   </PropertyGroup>
@@ -84,7 +85,6 @@
     <Compile Include="Cropper\BlockReferenceCropper.cs" />
     <Compile Include="Archive\O_GeoExt.cs" />
     <Compile Include="Environments\CommandBase.cs" />
-    <Compile Include="Environments\MessageProviderOfEditor.cs" />
     <Compile Include="LibsOfDDNCrop\CommandBaseOfDDNCrop.cs" />
     <Compile Include="LibsOfDDNCrop\OCommandTransBaseOfDdnCrop.cs" />
     <Compile Include="Archive\O_DocHelper2.cs" />

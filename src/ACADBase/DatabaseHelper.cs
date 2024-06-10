@@ -6,7 +6,6 @@ namespace ACADBase
 {
     public abstract class DatabaseHelper : DisposableClass, IDatabaseHelper
     {
-
         public DatabaseHelper()
         {
         }
@@ -21,7 +20,7 @@ namespace ACADBase
         public bool IsInvalid { get; set; }
 
         public Database CadDatabase { get; protected set; }
-        
+
 
         public OperationResult<VoidValue> RunFuncInTransaction<T>(HandleValue handleValue,
             params Func<T, OperationResult<VoidValue>>[] funcs)
@@ -53,7 +52,8 @@ namespace ACADBase
             return OperationResult<ObjectId>.Failure(ExceptionMessage.InvalidHandle(handleValue.HandleAsLong));
         }
 
-        public static OperationResult<IDatabaseHelper> NewDatabaseHelper<T>(string drawingFile) where T : DatabaseHelper, new()
+        public static OperationResult<IDatabaseHelper> NewDatabaseHelper<T>(string drawingFile)
+            where T : DatabaseHelper, new()
         {
             var result = ReflectionExtension.CreateInstance<T>(new object[] { drawingFile });
             if (!result.IsSuccess) return OperationResult<IDatabaseHelper>.Failure(result.ErrorMessage);
@@ -78,7 +78,7 @@ namespace ACADBase
                 database = DatabaseExtension.GetDwgDatabase(drawingFile);
             return database;
         }
-        
+
 
         protected override void DisposeUnManaged()
         {

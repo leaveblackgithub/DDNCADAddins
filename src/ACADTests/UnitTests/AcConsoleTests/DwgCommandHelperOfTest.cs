@@ -1,6 +1,8 @@
-﻿using ACADBase;
+﻿using System.Windows.Forms;
+using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.Misc;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADTests.UnitTests.AcConsoleTests
 {
@@ -24,11 +26,6 @@ namespace ACADTests.UnitTests.AcConsoleTests
                 ? OperationResult<VoidValue>.Success()
                 : OperationResult<VoidValue>.Failure(resultId.ErrorMessage);
         }
-
-        public OperationResult<VoidValue> TestEditorOutput()
-        {
-            MessageProvider._.Show("Hello World");
-            return OperationResult<VoidValue>.Success();
-        }
+        
     }
 }

@@ -21,6 +21,8 @@ namespace ACADBase
         }
 
         public static Editor GetActiveEditor()
-        { return GetActiveDocument().Editor; }
+        {
+            return GetActiveDocument().Editor;
+        }
     }
 }

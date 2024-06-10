@@ -72,7 +72,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             Assert.True(DwgCommandHelperBase
                 .ExecuteCustomCommands<DwgCommandHelperOfTest>("").IsSuccess);
         }
-
+        
         [Test]
         public void TestWrongDwgName()
         {
@@ -88,49 +88,5 @@ namespace ACADTests.UnitTests.AcConsoleTests
                     .ExecuteCustomCommands<DwgCommandHelperOfTest>(TestTxtPath)
                     .ErrorMessage);
         }
-
-
-        // private void ExampleOfVerifyOnlyWorkOnce()
-        // {
-        //     Assert.Throws<MockException>(MsgProviderShowExInitInBaseOnce);
-        // }
-        //
-        // private void ExampleShowsVerifyCheckingExactlySameObject()
-        // {
-        //     //Example shows parameter verify should be exactly the same object.
-        //     Assert.Throws<MockException>(() =>
-        //         MsgProviderVerifyExOnce(m => m.Error(new Exception())));
-        // }
-        //
-        // [Test]
-        // public void TestWritingExMsgWMsgBox()
-        // {
-        //     //THIS DO NOT WORK:Console.WriteLine("\nConsole WriteLine");
-        //     DwgCommandHelperOfMsgBox.WriteMessage("Testing Msgbox AsProvider");
-        //     //DwgCommandHelperOfMsgBox.WriteMessage($"WorkingDatabase:{HostApplicationServices.WorkingDatabase.Filename}");
-        // }
-        // //TODO: FIX THIS TEST
-        // [Test]
-        // public void TestExceptionScopeAndTrack()
-        // {
-        //     DwgCommandHelperOfRecordingExScopeAndTrack.ExecuteDatabaseFuncs(db => throw ExInitInBase);
-        //     LogManager.GetCurrentClassLogger().Info(ExScopeStackTrace.ToString());
-        //     TestVerifyExceptionReflectingLastMethod(ExScopeStackTrace);
-        // }
-        // //TODO: FIX THIS TEST
-        // private static void TestVerifyExceptionReflectingLastMethod(StringBuilder exScopeStackTrace)
-        // {
-        //     Assert.True(exScopeStackTrace.ToString().Contains(nameof(TestExceptionScopeAndTrack)));
-        // }
-        //
-        // [Test]
-        // public void TestExceptionShouldNotBeThrownInDatabaseFunction()
-        // {
-        //     //Assert.Throws<TestException>(()=>
-        //     PropDwgCommandHelperActive.ExecuteDatabaseFuncs(db => throw ExInitInBase);//);
-        //     ExampleShowsVerifyCheckingExactlySameObject();
-        //     MsgProviderShowExInitInBaseOnce();
-        //     ExampleOfVerifyOnlyWorkOnce();
-        // }
     }
 }

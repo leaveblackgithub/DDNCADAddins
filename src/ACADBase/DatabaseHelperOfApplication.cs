@@ -1,7 +1,6 @@
 ﻿#if ApplicationTest
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
-using CommonUtils.Misc;
 
 namespace ACADBase
 {
@@ -16,7 +15,6 @@ namespace ACADBase
         }
 
         protected Document CadDocument => Application.DocumentManager.CurrentDocument;
-        
     }
 }
 #endif

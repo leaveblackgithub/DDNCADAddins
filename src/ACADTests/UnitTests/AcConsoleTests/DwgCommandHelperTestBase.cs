@@ -1,11 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
-using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils.Misc;
-using CommonUtils.UtilsForTest;
-using Moq;
-using NLog;
-using NUnit.Framework;
+﻿using CommonUtils.Misc;
 
 namespace ACADTests.UnitTests.AcConsoleTests
 {
@@ -17,23 +10,17 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected const string FakeDrawingName = "FakeDrawing.dwg";
 
         protected const string TestFolder = @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\";
-        
 
 
         protected string TestDrawingPath => TestFolder + TestDrawingName;
         protected string TestTxtPath => TestFolder + TestTxtName;
         protected string FakeDrawingPath => TestFolder + FakeDrawingName;
-        
-        
+
 
         protected OperationResult<VoidValue> TestAddingLines(DwgCommandHelperOfTest dwgCommandHelper)
         {
             return dwgCommandHelper.TestAddingLines();
         }
-
-        protected OperationResult<VoidValue> TestEditorOutput(DwgCommandHelperOfTest dwgCommandHelper)
-        {
-            return dwgCommandHelper.TestEditorOutput();
-        }
+        
     }
 }
