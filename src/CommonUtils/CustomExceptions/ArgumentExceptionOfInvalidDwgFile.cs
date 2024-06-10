@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonUtils.Misc;
 
 namespace CommonUtils.CustomExceptions
 {
@@ -15,7 +16,7 @@ namespace CommonUtils.CustomExceptions
 
         public static string CustomeMessage(string dwgPath)
         {
-            return $"Commands need to be executed in Active Document. Drawing file [{dwgPath}] is not active document.";
+            return ExceptionMessage.NullActiveDocument(dwgPath);
         }
     }
 }

@@ -12,53 +12,20 @@ namespace CommonUtils.Misc
             return enumerable == null || !enumerable.GetEnumerator().MoveNext();
         }
 
-        public static CommandResult RunForEach<T>(this Func<T, CommandResult>[] funcs, T t,
-            IMessageProvider messageProvider = null)
+        public static OperationResult<VoidValue> RunForEach<T>(this Func<T, OperationResult<VoidValue>>[] funcs, T t)
         {
+            var result = OperationResult<VoidValue>.Success();
             //CommandResult has record and log exception. No need to log again.
-            var result = new CommandResult();
             if (funcs.IsNullOrEmpty()) return result;
             foreach (var func in funcs)
             {
-               result= RunForOnce(func, t, messageProvider);
-               if (result.IsCancel) break;
+               result= result.Then(()=> func(t));
+               if (!result.IsSuccess) break;
             }
             return result;
         }
-
-        public static SortedDictionary<string, CommandResult> TestForEach<T>(this Func<T, CommandResult>[] funcs, T t,
-            IMessageProvider messageProvider = null)
-        {
-            //CommandResult has catch and record exception. No need to catch again.
-            var results = new SortedDictionary<string, CommandResult>();
-            if (funcs.IsNullOrEmpty()) return results;
-            foreach (var func in funcs)
-            {
-                var result = RunForOnce(func, t, messageProvider);
-                results.Add(result.StampString, result);
-            }
-            return results;
-        }
-
-        public static CommandResult RunForOnce<T>(Func<T, CommandResult> func, T t,
-            IMessageProvider messageProvider = null, ShowSuccessFuncName showSuccessFuncName =ShowSuccessFuncName.Hide)
-        {
-            var result = new CommandResult();
-            //try/catch again for safety
-            try
-            {
-                result = func(t);
-                if(result.IsSuccess&&showSuccessFuncName==ShowSuccessFuncName.Show) messageProvider?.Show(func.GetMethodInfo().Name);
-                if(result.IsCancel) messageProvider?.Error(result.ExceptionInfo);
-            }
-            catch (Exception e)
-            {
-                result.Cancel(e);
-                messageProvider?.Error(e);
-            }
-            return result;
-        }
-
+        
+        
         public enum ShowSuccessFuncName
         {
             Show=1,

@@ -71,49 +71,56 @@ namespace ACADBase
             ActiveMsgProvider.Error(exception);
         }
 
-        public virtual CommandResult CustomExecute()
+        public virtual OperationResult<VoidValue> CustomExecute()
         {
             throw new NotImplementedException();
         }
 
-        public static CommandResult ExecuteCustomCommands<T>(string drawingFile ,
+        public static OperationResult<VoidValue> ExecuteCustomCommands<T>(string drawingFile ,
             IMessageProvider messageProvider)
             where T : DwgCommandHelperBase, new()
         {
-            var result = new CommandResult();
-            if (drawingFile != "" && (drawingFile.SubStringRight(4) != ".dwg" || !File.Exists(drawingFile)))
-                return result.Cancel(DwgFileNotFoundException.CustomeMessage(drawingFile));
+            string errMessage;
+            OperationResult<VoidValue> resultVoid = drawingFile.IsDefaultOrExistingDwg();
+            // var result = new FuncResult();
+            // if (drawingFile.IsNotDefaultOrExistingDwg().IsSuccess)
+            //     return result.Cancel(DwgFileNotFoundException.CustomeMessage(drawingFile));
 #if ApplicationTest
             //TODO 无法解决Application里将新开图纸激活的问题，所以Application Command需要在当前图纸解决；
-            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile))
-                return result.Cancel(ArgumentExceptionOfInvalidDwgFile.CustomeMessage(drawingFile));
+            // if (!HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile).IsSuccess)
+            //     return result.Cancel(ArgumentExceptionOfInvalidDwgFile.CustomeMessage(drawingFile));
+            resultVoid = resultVoid.Then(() => HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile));
 
 #endif
             // T dwgCommandHelper = null;
             try
             {
-                // result = ReflectionExtension.GetConstructorInfo<T>
-                //     (new[] { typeof(string), typeof(IMessageProvider) }, out var constructorInfo);
-                // if (result.IsCancel) return result;
-                // using var dwgCommandHelper = (T)constructorInfo.Invoke(new object[] { drawingFile, messageProvider });
-                ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider }, out var newDwgCommandHelper);
-                using var dwgCommandHelper = newDwgCommandHelper;
-                result = dwgCommandHelper.InitiateCmdDataBaseHelper();
-                if (result.IsCancel) return result;
-                result = dwgCommandHelper.CustomExecute();
+                OperationResult<T> resultDwgCmdHelper= resultVoid.Then<VoidValue, T>(() =>
+                    ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider }));
+                if (!resultDwgCmdHelper.IsSuccess)
+                {
+                    errMessage = resultDwgCmdHelper.ErrorMessage;
+                    messageProvider.Show(errMessage);
+                    return OperationResult<VoidValue>.Failure(errMessage);
+                }
+
+                using T dwgCommandHelper = resultDwgCmdHelper.ReturnValue;
+                dwgCommandHelper.InitiateEnvironment();
+                resultVoid =
+                    resultDwgCmdHelper.Then<T, VoidValue>(() => dwgCommandHelper.InitiateCmdDataBaseHelper());
+                resultVoid = resultVoid.Then(() => dwgCommandHelper.CustomExecute());
+                if (!resultVoid.IsSuccess)
+                {
+                    messageProvider.Show(resultVoid.ErrorMessage);
+                }
+                return resultVoid;
             }
             catch (Exception e)
             {
-                result.Cancel(e);
+                errMessage = e.Message;
+                messageProvider.Show(errMessage);
+                return OperationResult<VoidValue>.Failure(errMessage);
             }
-
-            // finally
-            // {
-            //     dwgCommandHelper?.Dispose();
-            //     dwgCommandHelper = null;
-            //
-            // }
-            return result;
         }
 
         private void SaveWorkingDatabase()
@@ -136,27 +143,24 @@ namespace ACADBase
         [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
         public static extern void acedDisableDefaultARXExceptionHandler(bool disable);
 
-        private CommandResult InitiateCmdDataBaseHelper()
+        private OperationResult<VoidValue> InitiateCmdDataBaseHelper()
         {
-            var result = new CommandResult();
+            OperationResult<IDatabaseHelper> resultDataBaseHelper;
 #if AcConsoleTest
-            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile))
+            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile).IsSuccess)
             {
                 SaveWorkingDatabase();
                 _activeDbSwitched = true;
                 // return result;
             }
 
-            result =
-                DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile, ActiveMsgProvider,
-                    out var commandDataHelper);
+            resultDataBaseHelper= DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile, ActiveMsgProvider);
 #else
-            result = DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfApplication>(DrawingFile, null,
-                out var commandDataHelper);
-
+            resultDataBaseHelper = DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfApplication>(DrawingFile, ActiveMsgProvider);
 #endif
-            FldCmdDatabaseHelper = result.IsCancel ? null : commandDataHelper;
-            return result;
+            if (!resultDataBaseHelper.IsSuccess) return OperationResult<VoidValue>.Failure(resultDataBaseHelper.ErrorMessage);
+            FldCmdDatabaseHelper = resultDataBaseHelper.ReturnValue;
+            return OperationResult<VoidValue>.Success();
         }
 
         protected void InitiateEnvironment()

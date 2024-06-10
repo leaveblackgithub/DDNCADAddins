@@ -1,4 +1,5 @@
 ﻿using Autodesk.AutoCAD.DatabaseServices;
+using CommonUtils.Misc;
 
 namespace ACADBase
 {
@@ -11,12 +12,20 @@ namespace ACADBase
 
         public static void SetWorkingDatabase(Database database)
         {
-            if(database!=null) HostApplicationServices.WorkingDatabase= database;
+            if (database != null) HostApplicationServices.WorkingDatabase = database;
         }
-        public static bool IsTargetDrawingActive(string drawingFile)
+
+        // public static bool IsTargetDrawingActive(string drawingFile)
+        // {
+        //     return GetWorkingDatabase() != null &&
+        //            (string.IsNullOrEmpty(drawingFile) || GetWorkingDatabase().Filename == drawingFile);
+        // }
+        public static OperationResult<VoidValue> IsTargetDrawingActive(string drawingFile)
         {
             return GetWorkingDatabase() != null &&
-                   (string.IsNullOrEmpty(drawingFile) || GetWorkingDatabase().Filename == drawingFile);
+                   (string.IsNullOrEmpty(drawingFile) || GetWorkingDatabase().Filename == drawingFile)
+                ? OperationResult<VoidValue>.Success()
+                : OperationResult<VoidValue>.Failure(ExceptionMessage.NullActiveDocument(drawingFile));
         }
     }
 }

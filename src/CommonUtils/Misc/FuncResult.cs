@@ -1,47 +1,46 @@
 ﻿using System;
 using System.Runtime.ExceptionServices;
-using System.Windows.Forms;
 using NLog;
-using NLog.Fluent;
 
 namespace CommonUtils.Misc
 {
-    public class CommandResult
+    public class FuncResult
     {
-        public enum CommandResultType
+        public enum FuncResultType
         {
             Success,
             Cancel
         }
 
-        public CommandResult(string funcName="",CommandResultType resultType = CommandResultType.Success, Exception exception = null)
+        public FuncResult(string funcName = "", FuncResultType resultType = FuncResultType.Success,
+            Exception exception = null)
         {
             CancelMessage = "";
             StampString = GetStampString(funcName);
             Init(resultType, exception);
         }
 
-        private string GetStampString(string funcName="")
+        public string StampString { get; set; }
+
+        private FuncResultType ResultType { get; set; }
+        public ExceptionDispatchInfo ExceptionInfo { get; set; }
+        public string CancelMessage { get; set; }
+
+        public bool IsSuccess => ResultType == FuncResultType.Success;
+        public bool IsCancel => ResultType == FuncResultType.Cancel;
+
+        private string GetStampString(string funcName = "")
         {
             return DateTimeUtils.AddTimeStampPrefix(funcName);
         }
 
-        public string StampString { get; set; }
-
-        private void Init(CommandResultType resultType, Exception exception)
+        private void Init(FuncResultType resultType, Exception exception)
         {
-            if (exception != null && resultType != CommandResultType.Success)
+            if (exception != null && resultType != FuncResultType.Success)
                 throw new ArgumentException("Command can not success with exception");
             ResultType = resultType;
             ExceptionInfo = GetExceptionInfo(exception);
         }
-
-        private CommandResultType ResultType { get; set; }
-        public ExceptionDispatchInfo ExceptionInfo { get; set; }
-        public string CancelMessage { get; set; }
-
-        public bool IsSuccess => ResultType == CommandResultType.Success;
-        public bool IsCancel => ResultType == CommandResultType.Cancel;
 
         private static ExceptionDispatchInfo GetExceptionInfo(Exception exception)
         {
@@ -50,25 +49,26 @@ namespace CommonUtils.Misc
             return ExceptionDispatchInfo.Capture(exception);
         }
 
-        public CommandResult Success()
+        public FuncResult Success()
         {
-            ResultType = CommandResultType.Success;
+            ResultType = FuncResultType.Success;
             ExceptionInfo = null;
             return this;
         }
 
 
-        public CommandResult Cancel(Exception exception = null)
+        public FuncResult Cancel(Exception exception = null)
         {
-            ResultType = CommandResultType.Cancel;
+            ResultType = FuncResultType.Cancel;
             ExceptionInfo = GetExceptionInfo(exception);
             CancelMessage = exception?.Message;
             return this;
         }
-        public CommandResult Cancel(string message)
+
+        public FuncResult Cancel(string message)
         {
-            ResultType = CommandResultType.Cancel;
-            CancelMessage=message;
+            ResultType = FuncResultType.Cancel;
+            CancelMessage = message;
             LogManager.GetCurrentClassLogger().Warn(message);
             return this;
         }

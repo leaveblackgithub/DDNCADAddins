@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonUtils.Misc;
 
 namespace CommonUtils.CustomExceptions
 {
@@ -9,14 +10,14 @@ namespace CommonUtils.CustomExceptions
         {
         }
 
-        public static NullReferenceExceptionOfConstructor _<T>()
+        public static NullReferenceExceptionOfConstructor _<T>(Type[] parameterTypes)
         {
-            return new NullReferenceExceptionOfConstructor(CustomMessage<T>());
+            return new NullReferenceExceptionOfConstructor(CustomMessage<T>(parameterTypes));
         }
 
-        public static string CustomMessage<T>()
+        public static string CustomMessage<T>(Type[] parameterTypes)
         {
-            return $"Class [{typeof(T)}] doesn't have ";
+            return ExceptionMessage.NullConstructor<T>(parameterTypes);
         }
     }
 }

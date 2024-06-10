@@ -16,13 +16,14 @@ namespace ACADBase
         protected IMessageProvider FldMsgProvider;
         private Database _cadDatabase;
 
-        public static CommandResult NewDatabaseHelper<T>(string drawingFile,
-            IMessageProvider messageProvider,out T newDataBaseHelper) where T : DatabaseHelper, new()
+        public static OperationResult<IDatabaseHelper> NewDatabaseHelper<T>(string drawingFile,
+            IMessageProvider messageProvider) where T : DatabaseHelper, new()
         {
-            newDataBaseHelper = default(T);
-            var result=ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider },out newDataBaseHelper);
-            if (newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return result.Cancel(NullReferenceExceptionOfDatabase.CustomeMessage(drawingFile));
-            return result;
+            var result=ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider });
+            if (!result.IsSuccess) return OperationResult<IDatabaseHelper>.Failure(result.ErrorMessage);
+            T newDataBaseHelper = result.ReturnValue;
+            if (newDataBaseHelper == null||newDataBaseHelper.IsInvalid) return OperationResult<IDatabaseHelper>.Failure(NullReferenceExceptionOfDatabase.CustomeMessage(drawingFile));
+            return OperationResult<IDatabaseHelper>.Success(newDataBaseHelper);
         }
 
         public DatabaseHelper()
@@ -47,7 +48,7 @@ namespace ACADBase
         {
             Database database = null;
 
-            if (HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile))
+            if (HostApplicationServiceWrapper.IsTargetDrawingActive(drawingFile).IsSuccess)
             {
                 database = GetCurrentDatabase();
             }
@@ -88,31 +89,28 @@ namespace ACADBase
         {
         }
 
-        public CommandResult RunFuncInTransaction<T>(HandleValue handleValue,
-            params Func<T, CommandResult>[] funcs) where T : DBObject
+        public OperationResult<VoidValue> RunFuncInTransaction<T>(HandleValue handleValue,
+            params Func<T, OperationResult<VoidValue>>[] funcs) 
+            where T : DBObject
+
         {
-            var result = new CommandResult();
+            var result = OperationResult<VoidValue>.Success();
             if (funcs.IsNullOrEmpty()) return result;
-            using var tr = NewTransactionHelper();
-            
-            if (!TryGetObjectId(handleValue, out var objectId))
-                return result.Cancel(ArgumentExceptionOfInvalidHandle._(handleValue.HandleAsLong));
-            result = tr.RunFuncsOnObject(objectId, funcs);
+            var tr = NewTransactionHelper();
+            var resultObjectId = TryGetObjectId(handleValue);
+            result = resultObjectId.Then(()=>tr.RunFuncsOnObject(resultObjectId.ReturnValue, funcs));
             tr.Commit();
+            tr.Dispose();
             return result;
             
         }
 
-        public CommandResult CreateInCurrentSpace<T>(out HandleValue handleValue,
-            params Func<T, CommandResult>[] funcs)
-            where T : Entity, new()
+        public OperationResult<HandleValue> CreateInCurrentSpace<T>() where T : Entity, new()
         {
-            handleValue = null;
             using var tr = NewTransactionHelper();
-            handleValue = tr.CreateObject<T>(CadDatabase.CurrentSpaceId);
+            var handleValue = tr.CreateObject<T>(CadDatabase.CurrentSpaceId);
             tr.Commit();
-            CommandResult result = RunFuncInTransaction(handleValue, funcs);
-            return result;
+            return OperationResult<HandleValue>.Success(handleValue);
         }
 
         private ObjectId GetBlockTableId<T>() where T : Entity, new()
@@ -126,9 +124,11 @@ namespace ACADBase
             return new TransactionHelper(CadDatabase.TransactionManager.StartTransaction());
         }
 
-        public virtual bool TryGetObjectId(HandleValue handleValue, out ObjectId objectId)
+        public virtual OperationResult<ObjectId> TryGetObjectId(HandleValue handleValue)
         {
-            return CadDatabase.TryGetObjectId(handleValue.ToHandle(), out objectId);
+            if( CadDatabase.TryGetObjectId(handleValue.ToHandle(), out var objectId))
+                return OperationResult<ObjectId>.Success(objectId);
+            return OperationResult<ObjectId>.Failure(ExceptionMessage.InvalidHandle(handleValue.HandleAsLong));
         }
 
     }

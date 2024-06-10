@@ -2,6 +2,7 @@
 using System.Threading;
 using ACADBase;
 using CommonUtils.CustomExceptions;
+using CommonUtils.Misc;
 using Moq;
 using NUnit.Framework;
 
@@ -19,12 +20,12 @@ namespace ACADTests.UnitTests.AcConsoleTests
             // Run the tests
             // PropDwgCommandHelperOfTestDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
             // Assert.True(PropDwgCommandHelperOfTestAddingLinesDwg.TestAddingLine());
-            var result = DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(TestDrawingPath,GetMsgProviderMockObj());
+            var result=DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(TestDrawingPath,GetMsgProviderMockObj());
 #if ApplicationTest
-            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(TestDrawingPath))
+            if (!HostApplicationServiceWrapper.IsTargetDrawingActive(TestDrawingPath).IsSuccess)
             {
-                Assert.AreEqual(ArgumentExceptionOfInvalidDwgFile.CustomeMessage(TestDrawingPath),
-                    result.CancelMessage);
+                Assert.AreEqual(ExceptionMessage.NullActiveDocument(TestDrawingPath),
+                    result.ErrorMessage);
                 return;
             }
 
@@ -47,11 +48,11 @@ namespace ACADTests.UnitTests.AcConsoleTests
             Assert.False(File.Exists(invaildPath));
             Assert.AreEqual(DwgFileNotFoundException.CustomeMessage(invaildPath),
                 DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(invaildPath, GetMsgProviderMockObj())
-                    .CancelMessage);
+                    .ErrorMessage);
             Assert.True(File.Exists(TestTxtPath));
             Assert.AreEqual(DwgFileNotFoundException.CustomeMessage(TestTxtPath),
                 DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(TestTxtPath, GetMsgProviderMockObj())
-                    .CancelMessage);
+                    .ErrorMessage);
         }
         [Test]
         public void TestInvalidDwg()
@@ -59,7 +60,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
             Assert.True(File.Exists(FakeDrawingPath));
             Assert.AreEqual(NullReferenceExceptionOfDatabase.CustomeMessage(FakeDrawingPath),
                 DwgCommandHelperBase.ExecuteCustomCommands<DwgCommandHelperOfTestAddingLines>(FakeDrawingPath, GetMsgProviderMockObj())
-                    .CancelMessage);
+                    .ErrorMessage);
         }
         
         // private void ExampleOfVerifyOnlyWorkOnce()

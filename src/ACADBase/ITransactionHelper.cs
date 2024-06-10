@@ -12,7 +12,8 @@ namespace ACADBase
         HandleValue CreateObject<T>(ObjectId modelSpaceId)
             where T : Entity, new();
 
-        CommandResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, CommandResult>[] funcs) where T : DBObject;
+        OperationResult<VoidValue> RunFuncsOnObject<T>(ObjectId objectId, Func<T, OperationResult<VoidValue>>[] funcs)
+            where T : DBObject;
         void Commit();
         void AddNewlyCreatedDBObject(DBObject obj, bool add);
     }

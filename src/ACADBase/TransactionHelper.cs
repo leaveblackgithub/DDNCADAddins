@@ -44,13 +44,12 @@ namespace ACADBase
             return HandleValue.FromObject(obj);
         }
 
-        public CommandResult RunFuncsOnObject<T>(ObjectId objectId, Func<T, CommandResult>[] funcs) where T : DBObject
+        public OperationResult<VoidValue> RunFuncsOnObject<T>(ObjectId objectId, Func<T, OperationResult<VoidValue>>[] funcs)
+            where T : DBObject
         {
-            var result = new CommandResult();
-            if (funcs.IsNullOrEmpty()) return result;
+            if (funcs.IsNullOrEmpty()) return OperationResult<VoidValue>.Success();
             using var obj = GetObject<T>(objectId, OpenMode.ForWrite);
-            result = funcs.RunForEach(obj);
-            return result;
+            return funcs.RunForEach(obj);
         }
 
         public void Commit()

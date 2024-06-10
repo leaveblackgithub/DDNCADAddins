@@ -7,37 +7,73 @@ namespace CommonUtils.Misc
 {
     public static class ReflectionExtension
     {
-        public static CommandResult GetConstructorInfo<T>(Type[] parameterTypes,out ConstructorInfo constructorInfo)
+        // public static FuncResult GetConstructorInfo<T>(Type[] parameterTypes,out ConstructorInfo constructorInfo)
+        // {
+        //     FuncResult result=new FuncResult();
+        //     constructorInfo= typeof(T).GetConstructor(parameterTypes);
+        //     if (constructorInfo == null)
+        //     {
+        //         return result.Cancel(NullReferenceExceptionOfConstructor.CustomMessage<T>());
+        //     }
+        //
+        //     return result;
+        // }
+        public static OperationResult<ConstructorInfo> GetConstructorInfo<TToConstruct>(Type[] parameterTypes)
         {
-            CommandResult result=new CommandResult();
-            constructorInfo= typeof(T).GetConstructor(parameterTypes);
-            if (constructorInfo == null)
-            {
-                return result.Cancel(NullReferenceExceptionOfConstructor.CustomMessage<T>());
-            }
-
-            return result;
-        }
-
-        public static CommandResult CreateInstance<T>(object[] parameterValues, out T t)
-        {
-            t= default(T);
-            var result = GetConstructorInfo<T>(parameterValues.Select(obj => obj.GetType()).ToArray(),
-                out var constructorInfo);
-            if (result.IsCancel) return result;
             try
             {
-                t = (T)constructorInfo.Invoke(parameterValues);
+                var returnValue = typeof(TToConstruct).GetConstructor(parameterTypes);
+                return returnValue != null
+                    ? OperationResult<ConstructorInfo>.Success(returnValue)
+                    : OperationResult<ConstructorInfo>.Failure(
+                        ExceptionMessage.NullConstructor<TToConstruct>(parameterTypes));
 
             }
             catch (Exception e)
             {
-                result.Cancel(e.Message);
-
+               return OperationResult<ConstructorInfo>.Failure(e.Message);
             }
-            return result;
         }
-        public static bool TryGetPropertyOfSpecificType<T>(this object obj, string propertyName, out PropertyInfo property)
+        //
+        // public static FuncResult CreateInstance<T>(object[] parameterValues, out T t)
+        // {
+        //     t= default(T);
+        //     var result = GetConstructorInfo<T>(parameterValues.Select(obj => obj.GetType()).ToArray(),
+        //         out var constructorInfo);
+        //     if (result.IsCancel) return result;
+        //     try
+        //     {
+        //         t = (T)constructorInfo.Invoke(parameterValues);
+        //
+        //     }
+        //     catch (Exception e)
+        //     {
+        //         result.Cancel(e.Message);
+        //
+        //     }
+        //     return result;
+        // }
+
+        public static OperationResult<T> CreateInstance<T>(object[] parameterValues)
+        {
+            if(parameterValues==null)return OperationResult<T>.Failure(ExceptionMessage.NullConstructorParameter());
+            Type[] types = parameterValues.Select(obj => obj.GetType()).ToArray();
+            var result = GetConstructorInfo<T>(types);
+            if (!result.IsSuccess) return OperationResult<T>.Failure(result.ErrorMessage); ;
+            try
+            {
+                var constructorInfo = result.ReturnValue;
+                var returnValue = (T)constructorInfo.Invoke(parameterValues);
+                return OperationResult<T>.Success(returnValue);
+            }
+            catch (Exception e)
+            {
+                return OperationResult<T>.Failure(e.Message);
+            }
+        }
+
+        public static bool TryGetPropertyOfSpecificType<T>(this object obj, string propertyName,
+            out PropertyInfo property)
         {
             property = null;
             var type = obj.GetType();
@@ -55,7 +91,6 @@ namespace CommonUtils.Misc
             //log exception in commandresult,not in util methods.
             //LogManager.GetCurrentClassLogger().Error(argumentException);
             throw argumentException;
-
         }
 
         public static T GetObjectPropertyValue<T>(this object obj, string propertyname)
