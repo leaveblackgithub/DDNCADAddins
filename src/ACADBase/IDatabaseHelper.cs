@@ -4,7 +4,7 @@ using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public interface IDatabaseHelper:IDisposable
+    public interface IDatabaseHelper : IDisposable
     {
         OperationResult<VoidValue> RunFuncInTransaction<T>(HandleValue handleValue,
             params Func<T, OperationResult<VoidValue>>[] funcs)

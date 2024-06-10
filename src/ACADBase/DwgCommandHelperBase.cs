@@ -1,23 +1,24 @@
 ﻿using System;
-using System.IO;
 using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
-using CommonUtils.CustomExceptions;
-using CommonUtils.DwgLibs;
 using CommonUtils.Misc;
-using CommonUtils.StringLibs;
 
 namespace ACADBase
 {
-    public class DwgCommandHelperBase : DisposableClass, IDwgCommandHelper
+    public class DwgCommandHelperBase : DisposableClass
 
     {
+        // public virtual OperationResult<VoidValue> CustomExecute()
+        // {
+        //     throw new NotImplementedException();
+        // }
+
         private bool _activeDbSwitched;
         private DocumentLock _documentLock;
         private string _drawingFile;
-        private IMessageProvider _messageProvider;
         private Database _oldDb;
+
 
         public IDatabaseHelper FldCmdDatabaseHelper;
 
@@ -26,11 +27,10 @@ namespace ACADBase
             InitiateEnvironment();
         }
 
-        public DwgCommandHelperBase(string drawingFile = "", IMessageProvider messageProvider = null)
+        public DwgCommandHelperBase(string drawingFile = "")
         {
             InitiateEnvironment();
             DrawingFile = drawingFile;
-            ActiveMsgProvider = messageProvider;
         }
 
         protected virtual IDatabaseHelper CommandDataBaseHelper
@@ -53,35 +53,12 @@ namespace ACADBase
             }
         }
 
-        public IMessageProvider ActiveMsgProvider
-        {
-            get => _messageProvider;
-            protected set => _messageProvider = value ?? new MessageProviderOfMessageBox();
-        }
-
-        
-
-        public void WriteMessage(string message)
-        {
-            ActiveMsgProvider.Show(message);
-        }
-
-        public void ShowError(Exception exception)
-        {
-            ActiveMsgProvider.Error(exception);
-        }
-
-        public virtual OperationResult<VoidValue> CustomExecute()
-        {
-            throw new NotImplementedException();
-        }
-
-        public static OperationResult<VoidValue> ExecuteCustomCommands<T>(string drawingFile ,
-            IMessageProvider messageProvider)
+        public static OperationResult<VoidValue> ExecuteCustomCommands<T>(string drawingFile,
+            params Func<T, OperationResult<VoidValue>>[] funcs)
             where T : DwgCommandHelperBase, new()
         {
             string errMessage;
-            OperationResult<VoidValue> resultVoid = drawingFile.IsDefaultOrExistingDwg();
+            var resultVoid = drawingFile.IsDefaultOrExistingDwg();
             // var result = new FuncResult();
             // if (drawingFile.IsNotDefaultOrExistingDwg().IsSuccess)
             //     return result.Cancel(DwgFileNotFoundException.CustomeMessage(drawingFile));
@@ -95,30 +72,28 @@ namespace ACADBase
             // T dwgCommandHelper = null;
             try
             {
-                OperationResult<T> resultDwgCmdHelper= resultVoid.Then<VoidValue, T>(() =>
-                    ReflectionExtension.CreateInstance<T>(new object[] { drawingFile, messageProvider }));
+                var resultDwgCmdHelper = resultVoid.Then(() =>
+                    ReflectionExtension.CreateInstance<T>(new object[] { drawingFile }));
                 if (!resultDwgCmdHelper.IsSuccess)
                 {
                     errMessage = resultDwgCmdHelper.ErrorMessage;
-                    messageProvider.Show(errMessage);
+                    MessageProvider._.Show(errMessage);
                     return OperationResult<VoidValue>.Failure(errMessage);
                 }
 
-                using T dwgCommandHelper = resultDwgCmdHelper.ReturnValue;
-                dwgCommandHelper.InitiateEnvironment();
+                using var dwgCommandHelper = resultDwgCmdHelper.ReturnValue;
                 resultVoid =
-                    resultDwgCmdHelper.Then<T, VoidValue>(() => dwgCommandHelper.InitiateCmdDataBaseHelper());
-                resultVoid = resultVoid.Then(() => dwgCommandHelper.CustomExecute());
+                    resultDwgCmdHelper.Then(() => dwgCommandHelper.InitiateCmdDataBaseHelper());
+                if (funcs.IsNullOrEmpty()) return resultVoid;
+                foreach (var func in funcs) resultVoid = resultVoid.Then(() => func(dwgCommandHelper));
                 if (!resultVoid.IsSuccess)
-                {
-                    messageProvider.Show(resultVoid.ErrorMessage);
-                }
+                    MessageProvider._.Show(resultVoid.ErrorMessage);
                 return resultVoid;
             }
             catch (Exception e)
             {
                 errMessage = e.Message;
-                messageProvider.Show(errMessage);
+                MessageProvider._.Show(errMessage);
                 return OperationResult<VoidValue>.Failure(errMessage);
             }
         }
@@ -154,11 +129,14 @@ namespace ACADBase
                 // return result;
             }
 
-            resultDataBaseHelper= DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile, ActiveMsgProvider);
+            resultDataBaseHelper =
+                DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfAcConsole>(DrawingFile);
 #else
-            resultDataBaseHelper = DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfApplication>(DrawingFile, ActiveMsgProvider);
+            resultDataBaseHelper =
+                DatabaseHelper.NewDatabaseHelper<DatabaseHelperOfApplication>(DrawingFile);
 #endif
-            if (!resultDataBaseHelper.IsSuccess) return OperationResult<VoidValue>.Failure(resultDataBaseHelper.ErrorMessage);
+            if (!resultDataBaseHelper.IsSuccess)
+                return OperationResult<VoidValue>.Failure(resultDataBaseHelper.ErrorMessage);
             FldCmdDatabaseHelper = resultDataBaseHelper.ReturnValue;
             return OperationResult<VoidValue>.Success();
         }
@@ -179,7 +157,6 @@ namespace ACADBase
             CommandDataBaseHelper = null;
             _documentLock?.Dispose();
             _documentLock = null;
-            ActiveMsgProvider = null;
         }
 
         protected override void DisposeManaged()

@@ -8,12 +8,11 @@ namespace CADAddins.Environments
 {
     public class CommandBase : O_CommandBase
     {
-        public IDwgCommandHelper ActiveDwgCommandHelper;
+        public DwgCommandHelperBase ActiveDwgCommandHelper;
 
         public CommandBase()
         {
-            ActiveDwgCommandHelper = new DwgCommandHelperBase("",
-                new MessageProviderOfEditor(Application.DocumentManager.CurrentDocument.Editor));
+            ActiveDwgCommandHelper = new DwgCommandHelperBase("");
         }
 
         public override void RunCommand()

@@ -89,6 +89,7 @@
     <Compile Include="HostApplicationServiceWrapper.cs" />
     <Compile Include="IDatabaseHelper.cs" />
     <Compile Include="ITransactionHelper.cs" />
+    <Compile Include="MessageProvider.cs" />
     <Compile Include="MessageProviderOfEditor.cs" />
     <Compile Include="TransactionHelper.cs" />
   </ItemGroup>

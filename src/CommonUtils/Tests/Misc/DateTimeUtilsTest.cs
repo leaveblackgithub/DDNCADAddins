@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Globalization;
-using System.Reflection;
-using NUnit.Framework;
 using CommonUtils.Misc;
 using CommonUtils.StringLibs;
+using NUnit.Framework;
 
 namespace CommonUtils.Tests.Misc
 {
@@ -14,7 +12,7 @@ namespace CommonUtils.Tests.Misc
         [Test]
         public void DateTimeToTimeStampTest()
         {
-            var dateTime = new System.DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var dateTime = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var timeStamp = DateTimeUtils.DateTimeToTimeStamp(dateTime);
             Assert.AreEqual(1577836800, timeStamp);
         }
@@ -22,43 +20,43 @@ namespace CommonUtils.Tests.Misc
         [Test]
         public void DateTimeToLongTimeStampTest()
         {
-            var dateTime = new System.DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+            var dateTime = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             var timeStamp = DateTimeUtils.DateTimeToLongTimeStamp(dateTime);
             Assert.AreEqual(1577836800000, timeStamp);
         }
 
 
-        private void AddTimeStampeTest(Func<string,string> getStampedContent,Func<string,string,bool> startsOrEndsWith,Func<string,int,string>getStampSubString)
+        private void AddTimeStampeTest(Func<string, string> getStampedContent,
+            Func<string, string, bool> startsOrEndsWith, Func<string, int, string> getStampSubString)
         {
             var content = "Test";
             var stamp1 = DateTimeUtils.DateTimeToLongTimeStampOfNow();
             var stampedContent = getStampedContent(content);
             var stamp2 = DateTimeUtils.DateTimeToLongTimeStampOfNow();
-            int contentLength = content.Length;
-            int stampLength = stampedContent.Length;
+            var contentLength = content.Length;
+            var stampLength = stampedContent.Length;
             var spanExpected = stamp2 - stamp1;
             Assert.True(startsOrEndsWith(stampedContent, content));
-            var stampOfContent = long.Parse(getStampSubString(stampedContent, stampLength-contentLength));
+            var stampOfContent = long.Parse(getStampSubString(stampedContent, stampLength - contentLength));
             var spanActual = stampOfContent - stamp1;
             Assert.GreaterOrEqual(spanExpected, spanActual);
-            Assert.LessOrEqual(0,spanActual);
-        
+            Assert.LessOrEqual(0, spanActual);
         }
 
         private bool StringStartsWith(string str1, string str2)
         {
-            return(str1.StartsWith(str2));
+            return str1.StartsWith(str2);
         }
 
         private bool StringEndsWith(string str1, string str2)
         {
-            return(str1.EndsWith(str2));
+            return str1.EndsWith(str2);
         }
 
         [Test]
         public void AddTimeStampSuffixTest()
         {
-            AddTimeStampeTest(DateTimeUtils.AddTimeStampSuffix,StringStartsWith,StringUtils.SubStringRight);
+            AddTimeStampeTest(DateTimeUtils.AddTimeStampSuffix, StringStartsWith, StringUtils.SubStringRight);
         }
 
         [Test]
@@ -66,6 +64,5 @@ namespace CommonUtils.Tests.Misc
         {
             AddTimeStampeTest(DateTimeUtils.AddTimeStampPrefix, StringEndsWith, StringUtils.SubStringLeft);
         }
-
     }
 }

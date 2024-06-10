@@ -44,7 +44,8 @@ namespace ACADBase
             return HandleValue.FromObject(obj);
         }
 
-        public OperationResult<VoidValue> RunFuncsOnObject<T>(ObjectId objectId, Func<T, OperationResult<VoidValue>>[] funcs)
+        public OperationResult<VoidValue> RunFuncsOnObject<T>(ObjectId objectId,
+            Func<T, OperationResult<VoidValue>>[] funcs)
             where T : DBObject
         {
             if (funcs.IsNullOrEmpty()) return OperationResult<VoidValue>.Success();

@@ -7,25 +7,16 @@ namespace ACADBase
 {
     public class DatabaseHelperOfApplication : DatabaseHelper
     {
-
-        public DatabaseHelperOfApplication(string drawingFile, IMessageProvider messageProvider) : base(drawingFile,
-            messageProvider)
+        public DatabaseHelperOfApplication(string drawingFile) : base(drawingFile)
         {
-
         }
 
-        public DatabaseHelperOfApplication():base()
+        public DatabaseHelperOfApplication()
         {
         }
 
         protected Document CadDocument => Application.DocumentManager.CurrentDocument;
         
-
-        public override IMessageProvider ActiveMsgProvider
-        {
-            get => FldMsgProvider;
-            set => FldMsgProvider = value ?? new MessageProviderOfEditor(CadDocument.Editor);
-        }
     }
 }
 #endif

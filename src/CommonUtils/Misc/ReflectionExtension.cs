@@ -27,11 +27,10 @@ namespace CommonUtils.Misc
                     ? OperationResult<ConstructorInfo>.Success(returnValue)
                     : OperationResult<ConstructorInfo>.Failure(
                         ExceptionMessage.NullConstructor<TToConstruct>(parameterTypes));
-
             }
             catch (Exception e)
             {
-               return OperationResult<ConstructorInfo>.Failure(e.Message);
+                return OperationResult<ConstructorInfo>.Failure(e.Message);
             }
         }
         //
@@ -56,10 +55,11 @@ namespace CommonUtils.Misc
 
         public static OperationResult<T> CreateInstance<T>(object[] parameterValues)
         {
-            if(parameterValues==null)return OperationResult<T>.Failure(ExceptionMessage.NullConstructorParameter());
-            Type[] types = parameterValues.Select(obj => obj.GetType()).ToArray();
+            if (parameterValues == null) return OperationResult<T>.Failure(ExceptionMessage.NullConstructorParameter());
+            var types = parameterValues.Select(obj => obj.GetType()).ToArray();
             var result = GetConstructorInfo<T>(types);
-            if (!result.IsSuccess) return OperationResult<T>.Failure(result.ErrorMessage); ;
+            if (!result.IsSuccess) return OperationResult<T>.Failure(result.ErrorMessage);
+            ;
             try
             {
                 var constructorInfo = result.ReturnValue;

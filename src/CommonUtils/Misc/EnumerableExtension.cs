@@ -1,12 +1,16 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
 
 namespace CommonUtils.Misc
 {
     public static class EnumerableExtension
     {
+        public enum ShowSuccessFuncName
+        {
+            Show = 1,
+            Hide = 0
+        }
+
         public static bool IsNullOrEmpty(this IEnumerable enumerable)
         {
             return enumerable == null || !enumerable.GetEnumerator().MoveNext();
@@ -19,17 +23,11 @@ namespace CommonUtils.Misc
             if (funcs.IsNullOrEmpty()) return result;
             foreach (var func in funcs)
             {
-               result= result.Then(()=> func(t));
-               if (!result.IsSuccess) break;
+                result = result.Then(() => func(t));
+                if (!result.IsSuccess) break;
             }
+
             return result;
-        }
-        
-        
-        public enum ShowSuccessFuncName
-        {
-            Show=1,
-            Hide=0
         }
     }
 }

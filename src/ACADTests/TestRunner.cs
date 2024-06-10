@@ -1,8 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using ACADTests;
 using Autodesk.AutoCAD.Runtime;
-using NLog;
 using TestRunnerACAD;
 
 [assembly: CommandClass(typeof(TestRunner))]
@@ -16,7 +14,7 @@ namespace ACADTests
         public static void RunTests()
         {
             var assembly = Assembly.GetExecutingAssembly();
-#if AcConsole
+#if AcConsoleTest
             TestRunnerBase.RunTestsBaseIncludes(assembly, "ACADTests.UnitTests.AcConsoleTests");
 #else
             TestRunnerBase.RunTestsBaseIncludes(assembly);

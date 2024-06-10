@@ -1,4 +1,5 @@
 ﻿using System;
+using CommonUtils.Misc;
 
 namespace CommonUtils.CustomExceptions
 {
@@ -13,9 +14,10 @@ namespace CommonUtils.CustomExceptions
         {
             return new NullReferenceExceptionOfDatabase(CustomeMessage(dwgPath));
         }
+
         public static string CustomeMessage(string dwgPath)
         {
-            return $"DwgDatabase read from [{dwgPath}] is null.";
+            return ExceptionMessage.NullDatabase(dwgPath);
         }
     }
 }

@@ -8,9 +8,10 @@ namespace CommonUtils.CustomExceptions
         {
         }
 
-        public static ArgumentExceptionOfInvalidProperty _<T>( object obj, string propertyName)
+        public static ArgumentExceptionOfInvalidProperty _<T>(object obj, string propertyName)
         {
-            return new ArgumentExceptionOfInvalidProperty($"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
+            return new ArgumentExceptionOfInvalidProperty(
+                $"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}");
         }
     }
 }

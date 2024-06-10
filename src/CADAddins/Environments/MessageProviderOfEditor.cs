@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.ExceptionServices;
-using Autodesk.AutoCAD.EditorInput;
+﻿using Autodesk.AutoCAD.EditorInput;
 using CommonUtils.Misc;
 
 namespace CADAddins.Environments
@@ -19,6 +17,5 @@ namespace CADAddins.Environments
         {
             _editor.WriteMessage(message);
         }
-        
     }
 }

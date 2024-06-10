@@ -4,7 +4,7 @@ using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public interface ITransactionHelper:IDisposable
+    public interface ITransactionHelper : IDisposable
     {
         T GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject;
@@ -14,6 +14,7 @@ namespace ACADBase
 
         OperationResult<VoidValue> RunFuncsOnObject<T>(ObjectId objectId, Func<T, OperationResult<VoidValue>>[] funcs)
             where T : DBObject;
+
         void Commit();
         void AddNewlyCreatedDBObject(DBObject obj, bool add);
     }

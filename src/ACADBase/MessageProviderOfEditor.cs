@@ -1,4 +1,4 @@
-﻿using System;
+﻿#if ApplicationTest
 using Autodesk.AutoCAD.EditorInput;
 using CommonUtils.Misc;
 
@@ -8,10 +8,10 @@ namespace ACADBase
     {
         public MessageProviderOfEditor(Editor editor)
         {
-            ActiveEditor=editor;
+            ActiveEditor = editor;
         }
 
-        public Editor ActiveEditor { get;}
+        public Editor ActiveEditor { get; }
 
         public override void Show(string message)
         {
@@ -19,3 +19,4 @@ namespace ACADBase
         }
     }
 }
+#endif

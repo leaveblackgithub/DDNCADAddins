@@ -30,6 +30,6 @@ namespace CommonUtils.StringLibs
         public static string SubStringRight(this string str, int length)
         {
             return str.Substring(str.Length - length);
-        }       
+        }
     }
 }

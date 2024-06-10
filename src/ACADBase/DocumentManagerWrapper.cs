@@ -1,4 +1,6 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
+using Autodesk.AutoCAD.ApplicationServices.Core;
+using Autodesk.AutoCAD.EditorInput;
 using CommonUtils.CustomExceptions;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
@@ -8,7 +10,7 @@ namespace ACADBase
     {
         public static Document GetActiveDocument()
         {
-            Document document = Application.DocumentManager.MdiActiveDocument;
+            var document = Application.DocumentManager.MdiActiveDocument;
             if (document == null) throw NullReferenceExceptionOfActiveDocument._();
             return document;
         }
@@ -17,5 +19,8 @@ namespace ACADBase
         {
             return GetActiveDocument().LockDocument();
         }
+
+        public static Editor GetActiveEditor()
+        { return GetActiveDocument().Editor; }
     }
 }

@@ -9,8 +9,8 @@ namespace CommonUtils.UtilsForTest
         private Func<TestCounter, FuncResult>[] _testFuncs;
 
         public static TestException TestExceptionForCancel => _testExceptionForCancel ??
-                                                       (_testExceptionForCancel =
-                                                           new TestException("Test Exception for Counter"));
+                                                              (_testExceptionForCancel =
+                                                                  new TestException("Test Exception for Counter"));
 
         public Func<TestCounter, FuncResult>[] _ => _testFuncs ?? (_testFuncs =
             new Func<TestCounter, FuncResult>[]
@@ -21,16 +21,17 @@ namespace CommonUtils.UtilsForTest
                 CancelMethod
             });
 
-        public  static FuncResult SucessMethod(TestCounter counter)
+        public static FuncResult SucessMethod(TestCounter counter)
         {
-            return TypicalMethod(counter, false);
+            return TypicalMethod(counter);
         }
 
-        public static  FuncResult CancelMethod(TestCounter counter)
+        public static FuncResult CancelMethod(TestCounter counter)
         {
             return TypicalMethod(counter, true);
         }
-        public static FuncResult TypicalMethod(TestCounter counter,bool throwException=false)
+
+        public static FuncResult TypicalMethod(TestCounter counter, bool throwException = false)
         {
             var result = new FuncResult();
             try
@@ -42,8 +43,8 @@ namespace CommonUtils.UtilsForTest
             {
                 result.Cancel(e);
             }
+
             return result;
         }
-
     }
 }

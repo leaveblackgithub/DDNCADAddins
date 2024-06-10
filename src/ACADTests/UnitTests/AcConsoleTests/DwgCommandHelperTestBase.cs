@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq.Expressions;
-using ACADBase;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.Misc;
 using CommonUtils.UtilsForTest;
@@ -19,63 +18,22 @@ namespace ACADTests.UnitTests.AcConsoleTests
 
         protected const string TestFolder = @"D:\leaveblackgithub\DDNCADAddinsForRevitImport\src\ACADTests\";
         
-        private TestException _exInitInBase;
 
 
         protected string TestDrawingPath => TestFolder + TestDrawingName;
         protected string TestTxtPath => TestFolder + TestTxtName;
         protected string FakeDrawingPath => TestFolder + FakeDrawingName;
-
-        protected TestException ExInitInBase =>
-            _exInitInBase ?? (_exInitInBase = new TestException(nameof(ExInitInBase)));
+        
         
 
-        [SetUp]
-        public virtual void SetUp()
+        protected OperationResult<VoidValue> TestAddingLines(DwgCommandHelperOfTest dwgCommandHelper)
         {
-            MsgProviderInvokeClear();
+            return dwgCommandHelper.TestAddingLines();
         }
 
-        [TearDown]
-        public virtual void TearDown()
+        protected OperationResult<VoidValue> TestEditorOutput(DwgCommandHelperOfTest dwgCommandHelper)
         {
-            // MsgProviderInvokeClear();
+            return dwgCommandHelper.TestEditorOutput();
         }
-
-        protected IMessageProvider GetMsgProviderMockObj()
-        {
-            return MessageProviderMockUtils.NewMessageProviderInstance();
-            // MsgProviderInvokeClear();
-            // return MsgProviderMockInitInBase.Object;
-        }
-
-        private void MsgProviderInvokeClear()
-        {
-            MessageProviderMockUtils.MsgProviderInvokeClear();
-            // MsgProviderMockInitInBase.Invocations.Clear();
-        }
-
-        protected void EmptyDbAction(Database db)
-        {
-            LogManager.GetCurrentClassLogger().Info("EmptyDbAction");
-        }
-
-        protected void MsgProviderShowExInitInBaseOnce()
-        {
-            MsgProviderVerifyExOnce(m => m.Error(ExInitInBase));
-        }
-
-        protected void MsgProviderVerifyExTypeOnce<T>() where T : Exception
-        {
-            MsgProviderVerifyExOnce(m => m.Error(It.IsAny<T>()));
-        }
-
-        protected void MsgProviderVerifyExOnce(Expression<Action<IMessageProvider>> checkExceptAction)
-        {
-            MessageProviderMockUtils.MsgProviderVerifyExOnce(checkExceptAction);
-            // MsgProviderMockInitInBase.Verify(checkExceptAction, Times.Once);
-            // MsgProviderInvokeClear();
-        }
-        
     }
 }
