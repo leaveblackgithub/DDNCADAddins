@@ -5,7 +5,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{743B10D0-FC6A-4E8C-A180-FE6CD1C52239}</ProjectGuid>
+    <ProjectGuid>{BE20882C-1C31-4005-A734-64DB8F050F90}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -42,6 +42,12 @@
     <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="acmgd">
+      <HintPath>C:\Program Files\Autodesk\AutoCAD 2019\acmgd.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="AcCoreMgd, Version=23.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoCAD.NET.Core.23.0.0\lib\net47\AcCoreMgd.dll</HintPath>
       <Private>False</Private>
@@ -73,28 +79,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="acmgd" Condition="'$(Configuration)|$(Platform)' == 'ApplicationTest|AnyCPU'">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2019\acmgd.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="DatabaseExtension.cs" />
-    <Compile Include="DatabaseHelper.cs" />
-    <Compile Include="DatabaseHelperOfAcConsole.cs" />
-    <Compile Include="DatabaseHelperOfApplication.cs" />
-    <Compile Include="DocumentManagerWrapper.cs" />
-    <Compile Include="BaseDwgCommandHelper.cs" />
-    <Compile Include="HandleValue.cs" />
-    <Compile Include="HostApplicationServiceWrapper.cs" />
-    <Compile Include="IDatabaseHelper.cs" />
-    <Compile Include="ITransactionHelper.cs" />
-    <Compile Include="TransactionHelper.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ACADBase\ACADBase.csproj">
+      <Project>{743b10d0-fc6a-4e8c-a180-fe6cd1c52239}</Project>
+      <Name>ACADBaseOfAcConsole</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
       <Project>{486D3F43-EF27-4F68-8EDE-3DF2E6C546D6}</Project>
       <Name>CommonUtils</Name>

@@ -1,0 +1,5 @@
+setvar
+trustedpaths
+D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/
+netload D:/leaveblackgithub/DDNCADAddinsForRevitImport/src/bin/ACADTestsOfUnit.dll
+RunTests

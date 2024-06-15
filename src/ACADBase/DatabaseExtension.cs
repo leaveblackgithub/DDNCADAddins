@@ -24,7 +24,7 @@ namespace ACADBase
                 database = NewDrawingDatabase();
                 database.ReadDwgFile(drawingFile, FileOpenMode.OpenTryForReadShare, true, null);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 database = null;
             }

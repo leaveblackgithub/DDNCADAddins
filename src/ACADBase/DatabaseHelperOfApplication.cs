@@ -1,6 +1,7 @@
 ﻿#if ApplicationTest
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
+using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADBase
 {
