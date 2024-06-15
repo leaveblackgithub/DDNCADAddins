@@ -6,14 +6,14 @@ using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADTests.UnitTests.AcConsoleTests
 {
-    public class DwgCommandHelperOfTest : DwgCommandHelperBase
+    public class TestDwgCommandHelper : BaseDwgCommandHelper
     {
-        public DwgCommandHelperOfTest(string drawingFile = "") :
+        public TestDwgCommandHelper(string drawingFile = "") :
             base(drawingFile)
         {
         }
 
-        public DwgCommandHelperOfTest()
+        public TestDwgCommandHelper()
         {
         }
 

@@ -7,8 +7,8 @@ using CommonUtils.Misc;
 
 namespace ACADBase
 {
-    public class DwgCommandHelperBase : DisposableClass
-
+    public class BaseDwgCommandHelper : DisposableClass
+        //NO interface due to static invoke
     {
         // public virtual OperationResult<VoidValue> CustomExecute()
         // {
@@ -23,12 +23,12 @@ namespace ACADBase
 
         public IDatabaseHelper FldCmdDatabaseHelper;
 
-        public DwgCommandHelperBase()
+        public BaseDwgCommandHelper()
         {
             InitiateEnvironment();
         }
 
-        public DwgCommandHelperBase(string drawingFile = "")
+        public BaseDwgCommandHelper(string drawingFile = "")
         {
             InitiateEnvironment();
             DrawingFile = drawingFile;
@@ -56,7 +56,7 @@ namespace ACADBase
 
         public static OperationResult<VoidValue> ExecuteCustomCommands<T>(string drawingFile,
             params Func<T, OperationResult<VoidValue>>[] funcs)
-            where T : DwgCommandHelperBase, new()
+            where T : BaseDwgCommandHelper, new()
         {
             string errMessage;
             var resultVoid = drawingFile.IsDefaultOrExistingDwg();

@@ -84,7 +84,7 @@
     <Compile Include="DatabaseHelperOfAcConsole.cs" />
     <Compile Include="DatabaseHelperOfApplication.cs" />
     <Compile Include="DocumentManagerWrapper.cs" />
-    <Compile Include="DwgCommandHelperBase.cs" />
+    <Compile Include="BaseDwgCommandHelper.cs" />
     <Compile Include="HandleValue.cs" />
     <Compile Include="HostApplicationServiceWrapper.cs" />
     <Compile Include="IDatabaseHelper.cs" />

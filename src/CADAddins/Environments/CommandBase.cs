@@ -6,11 +6,11 @@ namespace CADAddins.Environments
 {
     public class CommandBase : O_CommandBase
     {
-        public DwgCommandHelperBase ActiveDwgCommandHelper;
+        public BaseDwgCommandHelper ActiveDwgCommandHelper;
 
         public CommandBase()
         {
-            ActiveDwgCommandHelper = new DwgCommandHelperBase("");
+            ActiveDwgCommandHelper = new BaseDwgCommandHelper("");
         }
 
         public override void RunCommand()

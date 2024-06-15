@@ -88,9 +88,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IntegrateTests\CleanupCheck.cs" />
+    <Compile Include="IntegrateTests\CleanupCheckDwgCommandHelper.cs" />
     <Compile Include="TestRunner.cs" />
     <Compile Include="UnitTests\ACADAppTests\CleanupTests.cs" />
-    <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperOfTest.cs" />
+    <Compile Include="UnitTests\AcConsoleTests\TestDwgCommandHelper.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperTests.cs" />
     <Compile Include="UnitTests\AcConsoleTests\DwgCommandHelperTestBase.cs" />
     <Compile Include="UnitTests\AcConsoleTests\ExampleTestsToFail.cs" />

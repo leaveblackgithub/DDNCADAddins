@@ -17,7 +17,7 @@ namespace ACADTests.UnitTests.AcConsoleTests
         protected string FakeDrawingPath => TestFolder + FakeDrawingName;
 
 
-        protected OperationResult<VoidValue> TestAddingLines(DwgCommandHelperOfTest dwgCommandHelper)
+        protected OperationResult<VoidValue> TestAddingLines(TestDwgCommandHelper dwgCommandHelper)
         {
             return dwgCommandHelper.TestAddingLines();
         }
