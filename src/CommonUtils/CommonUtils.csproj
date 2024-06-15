@@ -83,6 +83,7 @@
     <Compile Include="DwgLibs\IDwgExecutor.cs" />
     <Compile Include="Misc\ExceptionMessage.cs" />
     <Compile Include="Misc\FilePathExtension.cs" />
+    <Compile Include="Misc\IMessageProvider.cs" />
     <Compile Include="Misc\OperationResult.cs" />
     <Compile Include="Misc\VoidValue.cs" />
     <Compile Include="Misc\OperationResultExtensions.cs" />
