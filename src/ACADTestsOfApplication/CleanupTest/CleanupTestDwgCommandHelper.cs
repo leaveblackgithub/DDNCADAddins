@@ -15,7 +15,7 @@ namespace ACADTestsOfApplication.CleanupTest
 
         public OperationResult<VoidValue> TestOutput()
         {
-            DocumentManagerWrapper.GetActiveEditor().WriteMessage("TestOutput");
+            DocumentManagerWrapper.GetActiveEditor().WriteMessage("TestOutput2");
             return OperationResult<VoidValue>.Success();
         }
     }

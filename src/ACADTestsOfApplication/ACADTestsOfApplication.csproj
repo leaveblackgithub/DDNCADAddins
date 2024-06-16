@@ -89,10 +89,6 @@
       <Project>{be20882c-1c31-4005-a734-64db8f050f90}</Project>
       <Name>ACADBaseOfAcConsole</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ACADAddins\ACADAddins.csproj">
-      <Project>{939D79C6-A85B-42CA-8873-406C9AA56A94}</Project>
-      <Name>CADAddins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ACADBase\ACADBase.csproj">
       <Project>{743b10d0-fc6a-4e8c-a180-fe6cd1c52239}</Project>
       <Name>ACADBase</Name>

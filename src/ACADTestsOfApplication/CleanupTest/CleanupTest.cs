@@ -1,5 +1,4 @@
-﻿using ACADAddins.Archive;
-using ACADBase;
+﻿using ACADBase;
 using ACADTestsOfApplication.CleanupTest;
 using Autodesk.AutoCAD.Runtime;
 using CommonUtils.Misc;
@@ -8,7 +7,7 @@ using CommonUtils.Misc;
 
 namespace ACADTestsOfApplication.CleanupTest
 {
-    public class CleanupTest : O_CommandBase
+    public class CleanupTest 
     {
         //private LayerHelper _curLayerHelper;
         //private LTypeHelper _curLTypeHelper;
@@ -23,7 +22,7 @@ namespace ACADTestsOfApplication.CleanupTest
         //        new LTypeHelper(AcCurDb.LinetypeTableId, O_CurDocHelper));
 
         [CommandMethod(nameof(CleanupTest))]
-        public override void RunCommand()
+        public  void RunCommand()
         {
             BaseDwgCommandHelper.ExecuteCustomCommands<CleanupTestDwgCommandHelper>("", TestOutput);
             //O_CurEditorHelper.WriteMessage($"\nCleanup Result Check [{O_CurDocHelper.Name}]...");
