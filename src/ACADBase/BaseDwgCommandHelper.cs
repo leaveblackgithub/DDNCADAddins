@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.DatabaseServices;
@@ -24,12 +26,12 @@ namespace ACADBase
 
         public BaseDwgCommandHelper()
         {
-            InitiateEnvironment();
+            InitiateFields();
         }
 
         public BaseDwgCommandHelper(string drawingFile = "")
         {
-            InitiateEnvironment();
+            InitiateFields();
             DrawingFile = drawingFile;
         }
 
@@ -37,7 +39,7 @@ namespace ACADBase
         {
             get
             {
-                if (FldCmdDatabaseHelper == null) InitiateCmdDataBaseHelper();
+                if (FldCmdDatabaseHelper == null) InitiateEnvironment();
                 return FldCmdDatabaseHelper;
             }
             set => FldCmdDatabaseHelper = value;
@@ -52,9 +54,9 @@ namespace ACADBase
                 if (string.IsNullOrEmpty(_drawingFile)) return;
             }
         }
-
+        public delegate OperationResult<VoidValue> CustomCommandDelegate();
         public static OperationResult<VoidValue> ExecuteCustomCommands<T>(string drawingFile,
-            params Func<T, OperationResult<VoidValue>>[] funcs)
+            params string[] methodNames)
             where T : BaseDwgCommandHelper, new()
         {
             string errMessage;
@@ -82,9 +84,8 @@ namespace ACADBase
 
                 using var dwgCommandHelper = resultDwgCmdHelper.ReturnValue;
                 resultVoid =
-                    resultDwgCmdHelper.Then(() => dwgCommandHelper.InitiateCmdDataBaseHelper());
-                if (funcs.IsNullOrEmpty()) return resultVoid;
-                foreach (var func in funcs) resultVoid = resultVoid.Then(() => func(dwgCommandHelper));
+                    resultDwgCmdHelper.Then(() => dwgCommandHelper.InitiateEnvironment());
+                resultVoid = resultVoid.Then(() => dwgCommandHelper.RunForEach(methodNames));
                 return resultVoid;
             }
             catch (Exception e)
@@ -94,6 +95,19 @@ namespace ACADBase
             }
         }
 
+        public OperationResult<VoidValue> RunForEach(string[] methodNames)
+        {
+            OperationResult<VoidValue> result = OperationResult<VoidValue>.Success();
+            if(methodNames.IsNullOrEmpty()) return result;
+            foreach (var methodName in methodNames)
+            {
+                var invokeResult=
+                this.MethodInvoke<OperationResult<VoidValue>>(methodName, new object[] { });
+                if (!invokeResult.IsSuccess) return OperationResult<VoidValue>.Failure(invokeResult.ErrorMessage);
+            }
+
+            return result;
+        }
         private void SaveWorkingDatabase()
         {
             _oldDb = HostApplicationServiceWrapper.GetWorkingDatabase();
@@ -114,8 +128,11 @@ namespace ACADBase
         [DllImport("accore.dll", EntryPoint = "?acedDisableDefaultARXExceptionHandler@@YAX_N@Z")]
         public static extern void acedDisableDefaultARXExceptionHandler(bool disable);
 
-        private OperationResult<VoidValue> InitiateCmdDataBaseHelper()
+        protected virtual OperationResult<VoidValue> InitiateEnvironment()
         {
+            var resultLock= DocumentManagerWrapper.LockActiveDocument();
+            if(!resultLock.IsSuccess) return OperationResult<VoidValue>.Failure(resultLock.ErrorMessage);
+            _documentLock = resultLock.ReturnValue;
             OperationResult<IDatabaseHelper> resultDataBaseHelper;
 #if AcConsoleTest
             if (!HostApplicationServiceWrapper.IsTargetDrawingActive(DrawingFile).IsSuccess)
@@ -137,9 +154,8 @@ namespace ACADBase
             return OperationResult<VoidValue>.Success();
         }
 
-        protected void InitiateEnvironment()
+        protected void InitiateFields()
         {
-            _documentLock = DocumentManagerWrapper.LockActiveDocument();
             _oldDb = null;
             _activeDbSwitched = false;
             //如果改为TRUE，未处理exception会导致cad崩溃???

@@ -17,10 +17,6 @@ namespace ACADTestsOfUnit.UnitTests.AcConsoleTests
         protected string TestTxtPath => Path.Combine(TestFolder, TestTxtName);
         protected string FakeDrawingPath => Path.Combine(TestFolder, FakeDrawingName);
 
-
-        protected OperationResult<VoidValue> TestAddingLines(TestDwgCommandHelper dwgCommandHelper)
-        {
-            return dwgCommandHelper.TestAddingLines();
-        }
+        
     }
 }

@@ -1,6 +1,8 @@
 ﻿using CommonUtils.CustomExceptions;
+using NUnit.Framework.Internal;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace CommonUtils.Misc
 {
@@ -43,13 +45,50 @@ namespace CommonUtils.Misc
             return $"{handleValueAsLong} is not a valid Handle Value.";
         }
 
+        public static string InvalidProperty<T> (object obj, string propertyName)
+        {
+            return 
+                $"Type {obj.GetType().Name} doesn't contain property {propertyName} of type {typeof(T).Name}";
+        }
         public static string NullDatabase(string dwgPath)
         {
             return $"DwgDatabase read from [{dwgPath}] is null.";
         }
+        public static string UnExpexctedError(Exception exception)
+        {
+            return $"Unexpected Error: {exception.ToString()}";
+        }
 
 
+        public static string NoActiveDocument()
+        {
+            return "Active Document is null.";
+        }
 
+        public static string NoActiveEditor()
+        {
+            return "Active Editor is null.";
+        }
 
+        public static string InvalidMethod<T>(object obj,string methodName)
+        {
+            return $"Method {methodName} of type {obj.GetType()} should return type {typeof(T)}.";
+        }
+
+        public static string NullMethodParameters()
+        {
+            return "Method parameters can not be null.";
+        }
+
+        public static string ReadonlyProperty(object o, string propertyname)
+        {
+            return
+                $"Type {o.GetType().Name}'s property {propertyname} is readonly";
+        }
+
+        public static string InvalidArguments()
+        {
+            return "Invalid Arguments.";
+        }
     }
 }

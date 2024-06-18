@@ -110,15 +110,15 @@ namespace ACADAddins.LibsOfCleanupTextStyles
                     foreach (dynamic objId in blk)
                     {
                         DBObject obj = trans.GetObject(objId, OpenMode.ForWrite);
-                        if (obj.TryGetPropertyOfSpecificType<object>(NameOfTextStyleId, out _))
-                            //                            ||
+                        var resultOfGettingTextStyleId = obj.TryGetPropertyOfSpecificType<object>(NameOfTextStyleId);
+                        if (!resultOfGettingTextStyleId.IsSuccess) continue;
+                        //                            ||
                             //                            entClassName == "AcDbAttributeDefinition")
                         {
                             //                            trans.GetObject(objId, OpenMode.ForWrite);
                             //                            _curEditorHelper.WriteMessage($"\n{entClassName}:{ent.TextStyleId.Name}");
 
-                            dynamic textStyleId = obj.GetObjectPropertyValue<ObjectId>(NameOfTextStyleId);
-                            if (textStyleId == null) continue;
+                            dynamic textStyleId = resultOfGettingTextStyleId.ReturnValue;
                             string idString = textStyleId.ToString();
                             if (!DirtyDict.TryGetValue(idString, out var newTextStyle)) continue;
                             try

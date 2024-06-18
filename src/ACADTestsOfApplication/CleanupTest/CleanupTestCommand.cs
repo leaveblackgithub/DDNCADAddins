@@ -24,7 +24,7 @@ namespace ACADTestsOfApplication.CleanupTest
         [CommandMethod(nameof(CleanupTestCommand))]
         public  void RunCommand()
         {
-            BaseDwgCommandHelper.ExecuteCustomCommands<CleanupTestDwgCommandHelper>("", TestOutput);
+            BaseDwgCommandHelper.ExecuteCustomCommands<CleanupTestDwgCommandHelper>("", nameof(TestOutput));
             //O_CurEditorHelper.WriteMessage($"\nCleanup Result Check [{O_CurDocHelper.Name}]...");
             //CurLTypeHelper.Check();
             //CurLayerHelper.Check();

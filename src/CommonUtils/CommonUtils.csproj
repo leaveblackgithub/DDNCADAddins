@@ -72,16 +72,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidHandle.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidId.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfInvalidProperty.cs" />
-    <Compile Include="CustomExceptions\ArgumentExceptionOfWrongDbObjectType.cs" />
     <Compile Include="CustomExceptions\NullReferenceExceptionOfConstructor.cs" />
     <Compile Include="CustomExceptions\NullReferenceExceptionOfActiveDocument.cs" />
     <Compile Include="DwgLibs\IDwgExecutor.cs" />
     <Compile Include="Misc\ExceptionMessage.cs" />
     <Compile Include="Misc\FilePathExtension.cs" />
-    <Compile Include="Misc\IMessageProvider.cs" />
     <Compile Include="Misc\OperationResult.cs" />
     <Compile Include="Misc\VoidValue.cs" />
     <Compile Include="Misc\OperationResultExtensions.cs" />
@@ -91,7 +86,6 @@
     <Compile Include="Misc\LazySingleton.cs" />
     <Compile Include="UtilsForTest\TestException.cs" />
     <Compile Include="Misc\FuncResult.cs" />
-    <Compile Include="CustomExceptions\DwgFileNotFoundException.cs" />
     <Compile Include="StringLibs\BoundPrefixUtils.cs" />
     <Compile Include="Misc\EnumerableExtension.cs" />
     <Compile Include="Misc\DateTimeUtils.cs" />

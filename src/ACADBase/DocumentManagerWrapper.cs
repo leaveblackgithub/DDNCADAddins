@@ -1,28 +1,35 @@
 ﻿using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.EditorInput;
-using CommonUtils.CustomExceptions;
+using CommonUtils.Misc;
 using Application = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace ACADBase
 {
     public static class DocumentManagerWrapper
     {
-        public static Document GetActiveDocument()
+        public static OperationResult<Document> GetActiveDocument()
         {
             var document = Application.DocumentManager.MdiActiveDocument;
-            if (document == null) throw NullReferenceExceptionOfActiveDocument._();
-            return document;
+            return document == null
+                ? OperationResult<Document>.Failure(ExceptionMessage.NoActiveDocument())
+                : OperationResult<Document>.Success(document);
         }
 
-        public static DocumentLock LockActiveDocument()
+        public static OperationResult<DocumentLock> LockActiveDocument()
         {
-            return GetActiveDocument().LockDocument();
+            var resultDocument = GetActiveDocument();
+            return resultDocument.IsSuccess
+                ? OperationResult<DocumentLock>.Success(resultDocument.ReturnValue.LockDocument())
+                : OperationResult<DocumentLock>.Failure(resultDocument.ErrorMessage);
         }
 
-        public static Editor GetActiveEditor()
+        public static OperationResult<Editor> GetActiveEditor()
         {
-            return GetActiveDocument().Editor;
+            var resultDocument = GetActiveDocument();
+            return resultDocument.IsSuccess
+                ? OperationResult<Editor>.Success(resultDocument.ReturnValue.Editor)
+                : OperationResult<Editor>.Failure(resultDocument.ErrorMessage);
         }
     }
 }

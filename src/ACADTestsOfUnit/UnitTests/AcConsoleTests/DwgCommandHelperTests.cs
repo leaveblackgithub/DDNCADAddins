@@ -10,18 +10,16 @@ namespace ACADTestsOfUnit.UnitTests.AcConsoleTests
     [Apartment(ApartmentState.STA)]
     public class DwgCommandHelperTests : DwgCommandHelperTestBase
     {
+        public string TestAddingLinesName=nameof(TestDwgCommandHelper.TestAddingLines);
         //Use a new drawing
 
 #if ApplicationTest
         [Test]
         public void TestAddLineInTestDwgOnApplication()
         {
-            // Run the tests
-            // PropTestDwgCommandHelperDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
-            // Assert.True(PropTestDwgCommandHelperAddingLinesDwg.TestAddingLine());
             var result =
                 BaseDwgCommandHelper.ExecuteCustomCommands<TestDwgCommandHelper>(TestDrawingPath,
-                     TestAddingLines);
+                    TestAddingLinesName);
             if (!HostApplicationServiceWrapper.IsTargetDrawingActive(TestDrawingPath).IsSuccess)
             {
                 Assert.AreEqual(ExceptionMessage.NullActiveDocument(TestDrawingPath),
@@ -45,11 +43,8 @@ namespace ACADTestsOfUnit.UnitTests.AcConsoleTests
         [Test]
         public void TestAddLineInTestDwgOnAcConsole()
         {
-            // Run the tests
-            // PropTestDwgCommandHelperDwg.ExecuteDatabaseFuncs(AddLine, CheckLine);
-            // Assert.True(PropTestDwgCommandHelperAddingLinesDwg.TestAddingLine());
             var result =
-                BaseDwgCommandHelper.ExecuteCustomCommands<TestDwgCommandHelper>(TestDrawingPath, TestAddingLines);
+                BaseDwgCommandHelper.ExecuteCustomCommands<TestDwgCommandHelper>(TestDrawingPath, TestAddingLinesName);
             Assert.True(result.IsSuccess);
         }
 
@@ -68,8 +63,6 @@ namespace ACADTestsOfUnit.UnitTests.AcConsoleTests
         [Test]
         public void TestAddLineInActiveDwg()
         {
-            // Run the tests
-            // PropDwgCommandHelperActive.ExecuteDatabaseFuncs(AddLine, CheckLine);
             Assert.True(BaseDwgCommandHelper
                 .ExecuteCustomCommands<TestDwgCommandHelper>("").IsSuccess);
         }

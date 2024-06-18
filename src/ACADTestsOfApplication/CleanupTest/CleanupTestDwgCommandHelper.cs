@@ -1,9 +1,10 @@
 ﻿using ACADBase;
+using ACADBaseOfApplication;
 using CommonUtils.Misc;
 
 namespace ACADTestsOfApplication.CleanupTest
 {
-    public class CleanupTestDwgCommandHelper : BaseDwgCommandHelper
+    public class CleanupTestDwgCommandHelper : AppBaseDwgCommandHelper
     {
         public CleanupTestDwgCommandHelper(string drawingFile = "") : base(drawingFile)
         {
@@ -15,7 +16,7 @@ namespace ACADTestsOfApplication.CleanupTest
 
         public OperationResult<VoidValue> TestOutput()
         {
-            DocumentManagerWrapper.GetActiveEditor().WriteMessage("TestOutput2");
+            ActiveEditorWrapper.WriteMessage("TestOutput3");
             return OperationResult<VoidValue>.Success();
         }
     }

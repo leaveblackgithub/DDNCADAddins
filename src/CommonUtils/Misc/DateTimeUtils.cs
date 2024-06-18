@@ -74,12 +74,5 @@ namespace CommonUtils.Misc
         {
             return DateTimeToShortStamp(DateTime.Now);
         }
-        public static string AddTimeStampForDebug(string content)
-        {
-#if DEBUG
-            return AddShortTimeStampSuffix(content);
-#endif
-            return content;
-        }
     }
 }

@@ -18,49 +18,75 @@ namespace CommonUtils.Tests.Misc
         private static TestClass _testClass = new TestClass();
         private readonly string _realproperty = "RealProperty";
         private readonly string _fakeproperty = "FakeProperty";
+        private readonly string _realmethod= "RealMethod";
+        private readonly string _fakemethod = "FakeMethod";
+        private readonly string _readonlyproperty = "ReadOnlyProperty";
 
         [Test]
         public void TryGetPropertyTest()
         {
-            PropertyInfo property;
-            Assert.True(_testClass.TryGetPropertyOfSpecificType<bool>(_realproperty, out property));
-            Assert.NotNull(property);
-            Assert.False(_testClass.TryGetPropertyOfSpecificType<string>(_realproperty, out property));
-            Assert.Null(property);
-            Assert.False(_testClass.TryGetPropertyOfSpecificType<bool>(_fakeproperty, out property));
-            Assert.Null(property);
+            var result1 = _testClass.TryGetPropertyOfSpecificType<bool>(_realproperty);
+            Assert.True(result1.IsSuccess);
+            Assert.NotNull(result1.ReturnValue);
+            var result2 = _testClass.TryGetPropertyOfSpecificType<string>(_realproperty);
+            Assert.False(result2.IsSuccess);
+            var result3 = _testClass.TryGetPropertyOfSpecificType<bool>(_fakeproperty);
+            Assert.False(result3.IsSuccess);
         }
-
         [Test]
-        public void MustGetPropertyTest()
+        public void GetObjectPropertyValueTest()
         {
-            Assert.NotNull(_testClass.MustGetProperty<bool>(_realproperty));
-            Assert.False(_testClass.GetObjectPropertyValue<bool>(_realproperty));
-            Exception ex;
-            ex = Assert.Throws<ArgumentExceptionOfInvalidProperty>(MustGetRealPropertyInString);
-            Assert.That(ex.Message, Is.EqualTo("Type TestClass doesn't contain property RealProperty of type String"));
-            ex = Assert.Throws<ArgumentExceptionOfInvalidProperty>(MustGetFakeProperty);
-            Assert.That(ex.Message, Is.EqualTo("Type TestClass doesn't contain property FakeProperty of type Boolean"));
-        }
+            var result1 = _testClass.GetObjectPropertyValue<bool>(_realproperty);
+            Assert.True(result1.IsSuccess);
 
-        private void MustGetRealPropertyInString()
+            Assert.False(result1.ReturnValue);
+            var result2 = _testClass.GetObjectPropertyValue<string>(_realproperty);
+            Assert.False(result2.IsSuccess);
+            var result3 = _testClass.GetObjectPropertyValue<bool>(_fakeproperty);
+            Assert.False(result3.IsSuccess);
+        }
+        [Test]
+        public void SetObjectPropertyValueTest()
         {
-            _testClass.MustGetProperty<string>(_realproperty);
+            var result1 = _testClass.SetObjectPropertyValue<bool>(_realproperty, true);
+            Assert.True(result1.IsSuccess);
+            Assert.True(_testClass.RealProperty);
+            var result2 = _testClass.SetObjectPropertyValue(_fakeproperty, true);
+            Assert.False(result2.IsSuccess);
+            var result3 = _testClass.SetObjectPropertyValue(_readonlyproperty, true);
+            Assert.False(result3.IsSuccess);
         }
-
-        private void MustGetFakeProperty()
+        [Test]
+        public void TryGeMethodOfSpecificTypeTest()
         {
-            _testClass.MustGetProperty<bool>(_fakeproperty);
+            var result1 = _testClass.TryGeMethodOfSpecificType<OperationResult<VoidValue>>(_realmethod,new Type[]{typeof(string)});
+            Assert.True(result1.IsSuccess);
+            Assert.AreEqual(result1.ReturnValue.ReturnType,typeof(OperationResult<VoidValue>));
+            var result2 = _testClass.TryGeMethodOfSpecificType<bool>(_fakemethod,Type.EmptyTypes);
+            Assert.False(result2.IsSuccess);
         }
-    }
-
-    public class TestClass
-    {
-        public TestClass(bool realProperty = false)
+        [Test]
+        public void MethodInvokeTest()
         {
-            RealProperty = realProperty;
+            var result1 = _testClass.MethodInvoke<OperationResult<VoidValue>>(_realmethod, new object[] { "" });
+            Assert.True(result1.IsSuccess);
+            Assert.AreEqual(result1.ReturnValue.GetType(), typeof(OperationResult<VoidValue>));
         }
+        public class TestClass
+        {
+            public TestClass(bool realProperty = false)
+            {
+                RealProperty = realProperty;
+                ReadOnlyProperty = true;
+            }
 
-        public bool RealProperty { get; }
+            public bool RealProperty { get; set; }
+            public bool ReadOnlyProperty { get;  }
+
+            public OperationResult<VoidValue> RealMethod(string param1)
+            {
+                return OperationResult<VoidValue>.Success();
+            }
+        }
     }
 }

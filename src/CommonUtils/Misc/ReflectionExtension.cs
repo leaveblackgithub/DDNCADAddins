@@ -1,23 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using CommonUtils.CustomExceptions;
+using NLog;
 
 namespace CommonUtils.Misc
 {
     public static class ReflectionExtension
     {
-        // public static FuncResult GetConstructorInfo<T>(Type[] parameterTypes,out ConstructorInfo constructorInfo)
-        // {
-        //     FuncResult result=new FuncResult();
-        //     constructorInfo= typeof(T).GetConstructor(parameterTypes);
-        //     if (constructorInfo == null)
-        //     {
-        //         return result.Cancel(NullReferenceExceptionOfConstructor.CustomMessage<T>());
-        //     }
-        //
-        //     return result;
-        // }
         public static OperationResult<ConstructorInfo> GetConstructorInfo<TToConstruct>(Type[] parameterTypes)
         {
             try
@@ -33,29 +22,11 @@ namespace CommonUtils.Misc
                 return OperationResult<ConstructorInfo>.Failure(e.Message);
             }
         }
-        //
-        // public static FuncResult CreateInstance<T>(object[] parameterValues, out T t)
-        // {
-        //     t= default(T);
-        //     var result = GetConstructorInfo<T>(parameterValues.Select(obj => obj.GetType()).ToArray(),
-        //         out var constructorInfo);
-        //     if (result.IsCancel) return result;
-        //     try
-        //     {
-        //         t = (T)constructorInfo.Invoke(parameterValues);
-        //
-        //     }
-        //     catch (Exception e)
-        //     {
-        //         result.Cancel(e.Message);
-        //
-        //     }
-        //     return result;
-        // }
+
 
         public static OperationResult<T> CreateInstance<T>(object[] parameterValues)
         {
-            if (parameterValues == null) return OperationResult<T>.Failure(ExceptionMessage.NullConstructorParameter());
+            if (parameterValues.IsNullOrEmpty()) return OperationResult<T>.Failure(ExceptionMessage.NullConstructorParameter());
             var types = parameterValues.Select(obj => obj.GetType()).ToArray();
             var result = GetConstructorInfo<T>(types);
             if (!result.IsSuccess) return OperationResult<T>.Failure(result.ErrorMessage);
@@ -72,35 +43,95 @@ namespace CommonUtils.Misc
             }
         }
 
-        public static bool TryGetPropertyOfSpecificType<T>(this object obj, string propertyName,
-            out PropertyInfo property)
+        public static OperationResult<PropertyInfo> TryGetPropertyOfSpecificType<T>(this object obj,
+            string propertyName)
         {
-            property = null;
-            var type = obj.GetType();
-            property = type.GetProperty(propertyName, typeof(T));
-            return property != null;
+            try
+            {
+                var type = obj.GetType();
+                var property = type.GetProperty(propertyName, typeof(T));
+                return property != null
+                    ? OperationResult<PropertyInfo>.Success(property)
+                    : OperationResult<PropertyInfo>.Failure(ExceptionMessage.InvalidProperty<T>(obj, propertyName));
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e);
+                return OperationResult<PropertyInfo>.Failure(ExceptionMessage.UnExpexctedError(e));
+            }
         }
 
-        public static PropertyInfo MustGetProperty<T>(this object obj, string propertyName)
+        public static OperationResult<T> GetObjectPropertyValue<T>(this object obj, string propertyname)
         {
-            PropertyInfo property;
-            obj.TryGetPropertyOfSpecificType<T>(propertyName, out property);
-            if (property != null) return property;
-            var argumentException =
-                ArgumentExceptionOfInvalidProperty._<T>(obj, propertyName);
-            //log exception in commandresult,not in util methods.
-            //LogManager.GetCurrentClassLogger().Error(argumentException);
-            throw argumentException;
+            try
+            {
+                var resultProperty = obj.TryGetPropertyOfSpecificType<T>(propertyname);
+                if (!resultProperty.IsSuccess) return OperationResult<T>.Failure(resultProperty.ErrorMessage);
+                var value = resultProperty.ReturnValue.GetValue(obj, null);
+                if (value == null || value.GetType() != typeof(T))
+                    return OperationResult<T>.Failure(ExceptionMessage.InvalidProperty<T>(obj, propertyname));
+                return OperationResult<T>.Success((T)value);
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e);
+                return OperationResult<T>.Failure(ExceptionMessage.UnExpexctedError(e));
+            }
         }
 
-        public static T GetObjectPropertyValue<T>(this object obj, string propertyname)
+        public static OperationResult<VoidValue> SetObjectPropertyValue<T>(this object obj, string propertyname,
+            T value)
         {
-            return (T)obj.MustGetProperty<T>(propertyname).GetValue(obj, null);
+            try
+            {
+                var resultProperty = obj.TryGetPropertyOfSpecificType<T>(propertyname);
+                if (!resultProperty.IsSuccess) return OperationResult<VoidValue>.Failure(resultProperty.ErrorMessage);
+                if(!resultProperty.ReturnValue.CanWrite) return OperationResult<VoidValue>.Failure(ExceptionMessage.ReadonlyProperty(obj, propertyname));
+                resultProperty.ReturnValue.SetValue(obj, value);
+                return OperationResult<VoidValue>.Success();
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e);
+                return OperationResult<VoidValue>.Failure(ExceptionMessage.UnExpexctedError(e));
+            }
         }
 
-        public static void SetObjectPropertyValue<T>(this object obj, string propertyname, T value)
+        public static OperationResult<MethodInfo> TryGeMethodOfSpecificType<T>(this object obj,
+            string methodName, Type[] parameterTypes)
         {
-            obj.MustGetProperty<T>(propertyname).SetValue(obj, value, null);
+            try
+            {
+                var type = obj.GetType();
+                var method = type.GetMethod(methodName, parameterTypes);
+                return method != null && method.ReturnType == typeof(T)
+                    ? OperationResult<MethodInfo>.Success(method)
+                    : OperationResult<MethodInfo>.Failure(ExceptionMessage.InvalidMethod<T>(obj, methodName));
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e);
+                return OperationResult<MethodInfo>.Failure(ExceptionMessage.UnExpexctedError(e));
+            }
+        }
+        public static OperationResult<T> MethodInvoke<T>(this object obj, string methodName, params object[] parameterValues)
+        {
+            try
+            {
+                Type[]parameterTypes=parameterValues.Length>0 ? parameterValues.Select(p => p.GetType()).ToArray():Type.EmptyTypes;
+                var resultMethod =
+                    obj.TryGeMethodOfSpecificType<T>(methodName, parameterTypes);
+                if (!resultMethod.IsSuccess) return OperationResult<T>.Failure(resultMethod.ErrorMessage);
+                var returnValue = resultMethod.ReturnValue.Invoke(obj, parameterValues);
+                if (returnValue == null || returnValue.GetType() != typeof(T))
+                    return OperationResult<T>.Failure(ExceptionMessage.InvalidMethod<T>(obj, methodName));
+                return OperationResult<T>.Success((T)returnValue);
+            }
+            catch (Exception e)
+            {
+                LogManager.GetCurrentClassLogger().Error(e);
+                return OperationResult<T>.Failure(ExceptionMessage.UnExpexctedError(e));
+            }
         }
     }
 }
