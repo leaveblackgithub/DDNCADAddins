@@ -81,7 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CleanupTest\CleanupTest.cs" />
+    <Compile Include="CleanupTest\CleanupTestCommand.cs" />
     <Compile Include="CleanupTest\CleanupTestDwgCommandHelper.cs" />
   </ItemGroup>
   <ItemGroup>

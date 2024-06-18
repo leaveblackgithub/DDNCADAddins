@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace ACADReferenceCodes.CancelCommands
+namespace CommonUtils
 {
     public class MyMessageFilter : IMessageFilter
     {

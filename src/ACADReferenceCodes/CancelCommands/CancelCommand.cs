@@ -1,6 +1,7 @@
 ﻿using ACADReferenceCodes.CancelCommands;
 using Autodesk.AutoCAD.ApplicationServices.Core;
 using Autodesk.AutoCAD.Runtime;
+using CommonUtils;
 
 [assembly: CommandClass(typeof(CancelCommand))]
 

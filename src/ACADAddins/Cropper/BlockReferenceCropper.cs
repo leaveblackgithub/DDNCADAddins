@@ -19,7 +19,7 @@ namespace ACADAddins.Cropper
             var wcsToMcs = _entity.BlockTransform.Inverse();
             var newbtrId =
                 OCommandTransBase.DuplicateBlockDef(_entity.BlockTableRecord,
-                    DateTimeUtils.AddTimeStampSuffix(_entity.Name));
+                    DateTimeUtils.AddLongTimeStampSuffix(_entity.Name));
             var newbtr = OCommandTransBase.GetObjectForWrite(newbtrId) as BlockTableRecord;
             var newBoundaryId = OCommandTransBase.DuplicateEntity(_boundary);
             using (var newBoundary = OCommandTransBase.GetObjectForWrite(newBoundaryId) as Curve)

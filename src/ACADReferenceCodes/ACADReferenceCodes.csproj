@@ -10,7 +10,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp></NuGetPackageImportStamp>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
     <DirectoryBuildPropsPath>..\Directory.Build.props</DirectoryBuildPropsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -75,7 +76,6 @@
     <Compile Include="AddLayerResult.cs" />
     <Compile Include="AddLayerStatuts.cs" />
     <Compile Include="CancelCommands\CancelCommand.cs" />
-    <Compile Include="CancelCommands\MyMessageFilter.cs" />
     <Compile Include="ChangeLayerPropertyStatus.cs" />
     <Compile Include="EditorTest.cs" />
     <Compile Include="LayerTool.cs" />
@@ -83,7 +83,12 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
+      <Project>{486D3F43-EF27-4F68-8EDE-3DF2E6C546D6}</Project>
+      <Name>CommonUtils</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

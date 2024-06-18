@@ -5,9 +5,10 @@ namespace CommonUtils.Misc
 {
     public static class DateTimeUtils
     {
-        private static long _laststamp;
+        private static long _lastLongStamp;
+        private static long _lastShortStamp;
 
-        public static long DateTimeToTimeStamp(DateTime dateTime)
+        public static long DateTimeToShortStamp(DateTime dateTime)
         {
             return (long)(dateTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc))
                 .TotalSeconds;
@@ -18,38 +19,67 @@ namespace CommonUtils.Misc
         /// </summary>
         /// <param name="dateTime"> DateTime</param>
         /// <returns>13位时间戳（单位：毫秒）</returns>
-        public static long DateTimeToLongTimeStamp(DateTime dateTime)
+        public static long DateTimeToLongStamp(DateTime dateTime)
         {
             return (long)(dateTime.ToUniversalTime() - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc))
                 .TotalMilliseconds;
         }
 
-        private static long GetValidTimeStamp()
+        private static long GetValidLongTimeStamp()
         {
-            var stamp = DateTimeToLongTimeStampOfNow();
-            if (stamp == _laststamp)
+            var stamp = DateTimeToLongStampOfNow();
+            if (stamp == _lastLongStamp)
             {
                 Thread.Sleep(1);
-                stamp = DateTimeToLongTimeStampOfNow();
+                stamp = DateTimeToLongStampOfNow();
             }
 
-            _laststamp = stamp;
+            _lastLongStamp = stamp;
+            return stamp;
+        }
+        private static long GetValidShortTimeStamp()
+        {
+            var stamp = DateTimeToShortStampOfNow();
+            if (stamp == _lastShortStamp)
+            {
+                Thread.Sleep(1);
+                stamp = DateTimeToShortStampOfNow();
+            }
+
+            _lastShortStamp = stamp;
             return stamp;
         }
 
-        public static string AddTimeStampSuffix(string content)
+        public static string AddLongTimeStampSuffix(string content)
         {
-            return $"{content}{GetValidTimeStamp()}";
+            return $"{content}{GetValidLongTimeStamp()}";
+        }
+        public static string AddShortTimeStampSuffix(string content)
+        {
+            return $"{content}{GetValidShortTimeStamp()}";
         }
 
-        public static string AddTimeStampPrefix(string content)
+        public static string AddLongTimeStampPrefix(string content)
         {
-            return $"{GetValidTimeStamp()}{content}";
+            return $"{GetValidLongTimeStamp()}{content}";
         }
 
-        public static long DateTimeToLongTimeStampOfNow()
+        public static long DateTimeToLongStampOfNow()
         {
-            return DateTimeToLongTimeStamp(DateTime.Now);
+            return DateTimeToLongStamp(DateTime.Now);
+        }
+
+
+        public static long DateTimeToShortStampOfNow()
+        {
+            return DateTimeToShortStamp(DateTime.Now);
+        }
+        public static string AddTimeStampForDebug(string content)
+        {
+#if DEBUG
+            return AddShortTimeStampSuffix(content);
+#endif
+            return content;
         }
     }
 }

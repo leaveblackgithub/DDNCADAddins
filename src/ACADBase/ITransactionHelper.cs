@@ -6,7 +6,7 @@ namespace ACADBase
 {
     public interface ITransactionHelper : IDisposable
     {
-        T GetObject<T>(ObjectId objectId, OpenMode mode)
+        OperationResult<T> GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject;
 
         HandleValue CreateObject<T>(ObjectId modelSpaceId)

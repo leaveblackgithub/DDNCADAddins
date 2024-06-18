@@ -13,7 +13,7 @@ namespace CommonUtils.Tests.Misc
         public void DateTimeToTimeStampTest()
         {
             var dateTime = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var timeStamp = DateTimeUtils.DateTimeToTimeStamp(dateTime);
+            var timeStamp = DateTimeUtils.DateTimeToShortStamp(dateTime);
             Assert.AreEqual(1577836800, timeStamp);
         }
 
@@ -21,7 +21,7 @@ namespace CommonUtils.Tests.Misc
         public void DateTimeToLongTimeStampTest()
         {
             var dateTime = new DateTime(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-            var timeStamp = DateTimeUtils.DateTimeToLongTimeStamp(dateTime);
+            var timeStamp = DateTimeUtils.DateTimeToLongStamp(dateTime);
             Assert.AreEqual(1577836800000, timeStamp);
         }
 
@@ -30,9 +30,9 @@ namespace CommonUtils.Tests.Misc
             Func<string, string, bool> startsOrEndsWith, Func<string, int, string> getStampSubString)
         {
             var content = "Test";
-            var stamp1 = DateTimeUtils.DateTimeToLongTimeStampOfNow();
+            var stamp1 = DateTimeUtils.DateTimeToLongStampOfNow();
             var stampedContent = getStampedContent(content);
-            var stamp2 = DateTimeUtils.DateTimeToLongTimeStampOfNow();
+            var stamp2 = DateTimeUtils.DateTimeToLongStampOfNow();
             var contentLength = content.Length;
             var stampLength = stampedContent.Length;
             var spanExpected = stamp2 - stamp1;
@@ -56,13 +56,13 @@ namespace CommonUtils.Tests.Misc
         [Test]
         public void AddTimeStampSuffixTest()
         {
-            AddTimeStampeTest(DateTimeUtils.AddTimeStampSuffix, StringStartsWith, StringUtils.SubStringRight);
+            AddTimeStampeTest(DateTimeUtils.AddLongTimeStampSuffix, StringStartsWith, StringUtils.SubStringRight);
         }
 
         [Test]
         public void AddTimeStampPrefixTest()
         {
-            AddTimeStampeTest(DateTimeUtils.AddTimeStampPrefix, StringEndsWith, StringUtils.SubStringLeft);
+            AddTimeStampeTest(DateTimeUtils.AddLongTimeStampPrefix, StringEndsWith, StringUtils.SubStringLeft);
         }
     }
 }

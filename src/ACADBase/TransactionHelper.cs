@@ -15,28 +15,37 @@ namespace ACADBase
 
         public Transaction ActiveTransaction { get; set; }
 
-        public T GetObject<T>(ObjectId objectId, OpenMode mode)
+        // public T GetObject<T>(ObjectId objectId, OpenMode mode)
+        //     where T : DBObject
+        // {
+        //     if (!objectId.IsValid) throw ArgumentExceptionOfInvalidId._(objectId.ToString());
+        //     try
+        //     {
+        //         var t = (T)ActiveTransaction.GetObject(objectId, mode);
+        //         return t;
+        //     }
+        //     catch (InvalidCastException e)
+        //     {
+        //         LogManager.GetCurrentClassLogger().Error(e);
+        //         throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId.ToString());
+        //     }
+        // }
+        public OperationResult<T> GetObject<T>(ObjectId objectId, OpenMode mode)
             where T : DBObject
         {
-            if (!objectId.IsValid) throw ArgumentExceptionOfInvalidId._(objectId.ToString());
-            try
-            {
-                var t = (T)ActiveTransaction.GetObject(objectId, mode);
-                return t;
-            }
-            catch (InvalidCastException e)
-            {
-                LogManager.GetCurrentClassLogger().Error(e);
-                throw ArgumentExceptionOfIdReferToWrongType._<T>(objectId.ToString());
-            }
+            if (!objectId.IsValid) return OperationResult<T>.Failure(ExceptionMessage.InvalidId(objectId.ToString()));
+            var t = ActiveTransaction.GetObject(objectId, mode);
+            if(t.GetType() != typeof(T) )return OperationResult<T>.Failure(ExceptionMessage.IdReferToWrongType<T>(objectId.ToString()));
+            return OperationResult<T>.Success(t as T);
         }
 
         public HandleValue CreateObject<T>(ObjectId modelSpaceId)
             where T : Entity, new()
         {
             using var obj = new T();
-            using var modelSpace =
-                GetObject<BlockTableRecord>(modelSpaceId, OpenMode.ForWrite);
+            var result= GetObject<BlockTableRecord>(modelSpaceId, OpenMode.ForWrite);
+            if (!result.IsSuccess) return HandleValue.FromObject(null);
+            using var modelSpace = result.ReturnValue;
             modelSpace.AppendEntity(obj);
             AddNewlyCreatedDBObject(obj, true);
 
@@ -49,7 +58,9 @@ namespace ACADBase
             where T : DBObject
         {
             if (funcs.IsNullOrEmpty()) return OperationResult<VoidValue>.Success();
-            using var obj = GetObject<T>(objectId, OpenMode.ForWrite);
+            var result = GetObject<T>(objectId, OpenMode.ForWrite);
+            if (!result.IsSuccess) return OperationResult<VoidValue>.Failure(result.ErrorMessage);
+            using var obj = result.ReturnValue;
             return funcs.RunForEach(obj);
         }
 

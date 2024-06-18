@@ -31,7 +31,7 @@ namespace CommonUtils.Misc
 
         private string GetStampString(string funcName = "")
         {
-            return DateTimeUtils.AddTimeStampPrefix(funcName);
+            return DateTimeUtils.AddLongTimeStampPrefix(funcName);
         }
 
         private void Init(FuncResultType resultType, Exception exception)

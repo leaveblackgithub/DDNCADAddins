@@ -1,6 +1,7 @@
 ﻿using System;
 using Autodesk.AutoCAD.DatabaseServices;
 using CommonUtils.CustomExceptions;
+using CommonUtils.Misc;
 
 namespace ACADBase
 {
@@ -13,21 +14,16 @@ namespace ACADBase
 
         public long HandleAsLong { get; set; }
 
-        public Handle ToHandle()
+        public OperationResult<Handle> ToHandle()
         {
             try
             {
-                return new Handle(HandleAsLong);
+                return OperationResult<Handle>.Success(new Handle(HandleAsLong));
             }
             catch (FormatException)
             {
-                throw ArgumentExceptionOfInvalidHandle._(HandleAsLong);
+                return OperationResult<Handle>.Failure(ExceptionMessage.InvalidHandle(HandleAsLong));
             }
-        }
-
-        public static Handle ToHandle(long handleAsLong)
-        {
-            return new HandleValue(handleAsLong).ToHandle();
         }
 
         public static HandleValue FromHandle(Handle handle)

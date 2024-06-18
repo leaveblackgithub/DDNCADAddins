@@ -45,11 +45,21 @@ namespace ACADBase
             return OperationResult<HandleValue>.Success(handleValue);
         }
 
-        public virtual OperationResult<ObjectId> TryGetObjectId(HandleValue handleValue)
+        public OperationResult<ObjectId> TryGetObjectId(HandleValue handleValue)
         {
-            if (CadDatabase.TryGetObjectId(handleValue.ToHandle(), out var objectId))
-                return OperationResult<ObjectId>.Success(objectId);
-            return OperationResult<ObjectId>.Failure(ExceptionMessage.InvalidHandle(handleValue.HandleAsLong));
+            var resultHandle = handleValue.ToHandle();
+            if (!resultHandle.IsSuccess) return OperationResult<ObjectId>.Failure(resultHandle.ErrorMessage);
+            var resultId= TryGetObjectId(resultHandle.ReturnValue);
+            return resultId.IsSuccess
+                ? OperationResult<ObjectId>.Success(resultId.ReturnValue)
+                : OperationResult<ObjectId>.Failure(resultId.ErrorMessage);
+        }
+
+        public OperationResult<ObjectId> TryGetObjectId(Handle handle)
+        {
+            return CadDatabase.TryGetObjectId(handle, out var objectId)
+                ? OperationResult<ObjectId>.Success(objectId)
+                : OperationResult<ObjectId>.Failure(ExceptionMessage.InvalidHandle(handle.Value));
         }
 
         public static OperationResult<IDatabaseHelper> NewDatabaseHelper<T>(string drawingFile)

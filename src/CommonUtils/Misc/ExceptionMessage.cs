@@ -1,10 +1,16 @@
-﻿using System;
+﻿using CommonUtils.CustomExceptions;
+using System;
 using System.Linq;
 
 namespace CommonUtils.Misc
 {
     public static class ExceptionMessage
     {
+
+        public static string IdReferToWrongType<T> (string idString)
+        {
+            return $"{idString} is not referring to a DbObject of Type {typeof(T).Name}.";
+        }
         public static string IsNotExistingOrNotDwg(string dwgPath)
         {
             return $"[{dwgPath}] is not an existing file or not a dwg file";
@@ -41,5 +47,9 @@ namespace CommonUtils.Misc
         {
             return $"DwgDatabase read from [{dwgPath}] is null.";
         }
+
+
+
+
     }
 }

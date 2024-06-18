@@ -3,11 +3,11 @@ using ACADTestsOfApplication.CleanupTest;
 using Autodesk.AutoCAD.Runtime;
 using CommonUtils.Misc;
 
-[assembly: CommandClass(typeof(CleanupTest))]
+[assembly: CommandClass(typeof(CleanupTestCommand))]
 
 namespace ACADTestsOfApplication.CleanupTest
 {
-    public class CleanupTest 
+    public class CleanupTestCommand 
     {
         //private LayerHelper _curLayerHelper;
         //private LTypeHelper _curLTypeHelper;
@@ -21,7 +21,7 @@ namespace ACADTestsOfApplication.CleanupTest
         //    _curLTypeHelper ?? (_curLTypeHelper =
         //        new LTypeHelper(AcCurDb.LinetypeTableId, O_CurDocHelper));
 
-        [CommandMethod(nameof(CleanupTest))]
+        [CommandMethod(nameof(CleanupTestCommand))]
         public  void RunCommand()
         {
             BaseDwgCommandHelper.ExecuteCustomCommands<CleanupTestDwgCommandHelper>("", TestOutput);
