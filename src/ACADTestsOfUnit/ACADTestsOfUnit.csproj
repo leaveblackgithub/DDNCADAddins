@@ -103,10 +103,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ACADAddins\ACADAddins.csproj">
-      <Project>{939D79C6-A85B-42CA-8873-406C9AA56A94}</Project>
-      <Name>CADAddins</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ACADBase\ACADBase.csproj">
       <Project>{743B10D0-FC6A-4E8C-A180-FE6CD1C52239}</Project>
       <Name>ACADBase</Name>

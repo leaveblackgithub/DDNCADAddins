@@ -10,8 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
+    <NuGetPackageImportStamp></NuGetPackageImportStamp>
     <DirectoryBuildPropsPath>..\Directory.Build.props</DirectoryBuildPropsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AcConsoleTest|AnyCPU' ">
@@ -92,10 +91,6 @@
     <ProjectReference Include="..\ACADBase\ACADBase.csproj">
       <Project>{743b10d0-fc6a-4e8c-a180-fe6cd1c52239}</Project>
       <Name>ACADBase</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\ACADReferenceCodes\ACADReferenceCodes.csproj">
-      <Project>{a1d4e5ca-1012-40bf-919b-027df94aa045}</Project>
-      <Name>ACADReferenceCodes</Name>
     </ProjectReference>
     <ProjectReference Include="..\CommonUtils\CommonUtils.csproj">
       <Project>{486d3f43-ef27-4f68-8ede-3df2e6c546d6}</Project>
